@@ -42,6 +42,7 @@ C4Context
         Component(h_conf,Hyperdrive Configuration Module, "")
         Component(h_query,Hyperdrive Query Module, "")
     }
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 ```
 
 Each module has its specific functionality:
@@ -71,8 +72,8 @@ The hyperdrive has three distinct users:
 The user interaction with the hyperdrive modules is depicted in the following. 
 
 ```mermaid
+%%{init: {'theme': 'neutral' } }%%
 C4Context
-    %%{init: {'theme': 'neutral' } }%%
     title Public Users Access
     Boundary(c0, "Hyperdrive") {
         Component(h_core,Hyperdrive Core Module, "")
@@ -81,25 +82,11 @@ C4Context
         Component(h_query,Hyperdrive Query Module, "")
     }
 
-    %% Boundary(core, "dARK Core", "Blockchain Nertwor") {
-    %%     ComponentDb(darkCore,dARK Data Service, "")
-    %%     Component(d,dARK Service, "")
-    %% }
-
     Person_Ext(pu,"User","public")
     
 
     BiRel(pu, h_query, "Uses")
     UpdateRelStyle(pu, h_query, $textColor="blue", $lineColor="blue", $offsetY="-10")
-
-
-    %% Person(pp,"Curator","private")
-    %% Person(mu,"Manager","private")
-    %% BiRel(pp, h_core, "Uses")
-    %% Rel(pp, h_auth, "authenticate")
-
-    %% Rel(mu, h_auth, "Configure")
-    %% Rel(mu, h_conf, "Configure")
 
 
     UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
@@ -119,25 +106,13 @@ C4Context
         Component(h_query,Hyperdrive Query Module, "")
     }
 
-    %% Boundary(core, "dARK Core", "Blockchain Nertwor") {
-    %%     ComponentDb(darkCore,dARK Data Service, "")
-    %%     Component(d,dARK Service, "")
-    %% }
-
-    %Person_Ext(pu,"User","public")
-    
-
-    %BiRel(pu, h_query, "Uses")
-    %UpdateRelStyle(pu, h_query, $textColor="blue", $lineColor="blue", $offsetY="-10")
-
-
     Person(pp,"Curator","private")
     Person(mu,"Manager","private")
     BiRel(pp, h_core, "Uses")
     Rel(pp, h_auth, "authenticate")
 
     Rel(mu, h_auth, "Configure")
-     Rel(mu, h_conf, "Configure")
+    Rel(mu, h_conf, "Configure")
 
 
     UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
