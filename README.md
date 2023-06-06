@@ -9,7 +9,7 @@ dARK Hyperdrive repository
 graph LR
     DA[dARK]
     MR[IPFS]
-    DS[DSPACE]
+    DS[External \n System]
     HD[HyperDriver]
 
     %% subgraph TD SS ["Space Shuttles" ]
