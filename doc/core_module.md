@@ -1,4 +1,4 @@
- # Hyperdrive API Methods
+ # Hyperdrive Core Module
 
  Description 
  - problema da data deposito
@@ -7,10 +7,55 @@
 
 ## DESCRIPTION
 
-todo
+TODO
 
+### Pid Dike
 
-## CORE API
+The fastest consensus algorithm available to the hyper ledger besu (the Blockchain technology employed in the core dARK network)  has 400 transactions per second (TPS) as its maximum throughput. This throughput could be a problem in a network with numerous users. In other words, having more than 400 TPS will degrade the dARK response time and lead to a bad user experience. 
+
+To mitigate the aforementioned problem, the **Hyperdrive must reduce its write operation to the dARK Core**. This restriction is applied only to the procedures that result in writing information on the Blockchain because read operations are distributed and indexed to answer as fast as possible, like a standard database system. Therefore, reading or querying functions do not impose any degradation on the dARK core.
+
+In a PID system, like the ARK, one operation performed frequently is requesting an identifier for a new item (e.g., an article or dataset). Moreover, this operation can be performed in batches for a large number of items. For example, a curator could ask for identifiers for all undergraduates' completion work in a university, resulting in thousands of PID requests to the dARK Core. 
+
+To reduce the number of requests to the dARK, the Hyperdrive must offer the possibility to the System Manager to configure a PID cache (Dike). 
+
+The PID Dike keeps some unused PID in a Hyperdrive repository (lake). These PIDs will be assigned to new items when the curator asks, without the need to ask for the Blockchain. This will reduce the communication cost between the user and the dARK core. The figure above, in flow a, illustrates the PID Dike mechanism. 
+
+```mermaid
+%%{init: {'theme': 'neutral' } }%%
+flowchart LR
+
+    user((fa:fa-user User))
+    
+    user -.-> |a.1| hcm
+    hcm -.-> |a.4| user
+
+    subgraph bc[fa:fa-vector-square dARK Core]
+        bd_dark[(dARK )]
+    end
+
+    subgraph ca[fa:fa-globe  Hyperdrive]
+        ham([Dike Spoter \n Funcion])
+
+        dike[\PID Dike/]
+        hcm[Hyperdrive\nCore]
+        
+        
+        ham --> |b.1| dike
+        dike --> |b.2| ham
+        dike --> |a.3| hcm
+        hcm --> |a.2| dike
+    end
+
+    ham -.->|b.3| bc
+    bc -.->|b.4| ham
+```
+
+Notice that the PID Dike is **optional and configured by the System Manager**. Moreover, the Hyperdrive **must have an asynchronous mechanism** (illustrated by Dike Spoter Function, in flow b) **to manage the number of PID in the Dike**.
+
+The Dike Spoter Function must be aware of the load of the Blockchain to ask for new PIDs to be loaded in the Dike. _The awareness must be further modeled and documented_. 
+
+## Hyperdrive Core API Methods
 
 
 ### PID Manipulation
@@ -24,7 +69,7 @@ description
 
 #### Assing PID
 <details>
- <summary><code>GET</code> <code><b>/pid/new</b></code> <code>(retrieve a new PID)</code></summary>
+ <summary><code>GET</code> <code><b>/core/pid//new</b></code> <code>(retrieve a new PID)</code></summary>
 
 ##### Parameters
 
@@ -43,7 +88,7 @@ description
 ##### Example cURL
 
 > ```javascript
->  curl -X GET -H "Content-Type: application/json" http://localhost:8889/pid/new
+>  curl -X GET -H "Content-Type: application/json" http://localhost:8889/core/pid/new
 > ```
 
 </details>
@@ -52,7 +97,7 @@ description
 
 #### Set External PID
 <details>
- <summary><code>PUT</code> <code><b>/pid/set_external_pid/{ark_id}</b></code> <code>(update a ark with an external PID)</code></summary>
+ <summary><code>PUT</code> <code><b>/core/pid//set_external_pid/{ark_id}</b></code> <code>(update a ark with an external PID)</code></summary>
 
 ##### Parameters
 
@@ -82,7 +127,7 @@ description
 ##### Example cURL
 
 > ```javascript
->  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/pid/set_external_pid/'8008/fk3abc123'/
+>  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/core/pid//set_external_pid/'8008/fk3abc123'/
 > ```
 
 </details>
@@ -91,7 +136,7 @@ description
 
 #### Set External link
 <details>
- <summary><code>PUT</code> <code><b>/pid/set_external_link/{ark_id}</b></code> <code>(update a ark with an external link/url)</code></summary>
+ <summary><code>PUT</code> <code><b>/core/pid//set_external_link/{ark_id}</b></code> <code>(update a ark with an external link/url)</code></summary>
 
 ##### Parameters
 
@@ -121,7 +166,7 @@ description
 ##### Example cURL
 
 > ```javascript
->  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/pid/set_external_pid/'8008/fk3abc123'/
+>  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/core/pid//set_external_pid/'8008/fk3abc123'/
 > ```
 
 </details>
@@ -130,7 +175,7 @@ description
 
 #### Set Payload
 <details>
- <summary><code>PUT</code> <code><b>/pid/set_payload/{ark_id}</b></code> <code>(update a ark with an payload)</code></summary>
+ <summary><code>PUT</code> <code><b>/core/pid//set_payload/{ark_id}</b></code> <code>(update a ark with an payload)</code></summary>
 
 ##### Parameters
 
@@ -153,7 +198,7 @@ description
 ##### Example cURL
 
 > ```javascript
->  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/pid/set_payload/'8008/fk3abc123'/
+>  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/core/pid//set_payload/'8008/fk3abc123'/
 > ```
 
 </details>
@@ -162,7 +207,7 @@ description
 
 #### Configure PID
 <details>
- <summary><code>PUT</code> <code><b>/pid/deploy/{ark_id}</b></code> <code>(update all ark field - e.g., external pids,links and payload)</code></summary>
+ <summary><code>PUT</code> <code><b>/core/pid//deploy/{ark_id}</b></code> <code>(update all ark field - e.g., external pids,links and payload)</code></summary>
 
 ##### Parameters
 
@@ -196,7 +241,7 @@ description
 ##### Example cURL
 
 > ```javascript
->  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/pid/set_payload/'8008/fk3abc123'/
+>  curl -X PUT -H "Content-Type: application/json" --data @put.json http://localhost:8889/core/pid//set_payload/'8008/fk3abc123'/
 > ```
 
 </details>
