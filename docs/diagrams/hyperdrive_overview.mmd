@@ -1,0 +1,33 @@
+
+graph LR
+    %% @config(./mmd_config.json)
+    DA[dARK]
+    MR[IPFS]
+    HD[HyperDriver]
+    MD[(Meta\nDatabase)]
+
+    US((User))
+    
+
+    %% subgraph TD SS ["Space Shuttles" ]
+    %%     HD
+    %% end
+    subgraph O[Organization]
+        subgraph GC[Blockchain]
+            DA
+            MR
+        end
+
+        HD .- |request| GC
+        
+
+        GC -->|update| MD
+
+        HD ..->|query| MD
+    end
+
+    US --> | use | HD
+    
+    
+
+    
