@@ -55,9 +55,9 @@ Each module has its specific functionality:
 
 The modules are further detailed in 
 
-1. [Hyperdrive Core Moule](doc/core_module.md)
+1. [Hyperdrive Core Moule](docs/core_module.md)
 1. Hyperdrive Query Module
-1. [Hyperdrive Authentication Module](doc/auth_module.md)
+1. [Hyperdrive Authentication Module](docs/auth_module.md)
 1. Hyperdrive Configuration Module
 
 ### Modules Use
