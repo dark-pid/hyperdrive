@@ -9,9 +9,9 @@ dARK Hyperdrive repository
 ## Cronogram
 
 | Status            | August | September | October | January | Feburay | March | April |
-|-------------------|:------:|:---------:|:-------:|:-------:|:-------:|:-----:|:-----:|
+|:------------------|:------:|:---------:|:-------:|:-------:|:-------:|:-----:|:-----:|
 | Literature review | x      | x         |         |         |         |       |       |
 | Desing            |        |           | x       |         |         |       |       |
 | Code              |        |           |         |    x    |         |       |       |
-| Test              |        |           |         |         |         |   x   |  x    |
+| Test              |        |           |         |         |   x     |   x   |       |
 | Documentation     |        |           |         |         |         |       |  x    |
