@@ -10,19 +10,7 @@ dARK Hyperdrive repository
 
 The hyperdrive module is organized into four modules, as the figure above presents.
 
-```mermaid
-%%{init: {'theme': 'neutral' } }%%
-C4Context
-    title Hyperdrive Modules
-
-    Boundary(c0, "Hyperdrive") {
-        Component(h_core,Hyperdrive Core Module, "")
-        Component(h_auth,Hyperdrive Auth Module, "")
-        Component(h_conf,Hyperdrive Configuration Module, "")
-        Component(h_query,Hyperdrive Query Module, "")
-    }
-    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
-```
+![](./figures/architecture/arch_modules_overview.png)
 
 Each module has its specific functionality:
 1. Hyperdrive Core Moule: This module is responsible to performs PID registration operations (e.g., adding or updating PID metadata or requesting a new PID for a new item).
@@ -45,52 +33,13 @@ The hyperdrive has three distinct users:
 
 The user interaction with the hyperdrive modules is depicted in the following. 
 
-```mermaid
-%%{init: {'theme': 'neutral' } }%%
-C4Context
-    title Public Users Access
-    Boundary(c0, "Hyperdrive") {
-        Component(h_core,Hyperdrive Core Module, "")
-        Component(h_auth,Hyperdrive Authentication Module, "")
-        Component(h_conf,Hyperdrive Configuration Module, "")
-        Component(h_query,Hyperdrive Query Module, "")
-    }
+![](./figures/architecture/arch_modules_user_view.png)
 
-    Person_Ext(pu,"User","public")
-    
-
-    BiRel(pu, h_query, "Uses")
-    UpdateRelStyle(pu, h_query, $textColor="blue", $lineColor="blue", $offsetY="-10")
-
-
-    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
-```
 The public user can be a person or system (e.g., the DSpace software). Public users send the queries to the Hyperdrive Query Module, that process the request and return it to the users. The figure above illustrates the interaction mentioned above. 
 
 The curator and manager users' actions are depicted above. 
 
-```mermaid
-%%{init: {'theme': 'neutral' } }%%
-C4Context
-    title Authenticaded Users 
-    Boundary(c0, "Hyperdrive") {
-        Component(h_core,Hyperdrive Core Module, "")
-        Component(h_auth,Hyperdrive Authentication Module, "")
-        Component(h_conf,Hyperdrive Configuration Module, "")
-        Component(h_query,Hyperdrive Query Module, "")
-    }
-
-    Person(pp,"Curator","private")
-    Person(mu,"Manager","private")
-    BiRel(pp, h_core, "Uses")
-    Rel(pp, h_auth, "authenticate")
-
-    Rel(mu, h_auth, "Configure")
-    Rel(mu, h_conf, "Configure")
-
-
-    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
-```
+![](./figures/architecture/arch_modules_auth_user.png)
 
 Notice that the curator has access only to the Hyperdrive Authentication Module and Hyperdrive Core Module. In contrast, the manager has access only to the Hyperdrive Authentication Module and Hyperdrive Configuration Module.
 

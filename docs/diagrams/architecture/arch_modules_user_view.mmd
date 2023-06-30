@@ -1,0 +1,18 @@
+C4Context
+    %% @config(../mmd_config.json)
+    title Public Users Access
+    Boundary(c0, "Hyperdrive") {
+        Component(h_core,Hyperdrive Core Module, "")
+        Component(h_auth,Hyperdrive Authentication Module, "")
+        Component(h_conf,Hyperdrive Configuration Module, "")
+        Component(h_query,Hyperdrive Query Module, "")
+    }
+
+    Person_Ext(pu,"User","public")
+    
+
+    BiRel(pu, h_query, "Uses")
+    UpdateRelStyle(pu, h_query, $textColor="blue", $lineColor="blue", $offsetY="-10")
+
+
+    UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
