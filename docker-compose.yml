@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  api:
+    container_name: api-${ENVIRONMENT:-dev}
+    # profiles:
+    #   - application
+    #   - p2w
+    build: 
+      context: ./
+      dockerfile: ./docker/Dockerfile
+    restart: always
+    environment:
+      - HTTP_PORT=${HTTP_PORT:-8080}
+      # - PORT_HTTPS=4001
+      # - SSL_CERT_PATH=/etc/ssl/server.crt
+      # - SSL_KEY_PATH=/etc/ssl/server.key
+    # volumes:
+    #   - ./.certs/backend:/etc/ssl/:ro
+    networks:
+      - dark-network
+    # depends_on:
+    #   - postgres
+    ports:
+      - ${HTTP_PORT:-8080}:8080
+    volumes:
+      - ./app/:/usr/src/hyperdrive
+
+networks:
+  dark-network:
+    name: dark-network
+    driver: bridge
