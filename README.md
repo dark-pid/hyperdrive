@@ -13,5 +13,5 @@ dARK Hyperdrive repository
 | Literature review | x      | x         |         |         |         |       |       |
 | Desing            |        |           | x       |         |         |       |       |
 | Code              |        |           |         |    x    |         |       |       |
-| Test              |        |           |         |         |    x    |   x   |  x    |
-| Documentation     |        |           |         |         |         |  x    |  x    |
+| Test              |        |           |         |         |         |   x   |  x    |
+| Documentation     |        |           |         |         |         |       |  x    |
