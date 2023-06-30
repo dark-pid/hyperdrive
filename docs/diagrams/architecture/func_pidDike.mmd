@@ -1,0 +1,26 @@
+flowchart LR
+    %% @config(../mmd_config.json)
+    user((fa:fa-user User))
+    
+    user -.-> |a.1| hcm
+    hcm -.-> |a.4| user
+
+    subgraph bc[fa:fa-vector-square dARK Core]
+        bd_dark[(dARK )]
+    end
+
+    subgraph ca[fa:fa-globe  Hyperdrive]
+        ham([Dike Spoter \n Funcion])
+
+        dike[\PID Dike/]
+        hcm[Hyperdrive\nCore]
+        
+        
+        ham --> |b.1| dike
+        dike --> |b.2| ham
+        dike --> |a.3| hcm
+        hcm --> |a.2| dike
+    end
+
+    ham -.->|b.3| bc
+    bc -.->|b.4| ham
