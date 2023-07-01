@@ -12,8 +12,9 @@ import json
 import pandas as pd
 from web3 import Web3
 
-from util import setup
-from util.libs import invoke_contract
+#altera o import para util
+from dark.gateway.util.libs import invoke_contract
+
 
 
 def extratc_metada_dspace(item_metada):
