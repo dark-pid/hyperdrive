@@ -96,3 +96,32 @@ def get_new():
     #novamente como reportar o erro aqui?
     return resp, error_code
 
+@core_api_blueprint.get('/get/<dark_id>')
+def get_pid(dark_id):
+    resp_code = 200
+    try:
+        dark_pid = None
+        if dark_id.startswith('0x'):
+            dark_pid = dark_map.get_pid_by_hash(dark_id)
+            # dark_object = dpid_db.caller.get(dark_id)
+        else:
+            dark_pid = dark_map.get_pid_by_ark(dark_id)
+        
+        
+        
+        resp_dict = dark_pid.to_dict()
+
+        if len(dark_pid.externa_pid_list) == 0:
+            del resp_dict['externa_pid_list']
+
+        resp = jsonify(resp_dict)
+    except ValueError as e:
+        resp = jsonify({'status' : 'Unable to recovery (' + str(dark_id) + ')', 'block_chain_error' : str(e)},)
+        resp_code = 500
+    
+    return resp, resp_code
+
+@core_api_blueprint.get('/get/<nam>/<shoulder>')
+def get_pid_by_noid(nam,shoulder):
+    dark_id = nam + str('/') + shoulder
+    return get_pid(dark_id)
