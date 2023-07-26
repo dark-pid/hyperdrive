@@ -5,12 +5,12 @@
 | name                     |  function     | method | status |
 |:-                        | :-:           | :-:    | :-: | 
 |[Assing PID](#assing_pid) | no_parameter  | sync   | :heavy_check_mark: |
-|[Assing PID](#assing_pid) | external_pid  | sync   | ⬜ |
-|[Assing PID](#assing_pid) | payload       | sync   | ⬜ |
+|[Assing PID](#assing_pid) | external_pid  | async   | ⬜ |
+|[Assing PID](#assing_pid) | payload       | async   | ⬜ |
 |[Get PID](#get_pid)       | ark           | sync   | :heavy_check_mark: |
-|[Get PID](#get_pid)       | hash_pid      | sync   | :heavy_check_mark: |
+|[Get PID](#get_pid)       | hash_pid      | async   | :heavy_check_mark: |
 |[Set](#set)               | external_pid  | sync   | ⬜ |
-|[Set](#set)               | payload       | sync   | ⬜ |
+|[Set](#set)               | payload       | async   | ⬜ |
 
 
 
