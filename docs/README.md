@@ -20,8 +20,6 @@
 |[set](#set)               | external_url  | async   | ⬜ |
 |[set](#set)               | payload       | async   | ⬜ |
 
-
-
 **status :**
 > - :heavy_check_mark: : done
 > - :x: : not implemented
@@ -128,7 +126,6 @@ description
 >  http://http://localhost:8080/core/get/8008/fk3abd1344
 > ```
 </details>
-
 
 ## Hyperdrive Transaction Verification Mechanism (HTVM)
 
