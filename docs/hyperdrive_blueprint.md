@@ -1,6 +1,7 @@
 # Hyperdrive 
 
 > Table of content:
+> - [Hyperdrive transactions processing schema](#hyperdrive-transactions-processing-schema)
 > - [Hyperdrive Functionalities](#hyperdrive-functionalities)
 > - [Hyperdrive Modules Architetural Overview](#hyperdrive-module)
 
@@ -13,10 +14,28 @@ The Hyperdrive *is a Application Programming Interfaces (API)*, to provide seaml
 
 To acomplish that goal we mapped the following **functionalities**:
 
-1. Provide seamless [interoperability](#interoperability) between dARK and existing applications;
+1. [Provide seamless interoperability between dARK and existing applications](#interoperability);
 1. [Encapsulate](#blockchain-abstratction) the Blockchain concepts;
-1. Reduce the [comunication cost](#pid-dike);
+1. [Reduce the comunication cost](#pid-dike);
+1. [Ensure that every transaction is executed properly executued and logged](#assync-blockchain-execution-and-verification)
 
+## Hyperdrive transactions processing schema
+
+In the following sequence diagram shows the interaction between a client, HyperDrive, and the dARK Blockchain. The client sends a request to HyperDrive, which converts the request to JSON-RPC and signs the transaction. HyperDrive then sends the transaction to the dARK Blockchain, which acknowledges the receipt of the transaction. The blockchain will process the transaction later. HyperDrive then responds to the client with a confirmation that the action will be processed.
+
+![](figures/hyperdrive_state_general.png)
+
+Here is a more detailed explanation of the sequence of events:
+
+> 1. The client sends a request to HyperDrive.
+> 1. HyperDrive converts the request to JSON-RPC.
+> 1. HyperDrive signs the transaction.
+> 1. HyperDrive sends the transaction to the dARK Blockchain.
+> 1. The dARK Blockchain acknowledges the receipt of the transaction.
+> 1. The dARK Blockchain will process the transaction later.
+> 1. HyperDrive responds to the client with a confirmation that the action will be processed.
+
+This sequence diagram is a useful way to visualize the interaction between the client, HyperDrive, and the dARK Blockchain. It can be used to understand how the process works and to identify any potential bottlenecks or problems.
 
 ## Hyperdrive Functionalities
 
@@ -52,9 +71,19 @@ Notice that the PID Dike is **optional and configured by the System Manager**. M
 
 The Dike Spoter Function must be aware of the load of the Blockchain to ask for new PIDs to be loaded in the Dike. _The awareness must be further modeled and documented_. 
 
-### Hyperdrive assync
+### Assync blockchain execution and verification
 
-TODO
+Blockchain transactions are typically executed in a decentralized manner, which means that transactions can be aborted, which means that they will not be reflected on the blockchain data. This means that the transaction will not be visible to other users, and it will not be able to be processed by the blockchain network. There are a number of reasons why a transaction might be aborted, such as; invalid data (if the data in the transaction is invalid, the transaction will be aborted), network congestion and insufficient funds.
+
+To mitigate the native effects of a borted transattion, *the HyperDrive API can be used to check whether a blockchain transaction has been executed or not*. The following diagram shows how HyperDrive checks whether a transaction has been executed on the dARK Blockchain.
+
+![](./figures/hyperdrive_state_check.png)
+
+The HyperDrive should sotre the transaction that where request by each client (detailed in the first segment of diagram, Client Interaction). Before the transaction is requested the HyperDrive should start the transaction verification process.
+
+The process starts with HyperDrive sending a message to the dARK Blockchain asking if the transaction has been executed (this method is encapsulated by the [dark-gateway](https://github.com/dark-pid/dark-gateway) lib). The dARK Blockchain then verifies the transaction and sends a message back to HyperDrive with the status of the transaction. 
+
+If the transaction has been executed, HyperDrive marks the transaction as executed. If the transaction has not been executed, HyperDrive has two options: retry the transaction or notify the user. In the HyperDrive@RNP grant we will implement the notification. In summary, if a transaction faild the HyperDrive sends an email to the client notifying them that the transaction has failed.
 
 
 ## Hyperdrive Module
