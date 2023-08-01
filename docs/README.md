@@ -1,16 +1,24 @@
+# Hyperdrive 
+
+
 ## Hyperdrive API
 
 ### Implementation Status
 
 | name                     |  function     | method | status |
 |:-                        | :-:           | :-:    | :-: | 
-|[Assing PID](#assing_pid) | no_parameter  | sync   | :heavy_check_mark: |
-|[Assing PID](#assing_pid) | external_pid  | sync   | ⬜ |
-|[Assing PID](#assing_pid) | payload       | sync   | ⬜ |
-|[Get PID](#get_pid)       | ark           | sync   | :heavy_check_mark: |
-|[Get PID](#get_pid)       | hash_pid      | sync   | :heavy_check_mark: |
-|[Set](#set)               | external_pid  | sync   | ⬜ |
-|[Set](#set)               | payload       | sync   | ⬜ |
+|[assing_pid](#assing_pid) | no_parameter  | sync   | :heavy_check_mark: |
+|[assing_pid](#assing_pid) | external_url  | sync   | ⬜ |
+|[assing_pid](#assing_pid) | external_pid  | sync   | ⬜ |
+|[assing_pid](#assing_pid) | payload       | sync   | ⬜ |
+|[get_pid](#get_pid)       | ark           | sync   | :heavy_check_mark: |
+|[get_pid](#get_pid)       | hash_pid      | sync   | :heavy_check_mark: |
+|[set](#set)               | external_pid  | sync   | ⬜ |
+|[set](#set)               | external_url  | sync   | ⬜ |
+|[set](#set)               | payload       | sync   | ⬜ |
+|[set](#set)               | external_pid  | async   | ⬜ |
+|[set](#set)               | external_url  | async   | ⬜ |
+|[set](#set)               | payload       | async   | ⬜ |
 
 
 
@@ -120,3 +128,6 @@ description
 >  http://http://localhost:8080/core/get/8008/fk3abd1344
 > ```
 </details>
+
+
+## Hyperdrive Transaction

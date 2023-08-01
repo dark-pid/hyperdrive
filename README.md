@@ -7,10 +7,12 @@ dARK Hyperdrive repository
 
 <details>
 <summary>System Requirements</summary>
- - python 3.10
- - pip
- - docker
- - docker-compose
+    <ul>
+        <li> python 3.10 </li>
+        <li> pip </li>
+        <li> docker </li>
+        <li> docker-compose </li>
+    </ul>
 </details>
 
 ### Docker execution
@@ -47,4 +49,4 @@ docker compose up -d
 
 **Hyperdrive Query**
 
-![](docs/images/misc/payload_v0.png)
+![](docs/figures/misc/payload_v0.png)
