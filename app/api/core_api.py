@@ -21,18 +21,18 @@ core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
 ##
 
 bc_config = configparser.ConfigParser()
+deployed_contracts_config = configparser.ConfigParser()
 
 # bc configuration
-bc_config.read(os.path.join('./','config.ini'))
-blockchain_net = bc_config['base']['blockchain_net']
-blockchain_config = bc_config[blockchain_net]
-# gw
-dark_gw = DarkGateway(blockchain_net,blockchain_config)
+PROJECT_ROOT='./'
+bc_config.read(os.path.join(PROJECT_ROOT,'config.ini'))
 # deployed contracts config
-deployed_contracts_config = configparser.ConfigParser()
-deployed_contracts_config.read(os.path.join('./','deployed_contracts.ini'))
-# load deployed contracts
-dark_gw.load_deployed_smart_contracts(deployed_contracts_config)
+deployed_contracts_config.read(os.path.join(PROJECT_ROOT,'deployed_contracts.ini'))
+
+
+# gw
+dark_gw = DarkGateway(bc_config,deployed_contracts_config)
+
 #
 dark_map = DarkMap(dark_gw)
 
@@ -43,7 +43,7 @@ dark_map = DarkMap(dark_gw)
 def create_pid():
     try:
         error_code = 200
-        pid_hash = dark_map.request_pid_hash()
+        pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
         resp = jsonify({'ark': pid_ark,
                         'hash': Web3.toHex(pid_hash)

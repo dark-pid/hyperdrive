@@ -20,4 +20,4 @@ gunicorn
 # uvicorn[standard]==0.21.1
 
 # dark
-dark-gateway==0.0.2a3
+dark-gateway==0.1.0
