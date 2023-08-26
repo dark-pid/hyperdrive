@@ -37,11 +37,12 @@ dark_gw = DarkGateway(bc_config,deployed_contracts_config)
 dark_map = DarkMap(dark_gw)
 
 ###
-### methods 
+### methods
 ###
 
 def create_pid():
     try:
+        print('entrou create')
         error_code = 200
         pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
@@ -49,7 +50,7 @@ def create_pid():
                         'hash': Web3.toHex(pid_hash)
                         })
     except Exception as e:
-        error_code = 500 
+        error_code = 500
         resp = jsonify({'status' : 'Unable to create a new PID',
                         'block_chain_error' : str(e)},)
     return resp,error_code
@@ -71,7 +72,7 @@ def get_new():
     # return erros imediatly
     if error_code != 200:
         return resp, error_code
-    
+
     # check if there are arguments
     # TODO: COULD BE ASYNC METHODS
     # FIXME: multiplas acoes executadas tem que ter cuidado que elas podem dar erros espescificos e tem que ser melhor gerenciadas
@@ -84,15 +85,15 @@ def get_new():
             data = request.json
             alternative_pid = data.get(EXTERNAL_PID_PARAMETER)
             alternative_url = data.get(EXTERNAL_PID_PARAMETER)
-        
-    
+
+
     if alternative_pid != None:
         #TODO: implementar metodo
         print("ADICIONAR EXTERNAL PID ("+str(alternative_pid)+") AO PID")
     if alternative_url != None:
         #TODO: implementar metodo
         print("ADICIONAR EXTERNAL URL ("+str(alternative_url)+")AO PID")
-    
+
     #novamente como reportar o erro aqui?
     return resp, error_code
 
@@ -106,9 +107,9 @@ def get_pid(dark_id):
             # dark_object = dpid_db.caller.get(dark_id)
         else:
             dark_pid = dark_map.get_pid_by_ark(dark_id)
-        
-        
-        
+
+
+
         resp_dict = dark_pid.to_dict()
 
         if len(dark_pid.externa_pid_list) == 0:
@@ -118,10 +119,33 @@ def get_pid(dark_id):
     except ValueError as e:
         resp = jsonify({'status' : 'Unable to recovery (' + str(dark_id) + ')', 'block_chain_error' : str(e)},)
         resp_code = 500
-    
+
     return resp, resp_code
 
 @core_api_blueprint.get('/get/<nam>/<shoulder>')
 def get_pid_by_noid(nam,shoulder):
     dark_id = nam + str('/') + shoulder
     return get_pid(dark_id)
+
+
+
+@core_api_blueprint.put('/pid/payload/<ark_id>')
+def update_payload(ark_id):
+    if ark_id.startswith('0x'):
+        dark_pid = dark_map.get_pid_by_hash(ark_id)
+    else:
+        dark_pid = dark_map.get_pid_by_ark(ark_id)
+
+    try:
+        payload_data = request.get_json()
+        print(payload_data)
+        if (payload_data is None):
+            return jsonify({'error': 'Invalid JSON payload'}),400
+
+    except Exception as e:
+        return jsonify({'error': str(e)}),400
+
+    dark_map.sync_set_payload(dark_pid.pid_hash, payload_data)
+
+    resp_dict = dark_pid.to_dict()
+    return jsonify(resp_dict), 200
