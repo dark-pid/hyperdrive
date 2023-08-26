@@ -42,7 +42,6 @@ dark_map = DarkMap(dark_gw)
 
 def create_pid():
     try:
-        print('entrou create')
         error_code = 200
         pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
@@ -138,7 +137,7 @@ def update_payload(ark_id):
 
     try:
         payload_data = request.get_json()
-        print(payload_data)
+
         if (payload_data is None):
             return jsonify({'error': 'Invalid JSON payload'}),400
 
