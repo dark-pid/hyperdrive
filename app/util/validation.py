@@ -16,7 +16,7 @@ class ValidationUtil:
           return False
 
     def check_pid(pid_str):
-      regex = r"^(https?://)?(doi/\.org/)?([a-zA-Z0-9.-]+)\.([a-z]{2,6})(/[\w\-.]*)*/?$"
+      regex = r"^(https?://)?(doi\.org/)?([a-zA-Z0-9.-]+)\.([a-z]{2,6})(/[\w\-.]*)*/?$"
 
       p = re.compile(regex)
 
