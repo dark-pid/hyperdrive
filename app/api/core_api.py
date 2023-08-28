@@ -149,7 +149,14 @@ def set_external_pid(dark_id):
 
         for pid in external_pids:
             if ValidationUtil.check_pid(pid):
-                valid_pids.append(pid)
+
+                if pid.startswith('https'):
+                    get_pid = pid[16:int(len(pid))]
+
+                else:
+                    get_pid = pid[8:int(len(pid))]
+
+                valid_pids.append(get_pid)
 
         valid_pids_str = json.dumps(valid_pids)
 
