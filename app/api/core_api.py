@@ -6,13 +6,14 @@ from flask import Blueprint, Flask , jsonify , render_template, send_file, abort
 from web3 import Web3
 
 from dark import DarkMap, DarkGateway
+
+from util.validation import ValidationUtil
 ###
 ### varaivel de ambiente
 ###
 #TODO: CRIAR UMA CLASS/config PARA ISSO
 EXTERNAL_PID_PARAMETER = 'external_pid'
 EXTERNAL_URL_PARAMETER = 'external_url'
-EXTERNAL_PIDS_PARAMETER = 'external_pids'
 
 core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
 
@@ -126,28 +127,37 @@ def get_pid_by_noid(nam,shoulder):
     dark_id = nam + str('/') + shoulder
     return get_pid(dark_id)
 
-@core_api_blueprint.route('/pid/set_external_pid/<ark_pid>', methods=('PUT'))
-def set_external_pid(ark_pid):
-    externals_pids = None
 
-    pid_to_updated = None
-    if ark_pid.startswith('0x'):
-        pid_to_updated = dark_map.get_pid_by_hash(ark_pid)
+@core_api_blueprint.route('/pid/set_external_pid/<dark_id>', methods=('PUT'))
+def set_external_pid(dark_id):
+    valid_pids = []
+
+    if dark_id.startswith('0x'):
+        dark_pid = dark_map.get_pid_by_hash(dark_id)
     else:
-        pid_to_updated = dark_map.get_pid_by_ark(ark_pid)
+        dark_pid = dark_map.get_pid_by_ark(dark_id)
 
-    if pid_to_updated is None:
-        return jsonify({'code': '404', 'message': 'PID não encontrado'}), 404
+    try:
+        external_pids = request.get_json()
 
-    if request.is_json:
-        content_type = request.headers.get('Content-Type')
-        data = request.json
-        externals_pids = data.get(EXTERNAL_PIDS_PARAMETER)
+        if (external_pids is None):
+            return jsonify({'error': 'Invalid JSON'}),400
 
-        if externals_pids is None:
-            return jsonify({'code': '400', 'message': 'Solicitação inválida'}), 400
+        if not isinstance(external_pids, list):
+            return jsonify({'error': 'Invalid JSON'}),400
 
-        updated_extenal_pids = dark_map.sync_add_external_pid(pid_to_updated, external_pid=externals_pids)
-        return jsonify({'code': '200', 'message': updated_extenal_pids}), 200
 
-    return jsonify({'code': '400', 'message': 'Solicitação inválida'}), 400
+        for pid in external_pids:
+            if ValidationUtil.check_pid(pid):
+                valid_pids.append(pid)
+
+        valid_pids_str = json.dumps(valid_pids)
+
+        dark_map.sync_add_external_pid(dark_pid.__hash__, valid_pids_str)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}),400
+
+    resp_dict = dark_pid.to_dict()
+
+    return jsonify(resp_dict),200
