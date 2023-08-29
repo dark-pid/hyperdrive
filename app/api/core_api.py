@@ -128,23 +128,30 @@ def get_pid_by_noid(nam,shoulder):
 
 
 
-@core_api_blueprint.put('/pid/payload/<ark_id>')
+@core_api_blueprint.put('/set/payload/<path:ark_id>')
 def update_payload(ark_id):
+    VERIFICATION_METHOD = os.environ['HYPERDRIVE_PAYLOAD_VALIDATION']
+
     if ark_id.startswith('0x'):
         dark_pid = dark_map.get_pid_by_hash(ark_id)
     else:
         dark_pid = dark_map.get_pid_by_ark(ark_id)
 
-    try:
-        payload_data = request.get_json()
+    if VERIFICATION_METHOD == "BASIC":
+        try:
+            payload_data = request.get_json()
 
-        if (payload_data is None):
-            return jsonify({'error': 'Invalid JSON payload'}),400
+            if (payload_data is None):
+                return jsonify({'error': 'Invalid JSON payload'}),400
 
-    except Exception as e:
-        return jsonify({'error': str(e)}),400
+        except Exception as e:
+            return jsonify({'error': str(e)}),400
 
-    dark_map.sync_set_payload(dark_pid.pid_hash, payload_data)
+        dark_map.sync_set_payload(dark_pid.pid_hash, payload_data)
 
-    resp_dict = dark_pid.to_dict()
-    return jsonify(resp_dict), 200
+        resp_dict = dark_pid.to_dict()
+
+        return jsonify(resp_dict), 200
+
+    else:
+        return jsonify({'error': 'Hyperdrive Payload Validation is none'}),400
