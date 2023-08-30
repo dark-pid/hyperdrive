@@ -157,3 +157,37 @@ def update_external_links(ark_id):
     resp_dict = get_pid_by_ark.to_dict()
 
     return jsonify(resp_dict),200
+
+
+@core_api_blueprint.put("/set/set-external-url/<path:ark_id>")
+def update_external_url(ark_id):
+    # VERIFICATION_METHOD = os.environ["HYPERDRIVE_URL_VALIDATION"]
+    VERIFICATION_METHOD = "BASIC"
+
+    if ark_id.startswith("0x"):
+        pid = dark_map.get_pid_by_hash(ark_id)
+    else:
+        pid = dark_map.get_pid_by_ark(ark_id)
+
+    if VERIFICATION_METHOD == "BASIC":
+        try:
+            external_link = request.get_json()
+
+            if external_link is None:
+                return jsonify({"error": "Invalid JSON"}), 400
+
+            links = external_link.values()
+            for link in links:
+                if ValidationUtil.check_url(link):
+                    valid_url = link
+
+            dark_map.sync_set_url(pid.__hash__, valid_url)
+
+            resp_dict = pid.to_dict()
+
+            return jsonify(resp_dict), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+    else:
+        return jsonify({"error": "Hyperdrive URL Validation is none"}), 400
