@@ -151,7 +151,7 @@ def update_payload(ark_id):
 
         resp_dict = dark_pid.to_dict()
 
-        return jsonify(resp_dict), 200
+        return jsonify(str(resp_dict)), 200
 
     else:
         return jsonify({'error': 'Hyperdrive Payload Validation is none'}),400
