@@ -13,6 +13,7 @@ from util.validation import ValidationUtil
 #TODO: CRIAR UMA CLASS/config PARA ISSO
 EXTERNAL_PID_PARAMETER = 'external_pid'
 EXTERNAL_URL_PARAMETER = 'external_url'
+HYPERDRIVE_URL_VALIDATION = "external_url"  # NONE or BASIC
 
 
 core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
@@ -127,50 +128,19 @@ def get_pid_by_noid(nam,shoulder):
     dark_id = nam + str('/') + shoulder
     return get_pid(dark_id)
 
-
-@core_api_blueprint.put('/pid/set-external-link/<ark_id>')
-def update_external_links(ark_id):
-    get_pid_by_ark = dark_map.get_pid_by_ark(ark_id)
-
-    try:
-        external_links = request.get_json()
-
-        if (external_links is None):
-            return jsonify({'error': 'Invalid JSON'}),400
-
-        if not isinstance(external_links, list):
-            return jsonify({'error': 'Invalid JSON'}),400
-
-        valid_links = []
-
-        for link in external_links:
-            if ValidationUtil.check_url(link):
-                valid_links.append(link)
-
-        valid_links_str = json.dumps(valid_links)
-
-        dark_map.sync_set_url(get_pid_by_ark.__hash__, valid_links_str)
-
-    except Exception as e:
-        return jsonify({'error': str(e)}),400
-
-    resp_dict = get_pid_by_ark.to_dict()
-
-    return jsonify(resp_dict),200
-
-
 @core_api_blueprint.put("/set/set-external-url/<path:ark_id>")
 def update_external_url(ark_id):
-    # VERIFICATION_METHOD = os.environ["HYPERDRIVE_URL_VALIDATION"]
-    VERIFICATION_METHOD = "BASIC"
+    VERIFICATION_METHOD = os.environ[HYPERDRIVE_URL_VALIDATION]
 
-    if ark_id.startswith("0x"):
-        pid = dark_map.get_pid_by_hash(ark_id)
-    else:
-        pid = dark_map.get_pid_by_ark(ark_id)
-
-    if VERIFICATION_METHOD == "BASIC":
+    if VERIFICATION_METHOD == "NONE":
         try:
+            pid = NONE
+
+            if ark_id.startswith("0x"):
+                pid = dark_map.get_pid_by_hash(ark_id)
+            else:
+                pid = dark_map.get_pid_by_ark(ark_id)
+
             external_link = request.get_json()
 
             if external_link is None:
@@ -180,12 +150,13 @@ def update_external_url(ark_id):
             for link in links:
                 if ValidationUtil.check_url(link):
                     valid_url = link
+                else:
+                    return jsonify({"error": "Invalid URL"}), 400
 
-            dark_map.sync_set_url(pid.__hash__, valid_url)
-
+            dark_map.sync_set_url(hash_pid=pid.pid_hash, ext_url=valid_url)
             resp_dict = pid.to_dict()
 
-            return jsonify(resp_dict), 200
+            return jsonify(str(resp_dict)), 200
 
         except Exception as e:
             return jsonify({"error": str(e)}), 400
