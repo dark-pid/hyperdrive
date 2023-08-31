@@ -1,9 +1,17 @@
 import re
 
+
 class ValidationUtil:
     @staticmethod
     def check_url(url_str):
-        regex = r"^(https?://)?(www\.)?([a-zA-Z0-9.-]+)\.([a-z]{2,6})(/[\w\-.]*)*/?$"
+        regex = (
+            "((http|https)://)(www.)?"
+            + "[a-zA-Z0-9@:%._\\+~#?&//=]"
+            + "{2,256}\\.[a-z]"
+            + "{2,6}\\b([-a-zA-Z0-9@:%"
+            + "._\\+~#?&//=]*)"
+        )
+
         p = re.compile(regex)
 
         if url_str is None:
