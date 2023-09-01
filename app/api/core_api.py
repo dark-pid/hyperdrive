@@ -162,11 +162,7 @@ def update_external_pid(ark_id):
             if ValidationUtil.check_pid(external_pid) == False:
                 return jsonify({"error": "Invalid Pid"}), 400
             else:
-                if external_pid.startswith('https'):
-                    valid_pid = external_pid[16:int(len(external_pid))]
-
-                else:
-                    valid_pid = external_pid[8:int(len(external_pid))]
+                valid_pid = external_pid[8:int(len(external_pid))]
 
         elif VERIFICATION_METHOD == "NONE":
             if len(external_pid) == 0:
