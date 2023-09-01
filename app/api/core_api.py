@@ -12,6 +12,7 @@ from dark import DarkMap, DarkGateway
 #TODO: CRIAR UMA CLASS/config PARA ISSO
 EXTERNAL_PID_PARAMETER = 'external_pid'
 EXTERNAL_URL_PARAMETER = 'external_url'
+os.environ['HYPERDRIVE_PAYLOAD_VALIDATION'] = "BASIC"
 
 
 core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
@@ -130,28 +131,46 @@ def get_pid_by_noid(nam,shoulder):
 
 @core_api_blueprint.put('/set/payload/<path:ark_id>')
 def update_payload(ark_id):
-    VERIFICATION_METHOD = os.environ['HYPERDRIVE_PAYLOAD_VALIDATION']
+    try:
+        VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_PAYLOAD_VALIDATION")
 
-    if ark_id.startswith('0x'):
-        dark_pid = dark_map.get_pid_by_hash(ark_id)
-    else:
-        dark_pid = dark_map.get_pid_by_ark(ark_id)
+        if VERIFICATION_METHOD == None:
+            raise ValueError("Hyperdrive Payload validation is None")
+        if VERIFICATION_METHOD == "":
+            raise ValueError("Hyperdrive Payload validation is empty")
 
-    if VERIFICATION_METHOD == "BASIC":
-        try:
-            payload_data = request.get_json()
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
 
-            if (payload_data is None):
+    try:
+        payload = request.get_json()
+
+        if ark_id.startswith('0x'):
+            pid = dark_map.get_pid_by_hash(ark_id)
+        else:
+            pid = dark_map.get_pid_by_ark(ark_id)
+
+        if VERIFICATION_METHOD == "BASIC":
+            if (payload is None):
                 return jsonify({'error': 'Invalid JSON payload'}),400
+        elif VERIFICATION_METHOD == "NONE":
+            if payload == 0:
+                return jsonify({'error': 'Invalid JSON payload'}),400
+        else:
+            return jsonify({"error": "the method could not be implemented"}), 400
 
-        except Exception as e:
-            return jsonify({'error': str(e)}),400
+        dark_map.sync_set_payload(pid.pid_hash, payload)
 
-        dark_map.sync_set_payload(dark_pid.pid_hash, payload_data)
+        return (
+            jsonify(
+                {
+                    "pid": str(pid.ark),
+                    "action": "payload_add",
+                    "parameter": payload,
+                }
+            ),
+            200,
+        )
 
-        resp_dict = dark_pid.to_dict()
-
-        return jsonify(str(resp_dict)), 200
-
-    else:
-        return jsonify({'error': 'Hyperdrive Payload Validation is none'}),400
+    except Exception as e:
+        return jsonify({'error': str(e)}),400
