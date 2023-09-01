@@ -13,7 +13,7 @@ from util.validation import ValidationUtil
 #TODO: CRIAR UMA CLASS/config PARA ISSO
 EXTERNAL_PID_PARAMETER = 'external_pid'
 EXTERNAL_URL_PARAMETER = 'external_url'
-HYPERDRIVE_URL_VALIDATION = "external_url"  # NONE or BASIC
+os.environ["HYPERDRIVE_URL_VALIDATION"] = "BASIC"  ## NONE OR BASIC
 
 
 core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
@@ -128,37 +128,51 @@ def get_pid_by_noid(nam,shoulder):
     dark_id = nam + str('/') + shoulder
     return get_pid(dark_id)
 
+
+
 @core_api_blueprint.put("/set/set-external-url/<path:ark_id>")
 def update_external_url(ark_id):
-    VERIFICATION_METHOD = os.environ[HYPERDRIVE_URL_VALIDATION]
+    try:
+        VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_URL_VALIDATION")
 
-    if VERIFICATION_METHOD == "NONE":
-        try:
-            pid = NONE
+        if VERIFICATION_METHOD == None:
+            raise ValueError("Hyperdrive URL validation is None")
+        if VERIFICATION_METHOD == "":
+            raise ValueError("Hyperdrive URL validation is empty")
 
-            if ark_id.startswith("0x"):
-                pid = dark_map.get_pid_by_hash(ark_id)
-            else:
-                pid = dark_map.get_pid_by_ark(ark_id)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
 
-            external_link = request.get_json()
+    try:
+        pid = None
+        if ark_id.startswith("0x"):
+            pid = dark_map.get_pid_by_hash(ark_id)
+        else:
+            pid = dark_map.get_pid_by_ark(ark_id)
 
-            if external_link is None:
-                return jsonify({"error": "Invalid JSON"}), 400
+        external_url = request.args.get("external_url")
 
-            links = external_link.values()
-            for link in links:
-                if ValidationUtil.check_url(link):
-                    valid_url = link
-                else:
-                    return jsonify({"error": "Invalid URL"}), 400
+        if VERIFICATION_METHOD == "BASIC":
+            if ValidationUtil.check_url(external_url) == False:
+                return jsonify({"error": "Invalid URL"}), 400
+        elif VERIFICATION_METHOD == "NONE":
+            if len(external_url) == 0:
+                return jsonify({"error": "Invalid URL"}), 400
+        else:
+            return jsonify({"error": "the method could not be implemented"}), 400
 
-            dark_map.sync_set_url(hash_pid=pid.pid_hash, ext_url=valid_url)
-            resp_dict = pid.to_dict()
+        dark_map.sync_set_url(pid.pid_hash, external_url)
 
-            return jsonify(str(resp_dict)), 200
+        return (
+            jsonify(
+                {
+                    "pid": str(pid.ark),
+                    "action": "external_pid_add",
+                    "parameter": external_url,
+                }
+            ),
+            200,
+        )
 
-        except Exception as e:
-            return jsonify({"error": str(e)}), 400
-    else:
-        return jsonify({"error": "Hyperdrive URL Validation is none"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
