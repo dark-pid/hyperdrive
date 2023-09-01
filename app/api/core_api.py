@@ -2,44 +2,46 @@ import json
 import os
 import configparser
 
-from flask import Blueprint, Flask , jsonify , render_template, send_file, abort, request
+from flask import Blueprint, Flask, jsonify, render_template, send_file, abort, request
 from web3 import Web3
 
 from dark import DarkMap, DarkGateway
 
 from util.validation import ValidationUtil
 ###
-### varaivel de ambiente
+# varaivel de ambiente
 ###
-#TODO: CRIAR UMA CLASS/config PARA ISSO
+# TODO: CRIAR UMA CLASS/config PARA ISSO
 EXTERNAL_PID_PARAMETER = 'external_pid'
 EXTERNAL_URL_PARAMETER = 'external_url'
 
 core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
 
 ##
-## configuring dARK GW
+# configuring dARK GW
 ##
 
 bc_config = configparser.ConfigParser()
 deployed_contracts_config = configparser.ConfigParser()
 
 # bc configuration
-PROJECT_ROOT='./'
-bc_config.read(os.path.join(PROJECT_ROOT,'config.ini'))
+PROJECT_ROOT = './'
+bc_config.read(os.path.join(PROJECT_ROOT, 'config.ini'))
 # deployed contracts config
-deployed_contracts_config.read(os.path.join(PROJECT_ROOT,'deployed_contracts.ini'))
+deployed_contracts_config.read(os.path.join(
+    PROJECT_ROOT, 'deployed_contracts.ini'))
 
 
 # gw
-dark_gw = DarkGateway(bc_config,deployed_contracts_config)
+dark_gw = DarkGateway(bc_config, deployed_contracts_config)
 
 #
 dark_map = DarkMap(dark_gw)
 
 ###
-### methods
+# methods
 ###
+
 
 def create_pid():
     try:
@@ -51,9 +53,9 @@ def create_pid():
                         })
     except Exception as e:
         error_code = 500
-        resp = jsonify({'status' : 'Unable to create a new PID',
-                        'block_chain_error' : str(e)},)
-    return resp,error_code
+        resp = jsonify({'status': 'Unable to create a new PID',
+                        'block_chain_error': str(e)},)
+    return resp, error_code
 
 ###
 ###
@@ -77,8 +79,10 @@ def get_new():
     # TODO: COULD BE ASYNC METHODS
     # FIXME: multiplas acoes executadas tem que ter cuidado que elas podem dar erros espescificos e tem que ser melhor gerenciadas
     if request.method == 'GET':
-        alternative_pid = request.args.get(EXTERNAL_PID_PARAMETER)#, default=0, type=int)
-        alternative_url = request.args.get(EXTERNAL_URL_PARAMETER)#, default=0, type=int)
+        alternative_pid = request.args.get(
+            EXTERNAL_PID_PARAMETER)  # , default=0, type=int)
+        alternative_url = request.args.get(
+            EXTERNAL_URL_PARAMETER)  # , default=0, type=int)
     elif request.method == 'POST':
         if request.is_json:
             content_type = request.headers.get('Content-Type')
@@ -86,16 +90,16 @@ def get_new():
             alternative_pid = data.get(EXTERNAL_PID_PARAMETER)
             alternative_url = data.get(EXTERNAL_PID_PARAMETER)
 
-
     if alternative_pid != None:
-        #TODO: implementar metodo
+        # TODO: implementar metodo
         print("ADICIONAR EXTERNAL PID ("+str(alternative_pid)+") AO PID")
     if alternative_url != None:
-        #TODO: implementar metodo
+        # TODO: implementar metodo
         print("ADICIONAR EXTERNAL URL ("+str(alternative_url)+")AO PID")
 
-    #novamente como reportar o erro aqui?
+    # novamente como reportar o erro aqui?
     return resp, error_code
+
 
 @core_api_blueprint.get('/get/<dark_id>')
 def get_pid(dark_id):
@@ -108,8 +112,6 @@ def get_pid(dark_id):
         else:
             dark_pid = dark_map.get_pid_by_ark(dark_id)
 
-
-
         resp_dict = dark_pid.to_dict()
 
         if len(dark_pid.externa_pid_list) == 0:
@@ -117,54 +119,53 @@ def get_pid(dark_id):
 
         resp = jsonify(resp_dict)
     except ValueError as e:
-        resp = jsonify({'status' : 'Unable to recovery (' + str(dark_id) + ')', 'block_chain_error' : str(e)},)
+        resp = jsonify({'status': 'Unable to recovery (' +
+                       str(dark_id) + ')', 'block_chain_error': str(e)},)
         resp_code = 500
 
     return resp, resp_code
 
+
 @core_api_blueprint.get('/get/<nam>/<shoulder>')
-def get_pid_by_noid(nam,shoulder):
+def get_pid_by_noid(nam, shoulder):
     dark_id = nam + str('/') + shoulder
     return get_pid(dark_id)
 
 
-@core_api_blueprint.route('/pid/set_external_pid/<dark_id>', methods=('PUT'))
-def set_external_pid(dark_id):
-    valid_pids = []
+@core_api_blueprint.put("/set/set-external-pid/<path:ark_id>")
+def update_external_pid(ark_id):
+    VERIFICATION_METHOD = os.environ['HYPERDRIVE_EXTERNAL_PID_VALIDATION']
 
-    if dark_id.startswith('0x'):
-        dark_pid = dark_map.get_pid_by_hash(dark_id)
-    else:
-        dark_pid = dark_map.get_pid_by_ark(dark_id)
+    if VERIFICATION_METHOD == "BASIC":
+        try:
+            pid = None
 
-    try:
-        external_pids = request.get_json()
+            if ark_id.startswith("0x"):
+                pid = dark_map.get_pid_by_hash(ark_id)
+            else:
+                pid = dark_map.get_pid_by_ark(ark_id)
 
-        if (external_pids is None):
-            return jsonify({'error': 'Invalid JSON'}),400
+            external_pid = request.get_json()
 
-        if not isinstance(external_pids, list):
-            return jsonify({'error': 'Invalid JSON'}),400
+            if external_pid is None:
+                return jsonify({"error": "Invalid JSON"}), 400
 
+            pids = external_pid.values()
 
-        for pid in external_pids:
-            if ValidationUtil.check_pid(pid):
-
-                if pid.startswith('https'):
-                    get_pid = pid[16:int(len(pid))]
-
+            for ex_pid in pids:
+                if ValidationUtil.check_pid(ex_pid):
+                    valid_pid = ex_pid
                 else:
-                    get_pid = pid[8:int(len(pid))]
+                    return jsonify({"error": "Invalid URL"}), 400
 
-                valid_pids.append(get_pid)
+            dark_map.sync_add_external_pid(
+                hash_pid=pid.pid_hash, external_pid=valid_pid)
 
-        valid_pids_str = json.dumps(valid_pids)
+            resp_dict = pid.to_dict()
 
-        dark_map.sync_add_external_pid(dark_pid.__hash__, valid_pids_str)
+            return jsonify(str(resp_dict)), 200
 
-    except Exception as e:
-        return jsonify({'error': str(e)}),400
-
-    resp_dict = dark_pid.to_dict()
-
-    return jsonify(resp_dict),200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+    else:
+        return jsonify({"error": "Hyperdrive PID Validation is none"}), 400
