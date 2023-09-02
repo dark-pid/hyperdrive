@@ -139,13 +139,8 @@ def update_external_pid(ark_id):
     try:
         VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_PID_VALIDATION")
 
-        if VERIFICATION_METHOD == None:
-            raise ValueError("Hyperdrive Pid validation is None")
-        if VERIFICATION_METHOD == "":
-            raise ValueError("Hyperdrive Pid validation is empty")
-
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+    except:
+        VERIFICATION_METHOD = None
 
     try:
         pid = None
@@ -164,7 +159,7 @@ def update_external_pid(ark_id):
             else:
                 valid_pid = external_pid[8:int(len(external_pid))]
 
-        elif VERIFICATION_METHOD == "NONE":
+        elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_pid) == 0:
                 return jsonify({"error": "Invalid Pid"}), 400
         else:
