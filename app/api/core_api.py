@@ -134,14 +134,8 @@ def get_pid_by_noid(nam,shoulder):
 def update_external_url(ark_id):
     try:
         VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_URL_VALIDATION")
-
-        if VERIFICATION_METHOD == None:
-            raise ValueError("Hyperdrive URL validation is None")
-        if VERIFICATION_METHOD == "":
-            raise ValueError("Hyperdrive URL validation is empty")
-
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+    except:
+        VERIFICATION_METHOD = None
 
     try:
         pid = None
@@ -155,7 +149,7 @@ def update_external_url(ark_id):
         if VERIFICATION_METHOD == "BASIC":
             if ValidationUtil.check_url(external_url) == False:
                 return jsonify({"error": "Invalid URL"}), 400
-        elif VERIFICATION_METHOD == "NONE":
+        elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_url) == 0:
                 return jsonify({"error": "Invalid URL"}), 400
         else:
