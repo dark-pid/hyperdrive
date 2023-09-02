@@ -134,13 +134,8 @@ def update_payload(ark_id):
     try:
         VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_PAYLOAD_VALIDATION")
 
-        if VERIFICATION_METHOD == None:
-            raise ValueError("Hyperdrive Payload validation is None")
-        if VERIFICATION_METHOD == "":
-            raise ValueError("Hyperdrive Payload validation is empty")
-
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
+    except:
+        VERIFICATION_METHOD = None
 
     try:
         payload = request.get_json()
@@ -153,8 +148,9 @@ def update_payload(ark_id):
         if VERIFICATION_METHOD == "BASIC":
             if (payload is None):
                 return jsonify({'error': 'Invalid JSON payload'}),400
-        elif VERIFICATION_METHOD == "NONE":
-            if payload == 0:
+
+        elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
+            if (payload is None):
                 return jsonify({'error': 'Invalid JSON payload'}),400
         else:
             return jsonify({"error": "the method could not be implemented"}), 400
