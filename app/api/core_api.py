@@ -156,8 +156,6 @@ def update_external_pid(ark_id):
 
             if ValidationUtil.check_pid(external_pid) == False:
                 return jsonify({"error": "Invalid Pid"}), 400
-            else:
-                valid_pid = external_pid[8:int(len(external_pid))]
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_pid) == 0:
@@ -165,6 +163,7 @@ def update_external_pid(ark_id):
         else:
             return jsonify({"error": "the method could not be implemented"}), 400
 
+        valid_pid = external_pid[8:int(len(external_pid))]
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
 
         return (
