@@ -133,8 +133,8 @@ def get_pid_by_noid(nam, shoulder):
     return get_pid(dark_id)
 
 
-@core_api_blueprint.put("/set/set-external-pid/<path:ark_id>")
-def update_external_pid(ark_id):
+@core_api_blueprint.put("/set/add-external-pid/<path:ark_id>")
+def add_external_pid(ark_id):
 
     try:
         VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_PID_VALIDATION")
@@ -154,7 +154,7 @@ def update_external_pid(ark_id):
 
         if VERIFICATION_METHOD == "BASIC":
 
-            if ValidationUtil.check_pid(external_pid) == False:
+            if external_pid.startswith("doi:/") == False:
                 return jsonify({"error": "Invalid Pid"}), 400
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
@@ -163,7 +163,7 @@ def update_external_pid(ark_id):
         else:
             return jsonify({"error": "the method could not be implemented"}), 400
 
-        valid_pid = external_pid[8:int(len(external_pid))]
+        valid_pid = external_pid.split(":/")[1]
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
 
         return (
