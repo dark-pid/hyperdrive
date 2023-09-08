@@ -129,8 +129,8 @@ def get_pid_by_noid(nam,shoulder):
 
 
 
-@core_api_blueprint.put('/set/payload/<path:ark_id>')
-def update_payload(ark_id):
+@core_api_blueprint.put('/set/add_payload/<path:ark_id>')
+def add_payload(ark_id):
     try:
         VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_PAYLOAD_VALIDATION")
 
@@ -138,12 +138,7 @@ def update_payload(ark_id):
         VERIFICATION_METHOD = None
 
     try:
-        payload = request.get_json()
-
-        if ark_id.startswith('0x'):
-            pid = dark_map.get_pid_by_hash(ark_id)
-        else:
-            pid = dark_map.get_pid_by_ark(ark_id)
+        payload = request.get_json(silent=True)
 
         if VERIFICATION_METHOD == "BASIC":
             if (payload is None):
@@ -154,6 +149,11 @@ def update_payload(ark_id):
                 return jsonify({'error': 'Invalid JSON payload'}),400
         else:
             return jsonify({"error": "the method could not be implemented"}), 400
+
+        if ark_id.startswith('0x'):
+            pid = dark_map.get_pid_by_hash(ark_id)
+        else:
+            pid = dark_map.get_pid_by_ark(ark_id)
 
         dark_map.sync_set_payload(pid.pid_hash, payload)
 
