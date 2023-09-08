@@ -2,37 +2,40 @@ import json
 import os
 import configparser
 
-from flask import Blueprint, Flask , jsonify , render_template, send_file, abort, request
+from flask import Blueprint, Flask, jsonify, render_template, send_file, abort, request
 from web3 import Web3
 
 from dark import DarkMap, DarkGateway
+from util.validation import ValidationUtil
 ###
-### varaivel de ambiente
+# varaivel de ambiente
 ###
-#TODO: CRIAR UMA CLASS/config PARA ISSO
+# TODO: CRIAR UMA CLASS/config PARA ISSO
 EXTERNAL_PID_PARAMETER = 'external_pid'
 EXTERNAL_URL_PARAMETER = 'external_url'
 os.environ['HYPERDRIVE_PAYLOAD_VALIDATION'] = "BASIC"
-
+os.environ['HYPERDRIVE_EXTERNAL_PID_VALIDATION'] = "BASIC"
+os.environ["HYPERDRIVE_URL_VALIDATION"] = "BASIC"  ## NONE OR BASIC
 
 core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
 
 ##
-## configuring dARK GW
+# configuring dARK GW
 ##
 
 bc_config = configparser.ConfigParser()
 deployed_contracts_config = configparser.ConfigParser()
 
 # bc configuration
-PROJECT_ROOT='./'
-bc_config.read(os.path.join(PROJECT_ROOT,'config.ini'))
+PROJECT_ROOT = './'
+bc_config.read(os.path.join(PROJECT_ROOT, 'config.ini'))
 # deployed contracts config
-deployed_contracts_config.read(os.path.join(PROJECT_ROOT,'deployed_contracts.ini'))
+deployed_contracts_config.read(os.path.join(
+    PROJECT_ROOT, 'deployed_contracts.ini'))
 
 
 # gw
-dark_gw = DarkGateway(bc_config,deployed_contracts_config)
+dark_gw = DarkGateway(bc_config, deployed_contracts_config)
 
 #
 dark_map = DarkMap(dark_gw)
@@ -40,6 +43,7 @@ dark_map = DarkMap(dark_gw)
 ###
 ### methods
 ###
+
 
 def create_pid():
     try:
@@ -77,8 +81,10 @@ def get_new():
     # TODO: COULD BE ASYNC METHODS
     # FIXME: multiplas acoes executadas tem que ter cuidado que elas podem dar erros espescificos e tem que ser melhor gerenciadas
     if request.method == 'GET':
-        alternative_pid = request.args.get(EXTERNAL_PID_PARAMETER)#, default=0, type=int)
-        alternative_url = request.args.get(EXTERNAL_URL_PARAMETER)#, default=0, type=int)
+        alternative_pid = request.args.get(
+            EXTERNAL_PID_PARAMETER)  # , default=0, type=int)
+        alternative_url = request.args.get(
+            EXTERNAL_URL_PARAMETER)  # , default=0, type=int)
     elif request.method == 'POST':
         if request.is_json:
             content_type = request.headers.get('Content-Type')
@@ -86,16 +92,16 @@ def get_new():
             alternative_pid = data.get(EXTERNAL_PID_PARAMETER)
             alternative_url = data.get(EXTERNAL_PID_PARAMETER)
 
-
     if alternative_pid != None:
-        #TODO: implementar metodo
+        # TODO: implementar metodo
         print("ADICIONAR EXTERNAL PID ("+str(alternative_pid)+") AO PID")
     if alternative_url != None:
-        #TODO: implementar metodo
+        # TODO: implementar metodo
         print("ADICIONAR EXTERNAL URL ("+str(alternative_url)+")AO PID")
 
     #novamente como reportar o erro aqui?
     return resp, error_code
+
 
 @core_api_blueprint.get('/get/<dark_id>')
 def get_pid(dark_id):
@@ -108,8 +114,6 @@ def get_pid(dark_id):
         else:
             dark_pid = dark_map.get_pid_by_ark(dark_id)
 
-
-
         resp_dict = dark_pid.to_dict()
 
         if len(dark_pid.externa_pid_list) == 0:
@@ -117,18 +121,105 @@ def get_pid(dark_id):
 
         resp = jsonify(resp_dict)
     except ValueError as e:
-        resp = jsonify({'status' : 'Unable to recovery (' + str(dark_id) + ')', 'block_chain_error' : str(e)},)
+        resp = jsonify({'status': 'Unable to recovery (' +
+                       str(dark_id) + ')', 'block_chain_error': str(e)},)
         resp_code = 500
 
     return resp, resp_code
 
+
 @core_api_blueprint.get('/get/<nam>/<shoulder>')
-def get_pid_by_noid(nam,shoulder):
+def get_pid_by_noid(nam, shoulder):
     dark_id = nam + str('/') + shoulder
     return get_pid(dark_id)
 
+@core_api_blueprint.put("/set/set-external-url/<path:ark_id>")
+def set_external_url(ark_id):
+    try:
+        VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_URL_VALIDATION")
 
+    except:
+        VERIFICATION_METHOD = None
 
+    try:
+        pid = None
+        
+        if ark_id.startswith("0x"):
+            pid = dark_map.get_pid_by_hash(ark_id)
+        else:
+            pid = dark_map.get_pid_by_ark(ark_id)
+
+        external_url = request.args.get("external_url")
+
+        if VERIFICATION_METHOD == "BASIC":
+            if ValidationUtil.check_url(external_url) == False:
+                return jsonify({"error": "Invalid URL"}), 400
+        elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
+            if len(external_url) == 0:
+                return jsonify({"error": "Invalid URL"}), 400
+        else:
+            return jsonify({"error": "the method could not be implemented"}), 400
+
+        dark_map.sync_set_url(pid.pid_hash, external_url)
+
+        return (
+            jsonify(
+                {
+                    "pid": str(pid.ark),
+                    "action": "external_url_add",
+                    "parameter": external_url,
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+          
+@core_api_blueprint.put("/set/add-external-pid/<path:ark_id>")
+def add_external_pid(ark_id):
+
+    try:
+        VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_PID_VALIDATION")
+
+    except:
+        VERIFICATION_METHOD = None
+
+    try:
+        pid = None
+
+        if ark_id.startswith("0x"):
+            pid = dark_map.get_pid_by_hash(ark_id)
+        else:
+            pid = dark_map.get_pid_by_ark(ark_id)
+
+        external_pid = request.args.get("external_pid")
+
+        if VERIFICATION_METHOD == "BASIC":
+
+            if external_pid.startswith("doi:/") == False:
+                return jsonify({"error": "Invalid Pid"}), 400
+
+        elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
+            if len(external_pid) == 0:
+                return jsonify({"error": "Invalid Pid"}), 400
+        else:
+            return jsonify({"error": "the method could not be implemented"}), 400
+
+        valid_pid = external_pid.split(":/")[1]
+        dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
+
+        return (
+            jsonify({
+                "pid": str(pid.ark),
+                "action": "external_pid_add",
+                "parameter": valid_pid,
+            }), 200
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+     
 @core_api_blueprint.put('/set/add_payload/<path:ark_id>')
 def add_payload(ark_id):
     try:
@@ -170,3 +261,4 @@ def add_payload(ark_id):
 
     except Exception as e:
         return jsonify({'error': str(e)}),400
+
