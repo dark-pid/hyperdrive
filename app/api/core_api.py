@@ -6,8 +6,6 @@ from flask import Blueprint, Flask, jsonify, render_template, send_file, abort, 
 from web3 import Web3
 
 from dark import DarkMap, DarkGateway
-
-from util.validation import ValidationUtil
 ###
 # varaivel de ambiente
 ###
