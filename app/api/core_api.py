@@ -220,14 +220,15 @@ def set_payload(ark_id, payload):
 
     try:
         if VERIFICATION_METHOD == "BASIC":
-            try:
-                #verifico se é um json valido com essa função
-                payload = json.loads(payload)
-            except json.JSONDecodeError:
+
+            payload = json.loads(payload)
+
+            #verifico se é um json valido com essa função
+            if type(payload) != dict or len(payload) == 0:
                 return jsonify({"error": "Invalid JSON payload"}), 400
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
-            if payload is None:
+            if type(payload) != dict or len(payload) == 0:
                 return jsonify({"error": "Invalid JSON payload"}), 400
         else:
             return jsonify({"error": "the method could not be implemented"}), 400
