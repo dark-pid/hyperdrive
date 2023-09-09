@@ -13,6 +13,7 @@ from util.validation import ValidationUtil
 # TODO: CRIAR UMA CLASS/config PARA ISSO
 EXTERNAL_PID_PARAMETER = 'external_pid'
 EXTERNAL_URL_PARAMETER = 'external_url'
+os.environ['HYPERDRIVE_PAYLOAD_VALIDATION'] = "BASIC"
 os.environ['HYPERDRIVE_EXTERNAL_PID_VALIDATION'] = "BASIC"
 os.environ["HYPERDRIVE_URL_VALIDATION"] = "BASIC"  ## NONE OR BASIC
 
@@ -218,3 +219,46 @@ def add_external_pid(ark_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+     
+@core_api_blueprint.put('/set/add_payload/<path:ark_id>')
+def add_payload(ark_id):
+    try:
+        VERIFICATION_METHOD = os.environ.get("HYPERDRIVE_PAYLOAD_VALIDATION")
+
+    except:
+        VERIFICATION_METHOD = None
+
+    try:
+        payload = request.get_json(silent=True)
+
+        if VERIFICATION_METHOD == "BASIC":
+            if (payload is None):
+                return jsonify({'error': 'Invalid JSON payload'}),400
+
+        elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
+            if (payload is None):
+                return jsonify({'error': 'Invalid JSON payload'}),400
+        else:
+            return jsonify({"error": "the method could not be implemented"}), 400
+
+        if ark_id.startswith('0x'):
+            pid = dark_map.get_pid_by_hash(ark_id)
+        else:
+            pid = dark_map.get_pid_by_ark(ark_id)
+
+        dark_map.sync_set_payload(pid.pid_hash, payload)
+
+        return (
+            jsonify(
+                {
+                    "pid": str(pid.ark),
+                    "action": "payload_add",
+                    "parameter": payload,
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        return jsonify({'error': str(e)}),400
+
