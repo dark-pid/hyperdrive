@@ -9,6 +9,7 @@ from dark import DarkMap, DarkGateway
 from util.validation import ValidationUtil
 from util.config_manager import ConfigManager
 
+# configurando classe das váriaveis externas
 config_manager = ConfigManager()
 
 core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
@@ -210,8 +211,6 @@ def add_external_pid(ark_id, external_pid):
 
 
 def set_payload(ark_id, payload):
-    # aqui você seta a variavel do payload para ser basic ou NONE
-    # config_manager.set_payload("NONE")
     try:
         VERIFICATION_METHOD = config_manager.get_payload_validation()
 
@@ -220,10 +219,8 @@ def set_payload(ark_id, payload):
 
     try:
         if VERIFICATION_METHOD == "BASIC":
-
             payload = json.loads(payload)
 
-            #verifico se é um json valido com essa função
             if type(payload) != dict or len(payload) == 0:
                 return jsonify({"error": "Invalid JSON payload"}), 400
 
