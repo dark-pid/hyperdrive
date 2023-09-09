@@ -167,7 +167,6 @@ def add_url(ark_id, external_url):
 
 
 def add_external_pid(ark_id, external_pid):
-
     try:
         VERIFICATION_METHOD = config_manager.get_external_pid_validation()
 
@@ -196,11 +195,14 @@ def add_external_pid(ark_id, external_pid):
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
 
         return (
-            jsonify({
-                "pid": str(pid.ark),
-                "action": "external_pid_add",
-                "parameter": valid_pid,
-            }), 200
+            jsonify(
+                {
+                    "pid": str(pid.ark),
+                    "action": "external_pid_add",
+                    "parameter": valid_pid,
+                }
+            ),
+            200,
         )
 
     except Exception as e:
@@ -208,6 +210,8 @@ def add_external_pid(ark_id, external_pid):
 
 
 def set_payload(ark_id, payload):
+    # aqui você seta a variavel do payload para ser basic ou NONE
+    # config_manager.set_payload("NONE")
     try:
         VERIFICATION_METHOD = config_manager.get_payload_validation()
 
@@ -216,16 +220,19 @@ def set_payload(ark_id, payload):
 
     try:
         if VERIFICATION_METHOD == "BASIC":
-            if (payload is None):
-                return jsonify({'error': 'Invalid JSON payload'}),400
+            try:
+                #verifico se é um json valido com essa função
+                payload = json.loads(payload)
+            except json.JSONDecodeError:
+                return jsonify({"error": "Invalid JSON payload"}), 400
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
-            if (payload is None):
-                return jsonify({'error': 'Invalid JSON payload'}),400
+            if payload is None:
+                return jsonify({"error": "Invalid JSON payload"}), 400
         else:
             return jsonify({"error": "the method could not be implemented"}), 400
 
-        if ark_id.startswith('0x'):
+        if ark_id.startswith("0x"):
             pid = dark_map.get_pid_by_hash(ark_id)
         else:
             pid = dark_map.get_pid_by_ark(ark_id)
@@ -244,15 +251,15 @@ def set_payload(ark_id, payload):
         )
 
     except Exception as e:
-        return jsonify({'error': str(e)}),400
-
-
+        return jsonify({"error": str(e)}), 400
 
 
 @core_api_blueprint.post("/set/<path:ark_id>")
 def set_general(ark_id):
     try:
         args = request.args.keys()
+        if len(args) == 0:
+            return jsonify(None), 405
 
         if len(args) > 1:
             return (
@@ -267,13 +274,14 @@ def set_general(ark_id):
         if "external_url" in args:
             external_url = request.args.get("external_url")
             return add_url(ark_id, external_url)
-        elif "add_pid" in args:
+
+        if "add_pid" in args:
             pid = request.args.get("add_pid")
             return add_external_pid(ark_id, pid)
-        else:
-            payload = request.get_json(silent=True)
-            if payload is not None:
-                return set_payload(ark_id, payload)
+
+        if "payload" in args:
+            payload = request.args.get("payload")
+            return set_payload(ark_id, payload)
 
     except Exception as e:
         return jsonify({"code": "400", "message": "Bad Request"}), 400
