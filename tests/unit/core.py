@@ -53,8 +53,8 @@ class HyperDriveAPI:
             elif response.status_code == 401:
                 return json.dumps({"ERROR": "Authorization Error. "
                                             "Please check API Key"})
-            # elif response.status_code >= 500:
-            #     return json.dumps({"ERROR": "INTERNAL SERVER ERROR "})
+            elif response.status_code >= 500:
+                return json.dumps({"ERROR": "INTERNAL SERVER ERROR "})
             response.raise_for_status()
         except requests.exceptions.HTTPError as errh:
             logging.error(errh)
@@ -77,14 +77,14 @@ class HyperDriveAPI:
         
         return response
 
-    def set(self, payload: dict) -> str:
+    def set(self, pid:str, payload: dict) -> str:
         """
         
         :param payload: API Request Parameters. Type - Dict
         :return: Response. Type - JSON Formatted String
         """
-        create_vote_url = f"{self.api_url}/votes"
-        if isinstance(payload, dict) and "image_id" and "value" in payload:
+        create_vote_url = f"{self.api_url}/set/pid"
+        if isinstance(payload, dict):
             response = self.call_api(request_type=RequestType.POST.value,
                                      endpoint=create_vote_url,
                                      payload=payload)
