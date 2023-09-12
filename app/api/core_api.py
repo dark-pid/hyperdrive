@@ -85,7 +85,7 @@ def get_new():
         if request.is_json:
             content_type = request.headers.get("Content-Type")
             data = request.json
-            alternative_pid = data.get(config_managerEXTERNAL_PID_PARAMETER)
+            alternative_pid = data.get(config_manager.EXTERNAL_PID_PARAMETER)
             alternative_url = data.get(config_manager.EXTERNAL_URL_PARAMETER)
 
     if alternative_pid != None:
@@ -282,12 +282,12 @@ def set_general(ark_id):
             external_url = data.get("external_url")
             return add_url(ark_id, external_url)
 
-        if "add_pid" in data:
-            pid = data.get("add_pid")
+        if "external_pid" in data:
+            pid = data.get("external_pid")
             return add_external_pid(ark_id, pid)
 
         if "payload" in data:
-            payload = data.get("payload")
+            payload = data
             return set_payload(ark_id, payload)
 
-    return jsonify({"error": "no json passed"}), 400
+    return jsonify({"error": "Invalid or missing data in the request. Please check your input and try again."}), 400
