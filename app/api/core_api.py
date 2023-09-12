@@ -252,34 +252,64 @@ def set_payload(ark_id, payload):
         return jsonify({"error": str(e)}), 400
 
 
-@core_api_blueprint.post("/set/<path:ark_id>")
+@core_api_blueprint.route("/set/<path:ark_id>", methods=('GET', 'POST'))
 def set_general(ark_id):
     try:
-        args = request.args.keys()
-        if len(args) == 0:
-            return jsonify(None), 405
+        if request.method == 'GET':
+            args = request.args.keys()
+            if len(args) == 0:
+                return jsonify(None), 405
 
-        if len(args) > 1:
-            return (
-                jsonify(
-                    {
-                        "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
-                    }
-                ),
-                400,
-            )
+            if len(args) > 1:
+                return (
+                    jsonify(
+                        {
+                            "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
+                        }
+                    ),
+                    400,
+                )
 
-        if "external_url" in args:
-            external_url = request.args.get("external_url")
-            return add_url(ark_id, external_url)
+            if "external_url" in args:
+                external_url = request.args.get("external_url")
+                return add_url(ark_id, external_url)
 
-        if "add_pid" in args:
-            pid = request.args.get("add_pid")
-            return add_external_pid(ark_id, pid)
+            if "add_pid" in args:
+                pid = request.args.get("add_pid")
+                return add_external_pid(ark_id, pid)
 
-        if "payload" in args:
-            payload = request.args.get("payload")
-            return set_payload(ark_id, payload)
+            if "payload" in args:
+                payload = request.args.get("payload")
+                return set_payload(ark_id, payload)
+
+        elif request.method == 'POST':
+
+            headers = request.get_json()
+
+            if len(headers) == 0:
+                return jsonify(None), 405
+
+            if len(headers) > 1:
+                return (
+                    jsonify(
+                        {
+                            "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
+                        }
+                    ),
+                    400,
+                )
+
+            if "external_url" in headers:
+                external_url = request.headers.get("external_url")
+                return add_url(ark_id, external_url)
+
+            if "add_pid" in headers:
+                pid = request.headers.get("add_pid")
+                return add_external_pid(ark_id, pid)
+
+            if "payload" in headers:
+                payload = request.headers.get("payload")
+                return set_payload(ark_id, payload)
 
     except Exception as e:
         return jsonify({"code": "400", "message": "Bad Request"}), 400
