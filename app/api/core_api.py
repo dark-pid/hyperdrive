@@ -134,7 +134,7 @@ def get_pid_by_noid(nam, shoulder):
     return get_pid(dark_id)
 
 
-# se quiser settar a variavel externa config_manager.set_url_validation("BASIC")
+# Set the external variable config_manager.set_url_validation("BASIC")
 def add_url(ark_id, external_url):
     try:
         VERIFICATION_METHOD = config_manager.get_url_validation()
@@ -174,7 +174,7 @@ def add_url(ark_id, external_url):
         return jsonify({"error": str(e)}), 400
 
 
-# se quiser settar a variavel externa config_manager.set_external_pid_validation("BASIC")
+# Set the external variable config_manager.set_external_pid_validation("BASIC")
 def add_external_pid(ark_id, external_pid):
     try:
         VERIFICATION_METHOD = config_manager.get_external_pid_validation()
@@ -218,7 +218,7 @@ def add_external_pid(ark_id, external_pid):
         return jsonify({"error": str(e)}), 400
 
 
-# se quiser settar a variavel externa config_manager.set_payload_validation("BASIC")
+# Set the external variable config_manager.set_payload_validation("BASIC")
 def set_payload(ark_id, payload):
     try:
         VERIFICATION_METHOD = config_manager.get_payload_validation()
