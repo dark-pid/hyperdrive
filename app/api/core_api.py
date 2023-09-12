@@ -12,7 +12,7 @@ from util.config_manager import ConfigManager
 # configurando classe das váriaveis externas
 config_manager = ConfigManager()
 
-core_api_blueprint = Blueprint('core_api', __name__, url_prefix='/core')
+core_api_blueprint = Blueprint("core_api", __name__, url_prefix="/core")
 
 ##
 # configuring dARK GW
@@ -22,11 +22,10 @@ bc_config = configparser.ConfigParser()
 deployed_contracts_config = configparser.ConfigParser()
 
 # bc configuration
-PROJECT_ROOT = './'
-bc_config.read(os.path.join(PROJECT_ROOT, 'config.ini'))
+PROJECT_ROOT = "./"
+bc_config.read(os.path.join(PROJECT_ROOT, "config.ini"))
 # deployed contracts config
-deployed_contracts_config.read(os.path.join(
-    PROJECT_ROOT, 'deployed_contracts.ini'))
+deployed_contracts_config.read(os.path.join(PROJECT_ROOT, "deployed_contracts.ini"))
 
 
 # gw
@@ -45,14 +44,14 @@ def create_pid():
         error_code = 200
         pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
-        resp = jsonify({'ark': pid_ark,
-                        'hash': Web3.toHex(pid_hash)
-                        })
+        resp = jsonify({"ark": pid_ark, "hash": Web3.toHex(pid_hash)})
     except Exception as e:
         error_code = 500
-        resp = jsonify({'status' : 'Unable to create a new PID',
-                        'block_chain_error' : str(e)},)
-    return resp,error_code
+        resp = jsonify(
+            {"status": "Unable to create a new PID", "block_chain_error": str(e)},
+        )
+    return resp, error_code
+
 
 ###
 ###
@@ -62,7 +61,7 @@ def create_pid():
 # -d @example_post.json
 
 
-@core_api_blueprint.route('/new', methods=('GET', 'POST'))
+@core_api_blueprint.route("/new", methods=("GET", "POST"))
 def get_new():
     alternative_pid = None
     alternative_url = None
@@ -75,35 +74,37 @@ def get_new():
     # check if there are arguments
     # TODO: COULD BE ASYNC METHODS
     # FIXME: multiplas acoes executadas tem que ter cuidado que elas podem dar erros espescificos e tem que ser melhor gerenciadas
-    if request.method == 'GET':
+    if request.method == "GET":
         alternative_pid = request.args.get(
-            EXTERNAL_PID_PARAMETER)  # , default=0, type=int)
+            config_manager.EXTERNAL_PID_PARAMETER
+        )  # , default=0, type=int)
         alternative_url = request.args.get(
-            EXTERNAL_URL_PARAMETER)  # , default=0, type=int)
-    elif request.method == 'POST':
+            config_manager.EXTERNAL_URL_PARAMETER
+        )  # , default=0, type=int)
+    elif request.method == "POST":
         if request.is_json:
-            content_type = request.headers.get('Content-Type')
+            content_type = request.headers.get("Content-Type")
             data = request.json
-            alternative_pid = data.get(EXTERNAL_PID_PARAMETER)
-            alternative_url = data.get(EXTERNAL_PID_PARAMETER)
+            alternative_pid = data.get(config_managerEXTERNAL_PID_PARAMETER)
+            alternative_url = data.get(config_manager.EXTERNAL_URL_PARAMETER)
 
     if alternative_pid != None:
         # TODO: implementar metodo
-        print("ADICIONAR EXTERNAL PID ("+str(alternative_pid)+") AO PID")
+        print("ADICIONAR EXTERNAL PID (" + str(alternative_pid) + ") AO PID")
     if alternative_url != None:
         # TODO: implementar metodo
-        print("ADICIONAR EXTERNAL URL ("+str(alternative_url)+")AO PID")
+        print("ADICIONAR EXTERNAL URL (" + str(alternative_url) + ")AO PID")
 
-    #novamente como reportar o erro aqui?
+    # novamente como reportar o erro aqui?
     return resp, error_code
 
 
-@core_api_blueprint.get('/get/<dark_id>')
+@core_api_blueprint.get("/get/<dark_id>")
 def get_pid(dark_id):
     resp_code = 200
     try:
         dark_pid = None
-        if dark_id.startswith('0x'):
+        if dark_id.startswith("0x"):
             dark_pid = dark_map.get_pid_by_hash(dark_id)
             # dark_object = dpid_db.caller.get(dark_id)
         else:
@@ -112,22 +113,28 @@ def get_pid(dark_id):
         resp_dict = dark_pid.to_dict()
 
         if len(dark_pid.externa_pid_list) == 0:
-            del resp_dict['externa_pid_list']
+            del resp_dict["externa_pid_list"]
 
         resp = jsonify(resp_dict)
     except ValueError as e:
-        resp = jsonify({'status': 'Unable to recovery (' +
-                       str(dark_id) + ')', 'block_chain_error': str(e)},)
+        resp = jsonify(
+            {
+                "status": "Unable to recovery (" + str(dark_id) + ")",
+                "block_chain_error": str(e),
+            },
+        )
         resp_code = 500
 
     return resp, resp_code
 
 
-@core_api_blueprint.get('/get/<nam>/<shoulder>')
+@core_api_blueprint.get("/get/<nam>/<shoulder>")
 def get_pid_by_noid(nam, shoulder):
-    dark_id = nam + str('/') + shoulder
+    dark_id = nam + str("/") + shoulder
     return get_pid(dark_id)
 
+
+# se quiser settar a variavel externa config_manager.set_url_validation("BASIC")
 def add_url(ark_id, external_url):
     try:
         VERIFICATION_METHOD = config_manager.get_url_validation()
@@ -167,6 +174,7 @@ def add_url(ark_id, external_url):
         return jsonify({"error": str(e)}), 400
 
 
+# se quiser settar a variavel externa config_manager.set_external_pid_validation("BASIC")
 def add_external_pid(ark_id, external_pid):
     try:
         VERIFICATION_METHOD = config_manager.get_external_pid_validation()
@@ -210,6 +218,7 @@ def add_external_pid(ark_id, external_pid):
         return jsonify({"error": str(e)}), 400
 
 
+# se quiser settar a variavel externa config_manager.set_payload_validation("BASIC")
 def set_payload(ark_id, payload):
     try:
         VERIFICATION_METHOD = config_manager.get_payload_validation()
@@ -252,64 +261,33 @@ def set_payload(ark_id, payload):
         return jsonify({"error": str(e)}), 400
 
 
-@core_api_blueprint.route("/set/<path:ark_id>", methods=('GET', 'POST'))
+@core_api_blueprint.post("/set/<path:ark_id>")
 def set_general(ark_id):
-    try:
-        if request.method == 'GET':
-            args = request.args.keys()
-            if len(args) == 0:
-                return jsonify(None), 405
+    if request.is_json:
+        data = request.get_json()
+        if len(data) == 0:
+            return jsonify({"error": "No parameter has been passed"}), 405
 
-            if len(args) > 1:
-                return (
-                    jsonify(
-                        {
-                            "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
-                        }
-                    ),
-                    400,
-                )
+        if len(data) > 1:
+            return (
+                jsonify(
+                    {
+                        "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
+                    }
+                ),
+                400,
+            )
 
-            if "external_url" in args:
-                external_url = request.args.get("external_url")
-                return add_url(ark_id, external_url)
+        if "external_url" in data:
+            external_url = data.get("external_url")
+            return add_url(ark_id, external_url)
 
-            if "add_pid" in args:
-                pid = request.args.get("add_pid")
-                return add_external_pid(ark_id, pid)
+        if "add_pid" in data:
+            pid = data.get("add_pid")
+            return add_external_pid(ark_id, pid)
 
-            if "payload" in args:
-                payload = request.args.get("payload")
-                return set_payload(ark_id, payload)
+        if "payload" in data:
+            payload = data.get("payload")
+            return set_payload(ark_id, payload)
 
-        elif request.method == 'POST':
-
-            headers = request.get_json()
-
-            if len(headers) == 0:
-                return jsonify(None), 405
-
-            if len(headers) > 1:
-                return (
-                    jsonify(
-                        {
-                            "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
-                        }
-                    ),
-                    400,
-                )
-
-            if "external_url" in headers:
-                external_url = request.headers.get("external_url")
-                return add_url(ark_id, external_url)
-
-            if "add_pid" in headers:
-                pid = request.headers.get("add_pid")
-                return add_external_pid(ark_id, pid)
-
-            if "payload" in headers:
-                payload = request.headers.get("payload")
-                return set_payload(ark_id, payload)
-
-    except Exception as e:
-        return jsonify({"code": "400", "message": "Bad Request"}), 400
+    return jsonify({"error": "no json passed"}), 400
