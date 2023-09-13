@@ -45,6 +45,10 @@ docker compose up -d
 > python.exe api_server.py
 >```
 
+### HyperDriver Configuration
+
+see the [HyperDrive configuration parameters detail](docs/configuration_parameter.md).
+
 ### Screenshots
 
 **Hyperdrive Query**
