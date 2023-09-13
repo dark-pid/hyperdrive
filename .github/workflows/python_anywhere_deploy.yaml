@@ -11,6 +11,6 @@ jobs:
         uses: jensvog/pythonanywhere-webapp-reload-action@v1
         with:
           host: ' hyperdrive.pythonanywhere.com'
-          username: ${{ variables.PYAW_USERNAME }}
+          username: ${{ secrets.PYAW_USERNAME }}
           api-token: ${{ secrets.PYAW_API_TOKEN }}
-          domain-name: ${{ variables.PYAW_DOMAIN_NAME }}
+          domain-name: ${{ secrets.PYAW_DOMAIN_NAME }}
