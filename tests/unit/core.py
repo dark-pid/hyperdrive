@@ -7,6 +7,17 @@ import os
 # Set Logging
 logging.basicConfig(level=logging.INFO)
 
+def check_basic_parameter(response: dict, expected_pid , excepted_response: dict ):
+    assert response['pid'] == expected_pid
+    # assert response['action'] == excepted_response['action']
+    action = str(excepted_response['action'])
+    
+    if action.__contains__('external_pid'):
+        assert response['parameter'] == excepted_response['parameter'].split(':/')[1]
+    else:
+        assert response['parameter'] == excepted_response['parameter']
+    
+    #TODO CHECK JSON
 
 class RequestType(Enum):
     """
@@ -50,6 +61,8 @@ class HyperDriveAPI:
 
             if response.status_code in (200, 201):
                 return response.json()
+            elif response.status_code == 400:
+                return json.dumps({"ERROR": "405" , "message" : response.json()})
             elif response.status_code == 401:
                 return json.dumps({"ERROR": "Authorization Error. "
                                             "Please check API Key"})

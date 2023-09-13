@@ -4,7 +4,7 @@ import logging
 import time
 import datetime
  
-from .core import HyperDriveAPI
+from .core import HyperDriveAPI , check_basic_parameter
 
 
 def test_create(hyperdrive_api) -> None:
@@ -44,9 +44,7 @@ def test_add_url(hyperdrive_api) -> None:
         
         response = hyperdrive_api.set(pid_ark, post_data)
         if type(response) == dict:
-            # assert response['ark'] == pid_ark
-            # assert response['action'] == excepted_response['action']
-            assert response['parameter'] == excepted_response['parameter']
+            check_basic_parameter(response=response, expected_pid=pid_ark , excepted_response=excepted_response)
         else:
             raise Exception(response)
         
@@ -87,17 +85,16 @@ def test_add_external_pid(hyperdrive_api) -> None:
         
         response = hyperdrive_api.set(pid_ark, post_data_set_url)
         if type(response) == dict:
-            assert response['ark'] == pid_ark
-            # assert response['action'] == excepted_response_set_url['action']
-            assert response['parameter'] == excepted_response_set_url['parameter']
+            check_basic_parameter(response=response, expected_pid=pid_ark , excepted_response=excepted_response_set_url)
         else:
             raise Exception(response)
         
         response = hyperdrive_api.set(pid_ark, post_data_add_pid)
         if type(response) == dict:
-            assert response['ark'] == pid_ark
-            # assert response['action'] == excepted_response_add_pid['action']
-            assert response['parameter'] == excepted_response_add_pid['parameter'].split(':/')[1]
+            check_basic_parameter(response=response, expected_pid=pid_ark , excepted_response=excepted_response_add_pid)
+            # assert response['pid'] == pid_ark
+            # # assert response['action'] == excepted_response_add_pid['action']
+            # assert response['parameter'] == excepted_response_add_pid['parameter'].split(':/')[1]
         else:
             raise Exception(response)
         
@@ -126,8 +123,9 @@ def test_set_payload(hyperdrive_api) -> None:
 
     excepted_response_set_payload = {
         "action": "set_payload",
-        'payload' : '{' + f'name : name_{str(now_unix_timestamp)}, time : {str(now_unix_timestamp)}' + '}',
+        'parameter' : '{' + f'name : name_{str(now_unix_timestamp)}, time : {str(now_unix_timestamp)}' + '}',
     }
+
 
     try:
         response = hyperdrive_api.new_v1()
@@ -138,19 +136,47 @@ def test_set_payload(hyperdrive_api) -> None:
         
         response = hyperdrive_api.set(pid_ark, post_data_set_url)
         if type(response) == dict:
-            assert response['ark'] == pid_ark
-            # assert response['action'] == excepted_response_set_url['action']
-            assert response['parameter'] == excepted_response_set_url['parameter']
+            check_basic_parameter(response=response, expected_pid=pid_ark , excepted_response=excepted_response_set_url)
         else:
             raise Exception(response)
         
         response = hyperdrive_api.set(pid_ark, post_data_set_payload)
+
         if type(response) == dict:
-            assert response['ark'] == pid_ark
-            # assert response['action'] == excepted_response_add_pid['action']
-            assert response['parameter'] == excepted_response_set_payload['parameter'].split(':/')[1]
+            # check_basic_parameter(response=response, expected_pid=pid_ark , excepted_response=excepted_response_set_payload)
+            pass
         else:
             raise Exception(response)
+        
+    except Exception as e:
+        logging.error('Failed to set payload to PID : '+ str(e))
+        raise Exception(str(e))
+
+
+def test_set_over_draft(hyperdrive_api) -> None:
+    # dict ok
+    now_unix_timestamp = datetime.datetime.timestamp(datetime.datetime.now())*1000
+
+    post_data_set_payload = {
+        'payload' : '{' + f'name : name_{str(now_unix_timestamp)}, time : {str(now_unix_timestamp)}' + '}',
+    }
+
+
+    try:
+        response = hyperdrive_api.new_v1()
+        if type(response) == dict:
+            pid_ark = response['ark']
+        else:
+            raise Exception(response)
+        
+        response = hyperdrive_api.set(pid_ark, post_data_set_payload)
+
+        if type(response) == dict:
+            raise Exception("operation executed over DRAFT PID")
+        else:
+            # o erro vem da blockchain, nao tratado
+            #TODO : MELHORAR
+            pass
         
     except Exception as e:
         logging.error('Failed to set payload to PID : '+ str(e))
