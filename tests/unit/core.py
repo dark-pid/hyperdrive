@@ -83,10 +83,10 @@ class HyperDriveAPI:
         :param payload: API Request Parameters. Type - Dict
         :return: Response. Type - JSON Formatted String
         """
-        create_vote_url = f"{self.api_url}/set/pid"
+        set_url = f"{self.api_url}/set/{pid}"
         if isinstance(payload, dict):
             response = self.call_api(request_type=RequestType.POST.value,
-                                     endpoint=create_vote_url,
+                                     endpoint=set_url,
                                      payload=payload)
         else:
             raise ValueError("ERROR - Parameter 'payload' should be of Type Dict")
