@@ -1,5 +1,5 @@
 # Name of Action
-name: aws_test
+name: aws_setup_host
 # Controls when the action will run. 
 on:
   workflow_dispatch:
