@@ -1,0 +1,16 @@
+name: Deploy pythonanywhere Hyperdrive
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Reload webapp
+        uses: jensvog/pythonanywhere-webapp-reload-action@v1
+        with:
+          host: ' hyperdrive.pythonanywhere.com'
+          username: ${{ secrets.PYAW_USERNAME }}
+          api-token: ${{ secrets.PYAW_API_TOKEN }}
+          domain-name: ${{ secrets.PYAW_DOMAIN_NAME }}
