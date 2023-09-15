@@ -1,47 +1,15 @@
 name: DEPLOY - AWS
 on:
+  workflow_dispatch:
   workflow_run:
     workflows: ["aws_setup_host"]
     types:
       - completed
 jobs:
-# This workflow contains a single job called "build"
   build:
-# The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    # Below this are each of the steps that are run
+    runs-on: self-hosted
     steps:
-      # - name: Deploy to Staging server
-      #   uses: easingthemes/ssh-deploy@main
-      #   with:
-      #     SSH_PRIVATE_KEY: ${{ secrets.AWS_CEOIS_KEY }}
-      #     ARGS: "-rlgoDzvc -i"
-      #     SOURCE: "hyperdrive/"
-      #     # TODO: ALTERAR ISSO PARA PEGAR
-      #     REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-      #     REMOTE_USER: ${{ secrets.AWS_CEOIS_USER }}
-      #     TARGET: ${{ secrets.REMOTE_TARGET }}
-      #     EXCLUDE: "/dist/, /node_modules/"
-      #     SCRIPT_BEFORE: |
-      #       whoami
-      #       ls -al
-      #     SCRIPT_AFTER: |
-      #       whoami
-      #       ls -al
-      #       echo $RSYNC_STDOUT
-      
-      
-      # - name: Install dependencies
-      #   run: |
-      #     python -m pip install --upgrade pip
-      #     # pip install ruff pytest
-      #     if [ -f requirements.txt ]; 
-
-      - name: Stop AWS EC2
-        # Run AWS Command on the GitHub Hosted runner which stops the instance using AWS authentication stored in GitHub Secrets (see below how to add)
-        run: |
-          aws ec2 stop-instances --instance-ids ${{secrets.AWS_EC2_INSTANCE_ID }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      - name: code checkout
+        uses: actions/checkout@v2
+      - name: Build and Run Docker
+        run: docker build . -t hyperdrive-main -f docker/Dockerfile && docker run -dp 8080:8080 --name hyperdrive-main hyperdrive-main
