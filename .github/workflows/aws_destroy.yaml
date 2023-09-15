@@ -1,7 +1,7 @@
 name: SETUP - AWS
 on:
   workflow_dispatch:
-    workflows: ["DEPLOY - AWS"]
+  #   workflows: ["DEPLOY - AWS"]
   # pull_request:
   #   branches:
   #     - develop
