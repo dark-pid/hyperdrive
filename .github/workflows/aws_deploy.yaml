@@ -1,15 +1,18 @@
 name: DEPLOY - AWS
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["aws_setup_host"]
-    types:
-      - completed
+  # workflow_run:
+  #   workflows: ["aws_setup_host"]
+  #   types:
+  #     - completed
 jobs:
   build:
     runs-on: self-hosted
     steps:
       - name: code checkout
         uses: actions/checkout@v2
-      - name: Build and Run Docker
-        run: docker build . -t hyperdrive-main -f docker/Dockerfile && docker run -dp 8080:8080 --name hyperdrive-main hyperdrive-main
+      
+      - name: Docker Build Image
+        run: docker build . -t hyperdrive-main -f docker/Dockerfile
+      - name: Docker Run
+        run: docker run -dp 8080:8080 --name hyperdrive-main hyperdrive-main
