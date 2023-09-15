@@ -1,0 +1,103 @@
+name: aws_power_on
+on:
+  workflow_dispatch:
+  # pull_request:
+  #   branches:
+  #     - develop
+jobs:
+  build:
+    # runs-on: ubuntu-latest
+    runs-on: aws-ibict-a
+    
+    steps:
+      - name: Start AWS VMs
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws ec2 start-instances --instance-ids ${{secrets.AWS_EC2_INSTANCE_ID }}
+      
+      - name: Wait For AWS 
+        run: |
+          sleep 60
+  
+      # - name: GET HOST
+      #     #AWS VARS
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      #   run: | 
+      #     EC2_HOST=`aws ec2 describe-instances --instance-ids i-0aea1f015a712bab7 --query 'Reservations[*].Instances[*].PublicDnsName' --output text`
+      #     echo "EC2_HOSTNAME=$EC2_HOST" >> $GITHUB_ENV
+
+      - name: Start EC2 Services
+        env:
+          #AWS VARS
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          #SSH VARS
+          SSH_PRIVATE_KEY: ${{ secrets.AWS_CEOIS_KEY }}
+          USER_NAME : ${{ secrets.AWS_CEOIS_USER  }}
+
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key && chmod 600 private_key
+          EC2_HOST=`aws ec2 describe-instances --instance-ids i-0aea1f015a712bab7 --query 'Reservations[*].Instances[*].PublicDnsName' --output text`
+          ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${EC2_HOST} '
+          
+            # Initialization Script
+            cd /home/ubuntu/actions-runner
+            # sudo ./svc.sh start
+            sudo ./svc.sh status
+            sleep 5
+
+      
+      # - name: Start AWS services 
+      #   uses: appleboy/ssh-action@v1.0.0
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USERNAME }}
+      #     password: ${{ secrets.PASSWORD }}
+      #     port: ${{ secrets.PORT }}
+      #     script: |
+      #       cd /home/ubuntu/actions-runner
+      #       sudo ./svc.sh start
+      #       sudo ./svc.sh status
+
+
+
+      # - name: Deploy to Staging server
+      #   uses: easingthemes/ssh-deploy@main
+      #   with:
+      #     SSH_PRIVATE_KEY: ${{ secrets.AWS_CEOIS_KEY }}
+      #     ARGS: "-rlgoDzvc -i"
+      #     SOURCE: "hyperdrive/"
+      #     # TODO: ALTERAR ISSO PARA PEGAR
+      #     REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+      #     REMOTE_USER: ${{ secrets.AWS_CEOIS_USER }}
+      #     TARGET: ${{ secrets.REMOTE_TARGET }}
+      #     EXCLUDE: "/dist/, /node_modules/"
+      #     SCRIPT_BEFORE: |
+      #       whoami
+      #       ls -al
+      #     SCRIPT_AFTER: |
+      #       whoami
+      #       ls -al
+      #       echo $RSYNC_STDOUT
+      
+      
+      # - name: Install dependencies
+      #   run: |
+      #     python -m pip install --upgrade pip
+      #     # pip install ruff pytest
+      #     if [ -f requirements.txt ]; 
+
+      # - name: Stop AWS EC2
+      #   # Run AWS Command on the GitHub Hosted runner which stops the instance using AWS authentication stored in GitHub Secrets (see below how to add)
+      #   run: |
+      #     aws ec2 stop-instances --instance-ids ${{secrets.AWS_EC2_INSTANCE_ID }}
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
