@@ -15,4 +15,4 @@ jobs:
       - name: Docker Build Image
         run: docker build . -t hyperdrive-main -f docker/Dockerfile
       - name: Docker Run
-        run: docker run -dp 8080:8080 --name hyperdrive-main hyperdrive-main
+        run: docker run -dp 8080:8080 --network=host --name hyperdrive-main hyperdrive-main
