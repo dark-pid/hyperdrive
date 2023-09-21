@@ -7,7 +7,7 @@ services:
     #   - application
     #   - p2w
     build: 
-      context: ./
+      context: ../
       dockerfile: ./docker/Dockerfile
     restart: always
     environment:
