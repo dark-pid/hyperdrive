@@ -49,7 +49,7 @@ jobs:
         name: Clean Up Docker
         run: |
           CONTAINER_ID=`docker ps -a -q -f name="$CONTAINER_NAME"`
-          [ ! $CONTAINER_ID ] && { docker stop "$CONTAINER_NAME"; sleep 2 ; docker rm "$CONTAINER_NAME"; sleep 2; } || echo "No container to clenup"
+          [ $CONTAINER_ID ] && { docker stop "$CONTAINER_NAME"; sleep 2 ; docker rm "$CONTAINER_NAME"; sleep 2; } || echo "No container to clenup"
       - id: run
         name: Docker Run
         run: |
