@@ -1,0 +1,70 @@
+name: AWS Deploy
+on:
+  workflow_dispatch:
+  # workflow_run:
+  #   workflows: ["aws_setup_host"]
+  #   types:
+  #     - completed
+jobs:
+  power_on:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      AWS_INSTANCE_ID: ${{ secrets.AWS_INSTANCE }}
+    outputs:
+      VM_ORIGINAL_STATUS: ${{ steps.power_on.outputs.STATUS }}
+      VM_DNS: ${{ steps.power_on.outputs.INSTANCE_DNS }}
+    steps:
+      - id: power_on
+        name: Start AWS VMs
+        run: |
+          INSTANCE_STATE=`aws ec2 describe-instances --instance-ids $AWS_INSTANCE_ID --output text --query 'Reservations[*].Instances[*].State.Name'`
+          echo "VM_ORIGINAL_STATUS=$INSTANCE_STATE"
+          [ "$INSTANCE_STATE" = "stopped" ] &&  aws ec2 start-instances --instance-ids $AWS_INSTANCE_ID || echo "STATUS=POWER_ON" >> "$GITHUB_OUTPUT"
+          [ "$INSTANCE_STATE" = "stopped" ] &&  aws ec2 wait instance-running --instance-ids $AWS_INSTANCE_ID || echo "VM ALREDY POWERED"
+          sleep 5
+          INSTANCE_DNS=`aws ec2 describe-instances --instance-ids $AWS_INSTANCE_ID --query 'Reservations[*].Instances[*].PublicDnsName' --output text`
+          echo "VM_DNS=$INSTANCE_DNS" >> "$GITHUB_OUTPUT"
+  deploy:
+    runs-on: self-hosted
+    needs: power_on
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      AWS_INSTANCE_ID: ${{ secrets.AWS_INSTANCE }}
+      #
+      SERVICE_ADDR: ${{needs.power_on.outputs.VM_DNS}}
+      CONTAINER_NAME: hyperdrive-main
+      SERVICE_PORT: 8080
+    outputs:
+        SERVICE_ADDR : ${{ steps.report.outputs.SERVICE_ADDR }}
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v2
+      - id: build
+        name: Docker Build Image
+        run: |
+          docker build -t "$CONTAINER_NAME" -f docker/Dockerfile .
+      - id: clean
+        name: Clean Up Docker
+        run: |
+          CONTAINER_ID=`docker ps -a -q -f name="$CONTAINER_NAME"`
+          [ ! $CONTAINER_ID ] && { docker stop "$CONTAINER_NAME"; sleep 2 ; docker rm "$CONTAINER_NAME"; sleep 2; } || echo "No container to clenup"
+      - id: run
+        name: Docker Run
+        run: |
+          sleep 2
+          STATUS_CLEAN=`docker ps -aq -f status=exited -f name=$CONTAINER_NAME`
+          [ $STATUS_CLEAN ] && { docker rm "$CONTAINER_NAME"; } || echo "No container to clenup"
+          sleep 1
+          docker run -dp "$SERVICE_PORT":"$SERVICE_PORT" --network host --env MANAGED_NAM_DICT='{"8033":true}' --name "$CONTAINER_NAME" "$CONTAINER_NAME"
+      - id: report
+        name: Report
+        run: |
+          SERV_DNS=`aws ec2 describe-instances --instance-ids $AWS_INSTANCE_ID --query 'Reservations[*].Instances[*].PublicDnsName' --output text`
+          # echo "SERVICE_ADDR=http://${SERV_DNS}:$SERVICE_PORT" >> "$GITHUB_OUTPUT"
+          echo "SERVICE_ADDR=http://${SERV_DNS}/hyperdrive/" >> "$GITHUB_OUTPUT"
+          echo "$SERV_DNS/hyperdrive/"
