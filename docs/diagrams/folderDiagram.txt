@@ -1,0 +1,14 @@
+├───.venv
+├───app
+│   ├───api
+│   ├───static
+│   ├───templates
+│   └───util
+├───docker
+├───docs
+│   ├───diagrams
+│   └───figures
+│       ├───architecture
+│       └───misc
+└───tests
+    └───unit
