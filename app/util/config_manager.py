@@ -1,15 +1,14 @@
 import os
 
-
 class ConfigManager:
     EXTERNAL_PID_PARAMETER = "external_pid"
     EXTERNAL_URL_PARAMETER = "external_url"
 
     def __init__(self):
-        # Configuração padrão para variáveis de ambiente, se não definidas
         os.environ.setdefault("HYPERDRIVE_EXTERNAL_PID_VALIDATION", "NONE")
         os.environ.setdefault("HYPERDRIVE_URL_VALIDATION", "NONE")
         os.environ.setdefault("HYPERDRIVE_PAYLOAD_VALIDATION", "NONE")
+        os.environ.setdefault("HYPERDRIVE_OPERATION_MODE", "ASYNC")
 
     def get_external_pid_validation(self):
         return os.environ["HYPERDRIVE_EXTERNAL_PID_VALIDATION"]
@@ -28,3 +27,9 @@ class ConfigManager:
 
     def set_payload_validation(self, value):
         os.environ["HYPERDRIVE_PAYLOAD_VALIDATION"] = value
+
+    def get_operation_mode(self):
+        return os.environ["HYPERDRIVE_OPERATION_MODE"]
+
+    def set_operation_mode(self, value):
+        os.environ["HYPERDRIVE_OPERATION_MODE"] = value
