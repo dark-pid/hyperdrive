@@ -19,8 +19,10 @@ core_api_blueprint = Blueprint("core_api", __name__, url_prefix="/core")
 
 async_mode = config_manager.get_operation_mode()
 
-from .synchronous.functions import add_url, add_external_pid, set_payload
-from .asynchronus.functions import add_url
+if async_mode == "ASYNC":
+    from util.asynchronus import add_url, set_payload
+else:
+    from util.synchronous import add_url, add_external_pid, set_payload
 
 
 ##
@@ -146,7 +148,6 @@ def get_pid_by_noid(nam, shoulder):
 @core_api_blueprint.post("/set/<path:ark_id>")
 def set_general(ark_id):
     if request.is_json:
-        print(async_mode)
         data = request.get_json()
         if len(data) == 0:
             return jsonify({"error": "No parameter has been passed"}), 405
@@ -166,7 +167,7 @@ def set_general(ark_id):
 
             if async_mode == "ASYNC":
                 return asyncio.run(add_url(ark_id, external_url))
-            else:
+            if async_mode == "SYNC":
                 return add_url(ark_id, external_url)
 
         if "external_pid" in data:
@@ -175,7 +176,11 @@ def set_general(ark_id):
 
         if "payload" in data:
             payload = data
-            return set_payload(ark_id, payload)
+
+            if async_mode == "ASYNC":
+                return asyncio.run(set_payload(ark_id, payload))
+            if async_mode == "SYNC":
+                return set_payload(ark_id, payload)
 
     return (
         jsonify(

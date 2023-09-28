@@ -1,5 +1,6 @@
 import os
 
+
 class ConfigManager:
     EXTERNAL_PID_PARAMETER = "external_pid"
     EXTERNAL_URL_PARAMETER = "external_url"
