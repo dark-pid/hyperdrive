@@ -20,7 +20,7 @@ core_api_blueprint = Blueprint("core_api", __name__, url_prefix="/core")
 async_mode = config_manager.get_operation_mode()
 
 if async_mode == "ASYNC":
-    from util.asynchronus import add_url, set_payload
+    from util.asynchronus import add_url, add_external_pid, set_payload
 else:
     from util.synchronous import add_url, add_external_pid, set_payload
 
@@ -172,7 +172,11 @@ def set_general(ark_id):
 
         if "external_pid" in data:
             pid = data.get("external_pid")
-            return add_external_pid(ark_id, pid)
+
+            if async_mode == "ASYNC":
+                return asyncio.run(add_external_pid(ark_id, pid))
+            if async_mode == "SYNC":
+                return add_external_pid(ark_id, pid)
 
         if "payload" in data:
             payload = data
