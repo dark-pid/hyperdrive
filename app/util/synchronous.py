@@ -64,16 +64,15 @@ def add_url(ark_id, external_url):
 
         dark_map.sync_set_url(pid.pid_hash, external_url)
 
-        return (
-            jsonify(
-                {
-                    "pid": str(pid.ark),
-                    "action": "external_url_add",
-                    "parameter": external_url,
-                }
-            ),
-            200,
-        )
+        result = {
+            "pid": str(pid.ark),
+            "pid_hash_index": Web3.toHex(pid.pid_hash),
+            "action": "add_url",
+            "parameter": external_url,
+            "status": "queued",
+        }
+
+        return jsonify(result), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -108,16 +107,15 @@ def add_external_pid(ark_id, external_pid):
         valid_pid = external_pid.split(":/")[1]
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
 
-        return (
-            jsonify(
-                {
+        result = {
                     "pid": str(pid.ark),
-                    "action": "external_pid_add",
+                    "pid_hash_index": str(pid.__hash__),
+                    "action":  "external_pid_add",
                     "parameter": valid_pid,
-                }
-            ),
-            200,
-        )
+                    "status": "queued",
+        }
+
+        return jsonify(result), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -151,16 +149,15 @@ def set_payload(ark_id, payload):
 
         dark_map.sync_set_payload(pid.pid_hash, payload)
 
-        return (
-            jsonify(
-                {
-                    "pid": str(pid.ark),
-                    "action": "payload_add",
-                    "parameter": payload,
-                }
-            ),
-            200,
-        )
+        result = {
+            "pid": str(pid.ark),
+            "pid_hash_index": Web3.toHex(pid.pid_hash),
+            "action": "set_payload",
+            "parameter": payload,
+            "status": "queued",
+        }
+
+        return jsonify(result), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
