@@ -7,10 +7,12 @@ from web3 import Web3
 
 from dark import DarkMap, DarkGateway
 from util.validation import ValidationUtil
+from util.responses import success_response, error_response
 from util.config_manager import ConfigManager
 
 # configurando classe das váriaveis externas
 config_manager = ConfigManager()
+async_mode = config_manager.get_operation_mode()
 
 core_api_blueprint = Blueprint("core_api", __name__, url_prefix="/core")
 
@@ -47,7 +49,9 @@ def add_url(ark_id, external_url):
         VERIFICATION_METHOD = None
 
     try:
+        action = "add_url"
         pid = None
+
         if ark_id.startswith("0x"):
             pid = dark_map.get_pid_by_hash(ark_id)
         else:
@@ -55,24 +59,18 @@ def add_url(ark_id, external_url):
 
         if VERIFICATION_METHOD == "BASIC":
             if ValidationUtil.check_url(external_url) == False:
-                return jsonify({"error": "Invalid URL"}), 400
+                return error_response(pid,async_mode.lower(), action, external_url,"Invalid URL", 400)
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_url) == 0:
-                return jsonify({"error": "Invalid URL"}), 400
+                return error_response(pid,async_mode.lower(), action, external_url,"Invalid URL", 400)
         else:
-            return jsonify({"error": "the method could not be implemented"}), 400
+            return error_response(pid,async_mode.lower(), action, external_url, "the method could not be implemented", 400)
 
         dark_map.sync_set_url(pid.pid_hash, external_url)
 
-        result = {
-            "pid": str(pid.ark),
-            "pid_hash_index": Web3.toHex(pid.pid_hash),
-            "action": "add_url",
-            "parameter": external_url,
-            "status": "queued",
-        }
+        response = success_response(pid, async_mode.lower(), action, external_url, "executed")
 
-        return jsonify(result), 200
+        return response
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -87,6 +85,7 @@ def add_external_pid(ark_id, external_pid):
         VERIFICATION_METHOD = None
 
     try:
+        action = "add_external_pid"
         pid = None
 
         if ark_id.startswith("0x"):
@@ -96,26 +95,20 @@ def add_external_pid(ark_id, external_pid):
 
         if VERIFICATION_METHOD == "BASIC":
             if external_pid.startswith("doi:/") == False:
-                return jsonify({"error": "Invalid Pid"}), 400
+                return error_response(pid,async_mode.lower(), action, external_pid, "Invalid PID", 400)
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_pid) == 0:
-                return jsonify({"error": "Invalid Pid"}), 400
+                return error_response(pid,async_mode.lower(), action, external_pid, "Invalid PID", 400)
         else:
-            return jsonify({"error": "the method could not be implemented"}), 400
+            return error_response(pid,async_mode.lower(), action, external_pid,"queued" ,"the method could not, be implemented", 400)
 
         valid_pid = external_pid.split(":/")[1]
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
 
-        result = {
-                    "pid": str(pid.ark),
-                    "pid_hash_index": str(pid.__hash__),
-                    "action":  "external_pid_add",
-                    "parameter": valid_pid,
-                    "status": "queued",
-        }
+        response = success_response(pid, async_mode.lower(), action, external_pid, "executed")
 
-        return jsonify(result), 200
+        return response
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -130,17 +123,20 @@ def set_payload(ark_id, payload):
         VERIFICATION_METHOD = None
 
     try:
+        action = "set_payload"
+        pid = None
+
         if VERIFICATION_METHOD == "BASIC":
             payload = json.loads(payload)
 
             if type(payload) != dict or len(payload) == 0:
-                return jsonify({"error": "Invalid JSON payload"}), 400
+                return error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400)
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if type(payload) != dict or len(payload) == 0:
-                return jsonify({"error": "Invalid JSON payload"}), 400
+                return error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400)
         else:
-            return jsonify({"error": "the method could not be implemented"}), 400
+            return error_response(pid,async_mode.lower(), action, payload, "the method could not be implemented", 400)
 
         if ark_id.startswith("0x"):
             pid = dark_map.get_pid_by_hash(ark_id)
@@ -149,15 +145,9 @@ def set_payload(ark_id, payload):
 
         dark_map.sync_set_payload(pid.pid_hash, payload)
 
-        result = {
-            "pid": str(pid.ark),
-            "pid_hash_index": Web3.toHex(pid.pid_hash),
-            "action": "set_payload",
-            "parameter": payload,
-            "status": "queued",
-        }
+        response = success_response(pid, async_mode.lower(), action, payload,"executed")
 
-        return jsonify(result), 200
+        return response
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
