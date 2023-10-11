@@ -74,9 +74,8 @@ async def add_url(ark_id, external_url):
             return make_response(error_response(pid,async_mode.lower(), action, external_url, "the method could not be implemented", 400))
 
         tx_set = dark_map.async_set_url(pid.pid_hash, external_url)
-        tx_status, tx_recipt = dark_gw.transaction_was_executed(tx_set)
 
-        response = success_response(pid, async_mode.lower(), action, external_url, "queued")
+        response = success_response(pid, async_mode.lower(), action, external_url, "queued", tx_receipt=tx_set.hex())
 
         return response
 
@@ -95,7 +94,7 @@ async def add_external_pid(ark_id, external_pid):
     try:
         action = "add_external_pid"
         pid = None
-        
+
         if ark_id.startswith("0x"):
             pid = dark_map.get_pid_by_hash(ark_id)
         else:
@@ -113,9 +112,8 @@ async def add_external_pid(ark_id, external_pid):
 
         valid_pid = external_pid.split(":/")[1]
         tx_set = dark_map.async_set_external_pid(pid.pid_hash, valid_pid)
-        tx_status, tx_recipt = dark_gw.transaction_was_executed(tx_set)
 
-        response = success_response(pid, async_mode.lower(), action, external_pid, "queued")
+        response = success_response(pid, async_mode.lower(), action, external_pid, "queued", tx_receipt=tx_set.hex())
 
         return response
 
@@ -154,7 +152,7 @@ async def set_payload(ark_id, payload):
         tx_set = dark_map.async_set_payload(pid.pid_hash, payload)
         tx_status, tx_recipt = dark_gw.transaction_was_executed(tx_set)
 
-        response = success_response(pid, async_mode.lower(), action, payload,"queued")
+        response = success_response(pid, async_mode.lower(), action, payload,"queued", tx_receipt=tx_set.hex())
 
         return response
 

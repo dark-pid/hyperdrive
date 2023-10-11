@@ -17,8 +17,10 @@ def success_response(pid, op_mode, action, parameter,status, tx_receipt=None, tx
         "hyperdrive_op_mode": op_mode.lower(),
     }
 
-    if tx_receipt != None or tx_status is not None:
+    if tx_receipt != None:
         response_data["transaction_hash"] = tx_receipt
+
+    if tx_status != None:
         response_data["tx_status"] = tx_status
 
     return jsonify(response_data), 200
