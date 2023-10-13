@@ -126,22 +126,23 @@ def set_payload(ark_id, payload):
         action = "set_payload"
         pid = None
 
-        if VERIFICATION_METHOD == "BASIC":
-            payload = json.loads(payload)
+        if ark_id.startswith("0x"):
+            pid = dark_map.get_pid_by_hash(ark_id)
+        else:
+            pid = dark_map.get_pid_by_ark(ark_id)
 
-            if type(payload) != dict or len(payload) == 0:
-                return error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400)
+        if VERIFICATION_METHOD == "BASIC":
+            if type(payload) != dict:
+                try:
+                    payload = json.loads(payload)
+                except Exception as e:
+                    return error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400)
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if type(payload) != dict or len(payload) == 0:
                 return error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400)
         else:
             return error_response(pid,async_mode.lower(), action, payload, "the method could not be implemented", 400)
-
-        if ark_id.startswith("0x"):
-            pid = dark_map.get_pid_by_hash(ark_id)
-        else:
-            pid = dark_map.get_pid_by_ark(ark_id)
 
         dark_map.sync_set_payload(pid.pid_hash, payload)
 
