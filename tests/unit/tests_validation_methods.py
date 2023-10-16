@@ -1,41 +1,89 @@
 import pytest
-from flask import jsonify
+import json
 from app.util.validation import ValidationUtil
-from app.util.config_manager import ConfigManager
 
-
-config_manager = ConfigManager()
-
-
-# tests for synchronous external url addition method
-
-def mock_add_url(VERIFICATION_METHOD, external_url):
-    try:
-        # Simulates URL validation behavior
-        if VERIFICATION_METHOD == "BASIC":
-            if ValidationUtil.check_url(external_url) == False:
-                return {"status": "error", "message": "invalid url"}, 400
-        elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
-            if len(external_url) == 0:
-                return {"status": "error", "message": "invalid url"}, 400
-        else:
-            return {"status": "error", "message": "the method could not be implemented"}, 400
-
-        # Simulates a successful response
-        return {"status": "success", "message": "executed"}, 200
-
-    except Exception as e:
-        # Simulates a generic error response
-        return jsonify({"error": str(e)}), 400
+# external url validation tests
 
 def test_add_url_valid():
-    config_manager.set_url_validation("BASIC")
-    VERIFICATION_METHOD = config_manager.get_url_validation()
-    result = mock_add_url(VERIFICATION_METHOD, "http://www.uol.com/123456")
-    assert 200 in result
+
+    url = "http://www.hyperdrive.com/123456"
+    assert ValidationUtil.check_url(url) is True
 
 def test_add_url_invalid():
-    config_manager.set_url_validation("BASIC")
-    VERIFICATION_METHOD = config_manager.get_url_validation()
-    result = mock_add_url(VERIFICATION_METHOD, "hello 123")
-    assert 400 in result
+
+    url = "hello 123"
+    assert ValidationUtil.check_url(url) is False
+
+def test_add_empty_url():
+
+    url = ""
+    assert ValidationUtil.check_url(url) is False
+
+def test_check_url_invalid_none():
+
+    url = None
+    assert ValidationUtil.check_url(url) is False
+
+# external pid validation tests
+
+def mock_validation_pid(external_pid):
+
+    if external_pid.startswith("doi:/"):
+        valid_pid = external_pid.split(":/")[1]
+        return valid_pid
+    else:
+        return False
+
+def test_mock_validation_pid_valid_pid():
+
+    external_pid = "doi:/116.jdakt.7892"
+    result = mock_validation_pid(external_pid)
+    assert result == "116.jdakt.7892"
+
+def test_mock_validation_pid_invalid_pid():
+
+    external_pid = "DOIXPTO"
+    result = mock_validation_pid(external_pid)
+    assert result is False
+
+def test_mock_validation_pid_empty_pid():
+
+    external_pid = ""
+    result = mock_validation_pid(external_pid)
+    assert result is False
+
+# payload validation tests
+def mock_validation_payload(payload):
+
+    if type(payload) != dict:
+        try:
+            payload = json.loads(payload)
+            return payload
+        except Exception:
+            return False
+    else:
+        return payload
+
+def test_mock_validation_payload_valid_dict():
+
+    payload = {"key": "value", "number": 42}
+    result = mock_validation_payload(payload)
+    assert result == payload
+
+def test_mock_validation_payload_valid_json_str():
+
+    payload_str = '{"key": "value", "number": 42}'
+    result = mock_validation_payload(payload_str)
+    assert result == json.loads(payload_str)
+
+def test_mock_validation_payload_invalid_json_str():
+
+    payload_str = "{x : y}"
+    result = mock_validation_payload(payload_str)
+    assert result is False
+
+def test_mock_validation_payload_invalid_type():
+
+    payload = 123
+    result = mock_validation_payload(payload)
+    assert result is False
