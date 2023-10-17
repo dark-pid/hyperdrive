@@ -179,7 +179,7 @@ def set_general(ark_id):
                 return add_external_pid(ark_id, pid)
 
         if "payload" in data:
-            payload = data
+            payload = data.get("payload")
 
             if async_mode == "ASYNC":
                 return asyncio.run(set_payload(ark_id, payload))
