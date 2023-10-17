@@ -282,35 +282,12 @@ def set_general(ark_id):
             external_url = data.get("external_url")
             return add_url(ark_id, external_url)
 
-        if "payload" in data:
-            payload = data
-            return set_payload(ark_id, payload)
-
-    return jsonify({"error": "Invalid or missing data in the request. Please check your input and try again."}), 400
-
-@core_api_blueprint.post("/add/<path:ark_id>")
-def add_general(ark_id):
-    if request.is_json:
-        data = request.get_json()
-        if len(data) == 0:
-            return jsonify({"error": "No parameter has been passed"}), 405
-
-        if len(data) > 1:
-            return (
-                jsonify(
-                    {
-                        "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
-                    }
-                ),
-                400,
-            )
-
-        if "external_url" in data:
-            external_url = data.get("external_url")
-            return add_url(ark_id, external_url)
-
         if "external_pid" in data:
             pid = data.get("external_pid")
             return add_external_pid(ark_id, pid)
+
+        if "payload" in data:
+            payload = data
+            return set_payload(ark_id, payload)
 
     return jsonify({"error": "Invalid or missing data in the request. Please check your input and try again."}), 400
