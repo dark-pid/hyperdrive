@@ -11,6 +11,13 @@ This page details the HyperDrive parameters.
 - Sync
 - Async
 
+| PARAMETER                                                         | VALIDATION METHODS        |
+| ---                                                               | ---                       |
+| [HYPERDRIVE_OPERATION_MODE]                     | SYNC, ASYNC               |
+
+
+detailed in issue #17
+
 ## Validations
 
 
