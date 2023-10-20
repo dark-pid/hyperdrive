@@ -1,4 +1,4 @@
-name: SETUP - AWS
+name: AWS PowerOff
 on:
   workflow_dispatch:
   #   workflows: ["DEPLOY - AWS"]
