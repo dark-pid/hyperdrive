@@ -24,7 +24,6 @@ jobs:
           echo "VM_ORIGINAL_STATUS=$INSTANCE_STATE"
           [ "$INSTANCE_STATE" = "stopped" ] &&  aws ec2 start-instances --instance-ids $AWS_INSTANCE_ID || echo "STATUS=POWER_ON" >> "$GITHUB_OUTPUT"
           [ "$INSTANCE_STATE" = "stopped" ] &&  aws ec2 wait instance-running --instance-ids $AWS_INSTANCE_ID || echo "VM ALREDY POWERED"
-          sleep 5
           INSTANCE_DNS=`aws ec2 describe-instances --instance-ids $AWS_INSTANCE_ID --query 'Reservations[*].Instances[*].PublicDnsName' --output text`
           echo "VM_DNS=$INSTANCE_DNS" >> "$GITHUB_OUTPUT"
   deploy:
@@ -36,11 +35,9 @@ jobs:
       AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
       AWS_INSTANCE_ID: ${{ secrets.AWS_INSTANCE }}
       #
-      SERVICE_ADDR: ${{needs.power_on.outputs.VM_DNS}}
+      INSTANCE_DNS: ${{needs.power_on.outputs.VM_DNS}}
       CONTAINER_NAME: hyperdrive-main
       SERVICE_PORT: 8080
-    outputs:
-        SERVICE_ADDR : ${{ steps.report.outputs.SERVICE_ADDR }}
     steps:
       - name: code checkout
         uses: actions/checkout@v2
@@ -52,7 +49,7 @@ jobs:
         name: Clean Up Docker
         run: |
           CONTAINER_ID=`docker ps -a -q -f name="$CONTAINER_NAME"`
-          [ ! $CONTAINER_ID ] && { docker stop "$CONTAINER_NAME"; sleep 2 ; docker rm "$CONTAINER_NAME"; sleep 2; } || echo "No container to clenup"
+          [ $CONTAINER_ID ] && { docker stop "$CONTAINER_NAME"; sleep 2 ; docker rm "$CONTAINER_NAME"; sleep 2; } || echo "No container to clenup"
       - id: run
         name: Docker Run
         run: |
@@ -61,10 +58,23 @@ jobs:
           [ $STATUS_CLEAN ] && { docker rm "$CONTAINER_NAME"; } || echo "No container to clenup"
           sleep 1
           docker run -dp "$SERVICE_PORT":"$SERVICE_PORT" --network host --env MANAGED_NAM_DICT='{"8033":true}' --name "$CONTAINER_NAME" "$CONTAINER_NAME"
+  report:
+    runs-on: ubuntu-latest
+    needs: deploy
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      AWS_INSTANCE_ID: ${{ secrets.AWS_INSTANCE }}
+      #
+      CONTAINER_NAME: hyperdrive-main
+      SERVICE_PORT: 8080
+    outputs:
+        SERVICE_ADDR : ${{ steps.report.outputs.SERVICE_ADDR }}
+    steps:
       - id: report
         name: Report
         run: |
           SERV_DNS=`aws ec2 describe-instances --instance-ids $AWS_INSTANCE_ID --query 'Reservations[*].Instances[*].PublicDnsName' --output text`
-          # echo "SERVICE_ADDR=http://${SERV_DNS}:$SERVICE_PORT" >> "$GITHUB_OUTPUT"
           echo "SERVICE_ADDR=http://${SERV_DNS}/hyperdrive/" >> "$GITHUB_OUTPUT"
           echo "$SERV_DNS/hyperdrive/"

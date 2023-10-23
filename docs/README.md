@@ -16,19 +16,19 @@
 
 | name                     |  function     | method | status |
 |:-                        | :-:           | :-:    | :-: | 
-|[assing_pid](#assing_pid) | no_parameter  | sync   | :heavy_check_mark: |
-|[assing_pid](#assing_pid) | no_parameter  | async  | :x: |
+|[assing_pid](#assing_pid) | no_parameter  | sync   | :bulb: |
+|[assing_pid](#assing_pid) | no_parameter  | async  | :construction: |
 |[assing_pid](#assing_pid) | external_url  | async  | :construction: |
 |[assing_pid](#assing_pid) | external_pid  | async  | :construction: |
 |[assing_pid](#assing_pid) | payload       | async  | :construction: |
-|[get_pid](#get_pid)       | ark           | sync   | :bulb: |
-|[get_pid](#get_pid)       | hash_pid      | sync   | :bulb: |
-|[add](#add)               | external_pid  | sync   | :bulb: |
-|[add](#add)               | external_url  | sync   | :bulb: |
+|[get_pid](#get_pid)       | ark           | sync   | :heavy_check_mark: |
+|[get_pid](#get_pid)       | hash_pid      | sync   | :heavy_check_mark: |
+|[add](#add)               | external_pid  | sync   | :heavy_check_mark: |
+|[add](#add)               | external_url  | sync   | :heavy_check_mark: |
 |[set](#set)               | payload       | sync   | :heavy_check_mark: |
-|[add](#add)               | external_pid  | async  | :construction: |
-|[add](#add)               | external_url  | async  | :construction: |
-|[set](#set)               | payload       | async  | :construction: |
+|[add](#add)               | external_pid  | async  | :heavy_check_mark: |
+|[add](#add)               | external_url  | async  | :heavy_check_mark: |
+|[set](#set)               | payload       | async  | :heavy_check_mark: |
 
 **status :**
 > - :heavy_check_mark: : done
