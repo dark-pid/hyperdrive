@@ -3,6 +3,7 @@
 > *Table of Contents:*
 > - [HyperDrive Operation Mode](#operation-mode)
 > - [HyperDrive Validations](#validations)
+> - [Hyperdrive database connection](#database-connection)
 
 This page details the HyperDrive parameters.
 
@@ -58,7 +59,7 @@ The HYPERDRIVE_URL_VALIDATION must be :
 
 The HyperDrive can perform check the External PID of a dARK PID, we assume a simple validation schema detailed below.
 
-We need that all pid starts with `<protocol>:/<pid>`. 
+We need that all pid starts with `<protocol>:/<pid>`.
 
 > - The `<protocol>` designates the pid system that handles/generates the pid (e.g., DOI)
 > - The `<pid>` is the pid
@@ -90,4 +91,16 @@ The HYPERDRIVE_PAYLOAD_VALIDATION must be :
 | --- | --- | --- |
 | NONE| No validation will be performed | ✅  |
 | BASIC | Perform the validation described here | ❌ |
+
+## database connection
+
+In HyperDrive it is possible to configure the connection to the Database through the following configuration variables:
+
+| parameter name | description | parameter value by default |
+| --- | --- | --- |
+| DB_HOST | configures the IP address or hostname of the PostgreSQL server | 127.0.0.1 |
+| DB_PORT | configures the port used to connect to the PostgreSQL server | 5432 |
+| DB_PASS | configures PostgreSQL database user password | postgres |
+| DB_USER | configures the username used to authenticate the connection to the PostgreSQL database | postgres |
+| DB_NAME | configures the name of the PostgreSQL database to which the project will connect | hyperdrive |
 
