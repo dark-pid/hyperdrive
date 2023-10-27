@@ -1,0 +1,77 @@
+classDiagram
+
+namespace HyperDrive {
+
+    class Organizaration {
+        -name : string
+        -ror_id : string
+        -nam : string
+    }
+
+    class User{
+        -email: string
+        -wallet_private_key: string
+    }
+
+    class Transaction {
+        - tx_hash
+        - parameters
+        - status
+    }
+}
+
+namespace OnChainEntities {
+
+    class Wallet{
+        -private_key : bytes32
+    }
+    
+    class NoidProvider{
+        -nam: bytes
+        -dnam: bytes
+        -sec_nam: bytes
+        -sep_token: bytes1
+        -noid_len: uint8
+
+        +gen() string
+    }
+
+    class DecentralizedNameMappingAuthority{
+        -id: bytes32
+        -ror_id: string
+        -shoulde_prefix: string
+        -noid_proveider_addr: address
+        -responsable: address
+        -List~bytes32~section_authorities
+    }
+
+    class SectionMappingAuthority {
+        -id: bytes32
+        -string shoulder_prefix;
+        -dNMA_id: bytes32
+        -noid_proveider_addr: address
+        -responsable: address
+    }
+    
+}
+
+%% inter relation
+Organizaration ..|> SectionMappingAuthority  : related to
+Organizaration ..|> DecentralizedNameMappingAuthority : related to
+User .. Wallet : link
+
+%% ddd
+Organizaration "1" --* "*" User: has
+User "1" --o Transaction: Executes
+
+%% onchain relation
+SectionMappingAuthority "1" --o "1" NoidProvider: has
+DecentralizedNameMappingAuthority "1" --o "*" SectionMappingAuthority: has
+DecentralizedNameMappingAuthority "1" --* "1" NoidProvider: has
+Wallet --> NoidProvider: use
+Wallet "1" ..> "1" SectionMappingAuthority: is responsable for
+Wallet "1" ..> "1" DecentralizedNameMappingAuthority: is responsable for
+
+
+
+
