@@ -66,10 +66,10 @@ async def add_url(ark_id, external_url):
 
         if VERIFICATION_METHOD == "BASIC":
             if ValidationUtil.check_url(external_url) == False:
-                return make_response(error_response(pid,async_mode.lower(), action, external_url, "Invalid URL", 400))
+                return make_response(error_response(pid,async_mode.lower(), action, external_url, "Sorry, the URL provided is not valid. Make sure it is in the correct format. Please review and try again.", 400))
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_url) == 0:
-                return make_response(error_response(pid,async_mode.lower(), action, external_url, "Invalid URL", 400))
+                return make_response(error_response(pid,async_mode.lower(), action, external_url, "Sorry, the URL cannot be empty. Please provide a valid URL and try again.", 400))
         else:
             return make_response(error_response(pid,async_mode.lower(), action, external_url, "the method could not be implemented", 400))
 
@@ -102,13 +102,13 @@ async def add_external_pid(ark_id, external_pid):
 
         if VERIFICATION_METHOD == "BASIC":
             if external_pid.startswith("doi:/") == False:
-                return make_response(error_response(pid,async_mode.lower(), action, external_pid, "Invalid PID", 400))
+                return make_response(error_response(pid,async_mode.lower(), action, external_pid, "Sorry, the PID provided is not valid. Make sure it is correct and try again.", 400))
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_pid) == 0:
-                return make_response(error_response(pid,async_mode.lower(), action, external_pid, "Invalid PID", 400))
+                return make_response(error_response(pid,async_mode.lower(), action, external_pid, "Sorry, PID cannot be empty. Please provide a valid PID and try again.", 400))
         else:
-            return make_response(error_response(pid,async_mode.lower(), action, external_pid,"queued" ,"the method could not, be implemented", 400))
+            return make_response(error_response(pid,async_mode.lower(), action, external_pid,"queued" ,"the method could not be implemented", 400))
 
         valid_pid = external_pid.split(":/")[1]
         tx_set = dark_map.async_set_external_pid(pid.pid_hash, valid_pid)
@@ -143,11 +143,11 @@ async def set_payload(ark_id, payload):
                 try:
                     payload = json.loads(payload)
                 except Exception as e:
-                    return error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400)
+                    return error_response(pid,async_mode.lower(), action, payload, "Sorry, the payload provided is not valid JSON. Make sure it is correct and try again", 400)
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(payload) == 0:
-                return make_response(error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400))
+                return make_response(error_response(pid,async_mode.lower(), action, payload, "Sorry, the provided payload cannot be empty. Please provide a valid payload and try again", 400))
         else:
             return make_response(error_response(pid,async_mode.lower(), action, payload, "the method could not be implemented", 400))
 
