@@ -40,3 +40,23 @@ def error_response(pid, op_mode, action, parameter, error_message, error_code):
         }
     }
     return jsonify(error_response), error_code
+
+def success_response_new(pid, pid_hash):
+    response_data = {
+        "pid": str(pid),
+        "pid_hash_index": Web3.toHex(pid_hash),
+        "action": "create_pid",
+        "status": "executed"
+    }
+
+    return jsonify(response_data)
+
+def error_response_new(error_code, e):
+    response_data = {
+        "action": "create_pid",
+        "status": "Unable to create a new PID",
+        "block_chain_error": str(e),
+        "error_code": error_code,
+    }
+
+    return jsonify(response_data)

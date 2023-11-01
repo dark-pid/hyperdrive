@@ -10,6 +10,7 @@ from web3 import Web3
 from dark import DarkMap, DarkGateway
 from util.validation import ValidationUtil
 from util.config_manager import ConfigManager
+from util.responses import success_response_new, error_response_new
 
 
 # configurando classe das váriaveis externas
@@ -55,12 +56,10 @@ def create_pid():
         error_code = 200
         pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
-        resp = jsonify({"ark": pid_ark, "hash": Web3.toHex(pid_hash)})
+        resp = success_response_new(pid_ark, pid_hash)
     except Exception as e:
         error_code = 500
-        resp = jsonify(
-            {"status": "Unable to create a new PID", "block_chain_error": str(e)},
-        )
+        resp = error_response_new(error_code, e)
     return resp, error_code
 
 
