@@ -39,4 +39,4 @@ def error_response(pid, op_mode, action, parameter, error_message, error_code):
             "hyperdrive_op_mode": op_mode.lower(),
         }
     }
-    return jsonify(error_response), 400
+    return jsonify(error_response), error_code

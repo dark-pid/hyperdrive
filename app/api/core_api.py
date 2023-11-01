@@ -150,7 +150,7 @@ def set_general(ark_id):
     if request.is_json:
         data = request.get_json()
         if len(data) == 0:
-            return jsonify({"error": "No parameter has been passed"}), 405
+            return jsonify({"error": "No parameter has been passed"}), 400
 
         if len(data) > 1:
             return (
@@ -159,7 +159,7 @@ def set_general(ark_id):
                         "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
                     }
                 ),
-                400,
+                500,
             )
 
         if "external_url" in data:
@@ -192,7 +192,7 @@ def add_general(ark_id):
     if request.is_json:
         data = request.get_json()
         if len(data) == 0:
-            return jsonify({"error": "No parameter has been passed"}), 405
+            return jsonify({"error": "No parameter has been passed"}), 400
 
         if len(data) > 1:
             return (
@@ -201,7 +201,7 @@ def add_general(ark_id):
                         "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
                     }
                 ),
-                400,
+                500,
             )
 
         if "external_url" in data:

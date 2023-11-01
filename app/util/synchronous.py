@@ -64,7 +64,7 @@ def add_url(ark_id, external_url):
             if len(external_url) == 0:
                 return error_response(pid,async_mode.lower(), action, external_url,"Sorry, the URL cannot be empty. Please provide a valid URL and try again.", 400)
         else:
-            return error_response(pid,async_mode.lower(), action, external_url, "the method could not be implemented", 400)
+            return error_response(pid,async_mode.lower(), action, external_url, "the method could not be implemented", 501)
 
         dark_map.sync_set_url(pid.pid_hash, external_url)
 
@@ -73,7 +73,7 @@ def add_url(ark_id, external_url):
         return response
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
 
 
 # Set the external variable -> config_manager.set_external_pid_validation("BASIC")
@@ -101,7 +101,7 @@ def add_external_pid(ark_id, external_pid):
             if len(external_pid) == 0:
                 return error_response(pid,async_mode.lower(), action, external_pid, "Sorry, PID cannot be empty. Please provide a valid PID and try again.", 400)
         else:
-            return error_response(pid,async_mode.lower(), action, external_pid,"queued" ,"the method could not, be implemented", 400)
+            return error_response(pid,async_mode.lower(), action, external_pid,"queued" ,"the method could not, be implemented", 501)
 
         valid_pid = external_pid.split(":/")[1]
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
@@ -111,7 +111,7 @@ def add_external_pid(ark_id, external_pid):
         return response
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
 
 
 # Set the external variable -> config_manager.set_payload_validation("BASIC")
@@ -142,7 +142,7 @@ def set_payload(ark_id, payload):
             if type(payload) != dict or len(payload) == 0:
                 return error_response(pid,async_mode.lower(), action, payload, "Sorry, the provided payload cannot be empty. Please provide a valid payload and try again", 400)
         else:
-            return error_response(pid,async_mode.lower(), action, payload, "the method could not be implemented", 400)
+            return error_response(pid,async_mode.lower(), action, payload, "the method could not be implemented", 501)
 
         dark_map.sync_set_payload(pid.pid_hash, payload)
 
@@ -151,4 +151,4 @@ def set_payload(ark_id, payload):
         return response
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
