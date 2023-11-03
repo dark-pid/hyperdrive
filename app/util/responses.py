@@ -42,7 +42,7 @@ def error_response(action, error_message, error_code, op_mode=None, status=None,
     return jsonify(error_response), error_code
 
 
-def success_response_new(pid, pid_hash):
+def success_response_create_pid(pid, pid_hash):
     response_data = {
         "pid": str(pid),
         "pid_hash_index": Web3.toHex(pid_hash),
