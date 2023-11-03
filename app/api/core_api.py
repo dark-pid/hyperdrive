@@ -10,7 +10,7 @@ from web3 import Web3
 from dark import DarkMap, DarkGateway
 from util.validation import ValidationUtil
 from util.config_manager import ConfigManager
-from util.responses import success_response_new, error_response_new
+from util.responses import success_response_new, error_response
 
 
 # configurando classe das váriaveis externas
@@ -37,7 +37,8 @@ deployed_contracts_config = configparser.ConfigParser()
 PROJECT_ROOT = "./"
 bc_config.read(os.path.join(PROJECT_ROOT, "config.ini"))
 # deployed contracts config
-deployed_contracts_config.read(os.path.join(PROJECT_ROOT, "deployed_contracts.ini"))
+deployed_contracts_config.read(os.path.join(
+    PROJECT_ROOT, "deployed_contracts.ini"))
 
 
 # gw
@@ -47,20 +48,23 @@ dark_gw = DarkGateway(bc_config, deployed_contracts_config)
 dark_map = DarkMap(dark_gw)
 
 ###
-### methods
+# methods
 ###
 
 
 def create_pid():
     try:
+        action = "create_pid"
         error_code = 200
         pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
         resp = success_response_new(pid_ark, pid_hash)
     except Exception as e:
+        message = f"block_chain_error : {str(e)}"
+        status = "Unable to create a new PID"
         error_code = 500
-        resp = error_response_new(error_code, e)
-    return resp, error_code
+        resp = error_response(action, message, error_code, status=status)
+    return resp
 
 
 ###
@@ -185,6 +189,7 @@ def set_general(ark_id):
         ),
         400,
     )
+
 
 @core_api_blueprint.post("/add/<path:ark_id>")
 def add_general(ark_id):
