@@ -29,16 +29,24 @@ def success_response(pid, op_mode, action, parameter, status, tx_receipt=None, t
 def error_response(action, error_message, error_code, op_mode=None, status=None, key_action=None, pid=None, parameter=None):
     error_response = {
         "error": {
-            "pid": str(pid.ark) if pid else None,
-            "pid_hash_index": Web3.toHex(pid.pid_hash) if pid else None,
             "message": error_message,
             "error_code": error_code,
             "action": action,
-            "parameter": {"pid": str(pid.ark), key_action: parameter} if key_action else None,
-            "status": "rejected" if status == None else status,
-            "hyperdrive_op_mode": op_mode.lower() if op_mode else None
+            "status": "rejected" if status == None else status
         }
     }
+
+    if key_action != None:
+        error_response["parameter"] = {
+            "pid": str(pid.ark), key_action: parameter}
+
+    if op_mode != None:
+        error_response["hyperdrive_op_mode"] = op_mode.lower()
+
+    if pid != None:
+        error_response["error"].update(
+            {"pid": str(pid.ark), "pid_hash_index": Web3.toHex(pid.pid_hash)})
+
     return jsonify(error_response), error_code
 
 
