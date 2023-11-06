@@ -64,7 +64,7 @@ def create_pid():
         status = "Unable to create a new PID"
         error_code = 500
         resp = error_response(action, message, error_code, status=status)
-    return resp
+    return resp, error_code
 
 
 ###
