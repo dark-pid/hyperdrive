@@ -70,8 +70,8 @@ def add_url(ark_id, external_url):
 
         dark_map.sync_set_url(pid.pid_hash, external_url)
 
-        response = success_response(
-            pid, async_mode.lower(), action, external_url, "executed")
+        response = success_response(action, "executed", pid=pid, op_mode=async_mode.lower(
+        ), parameter=external_url, key_action=key_action)
 
         return response
 
@@ -111,7 +111,7 @@ def add_external_pid(ark_id, external_pid):
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
 
         response = success_response(
-            pid, async_mode.lower(), action, external_pid, "executed")
+            action, "executed", pid=pid, op_mode=async_mode.lower(), parameter=external_pid, key_action=key_action)
 
         return response
 
@@ -153,7 +153,7 @@ def set_payload(ark_id, payload):
         dark_map.sync_set_payload(pid.pid_hash, payload)
 
         response = success_response(
-            pid, async_mode.lower(), action, payload, "executed")
+            action, "executed", pid=pid, op_mode=async_mode.lower(), parameter=payload, key_action=key_action)
 
         return response
 

@@ -1,3 +1,4 @@
+from util.responses import success_response, error_response
 import json
 import os
 import configparser
@@ -25,8 +26,7 @@ if async_mode == "ASYNC":
 else:
     from util.synchronous import add_url, add_external_pid, set_payload
 
-## config responses class
-from util.responses import success_response, error_response
+# config responses class
 
 ##
 # configuring dARK GW
@@ -60,7 +60,7 @@ def create_pid():
         error_code = 200
         pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
-        resp = success_response_create_pid(pid_ark, pid_hash)
+        resp = success_response_create_pid(pid_ark, pid_hash, action)
     except Exception as e:
         message = f"block_chain_error : {str(e)}"
         status = "Unable to create a new PID"
@@ -131,14 +131,13 @@ def get_pid(dark_id):
         if len(dark_pid.externa_pid_list) == 0:
             del resp_dict["externa_pid_list"]
 
-        return success_response(dark_pid, op_mode="sync", status="executed", parameter=dark_id, action="get_pid")
+        return success_response(pid=dark_pid, op_mode="sync", status="executed", parameter=dark_id, key_action="get_pid", action="get_pid")
     except Exception as e:
-
-        resp_dict = {"status": "Unable to recovery (" + str(dark_id) + ")",
-                     "block_chain_error": str(e)}
         resp_code = 500
+        status = f"Unable to recovery (' {str(dark_id)} ')"
+        error_message = f"block_chain_error : {str(e)}"
 
-        return error_response(dark_pid, op_mode="sync", action="get_pid", parameter=dark_id, error_code=resp_code, error_message=resp_dict)
+        return error_response(pid=dark_pid, op_mode="sync", action="get_pid", parameter=dark_id, error_code=resp_code, error_message=error_message, status=status)
 
 
 @core_api_blueprint.get("/get/<nam>/<shoulder>")
