@@ -2,21 +2,19 @@ classDiagram
 
 namespace HyperDrive {
 
-    class Organizaration {
-        -name : string
-        -ror_id : string
-        -nam : string
-    }
-
-    class User{
+    class UserAccount{
+        %%  Name Assigning Authority Number
+        -NAAN: string
+        -organization: string
         -email: string
         -wallet_private_key: string
     }
 
     class Transaction {
-        - tx_hash
-        - parameters
+        - tx_hash: string
+        - parameters: json
         - status
+        -List~string~parent_tx
     }
 }
 
@@ -56,13 +54,13 @@ namespace OnChainEntities {
 }
 
 %% inter relation
-Organizaration ..|> SectionMappingAuthority  : related to
-Organizaration ..|> DecentralizedNameMappingAuthority : related to
-User .. Wallet : link
+%% Organizaration ..|> SectionMappingAuthority  : related to
+%% Organizaration ..|> DecentralizedNameMappingAuthority : related to
+UserAccount .. Wallet : linked by the private key
 
 %% ddd
-Organizaration "1" --* "*" User: has
-User "1" --o Transaction: Executes
+%% Organizaration "1" --* "*" User: has
+UserAccount "1" --o Transaction: Executes
 
 %% onchain relation
 SectionMappingAuthority "1" --o "1" NoidProvider: has

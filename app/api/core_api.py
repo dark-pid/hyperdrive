@@ -25,6 +25,8 @@ if async_mode == "ASYNC":
 else:
     from util.synchronous import add_url, add_external_pid, set_payload
 
+## config responses class
+from util.responses import success_response, error_response
 
 ##
 # configuring dARK GW
@@ -129,17 +131,14 @@ def get_pid(dark_id):
         if len(dark_pid.externa_pid_list) == 0:
             del resp_dict["externa_pid_list"]
 
-        resp = jsonify(resp_dict)
-    except ValueError as e:
-        resp = jsonify(
-            {
-                "status": "Unable to recovery (" + str(dark_id) + ")",
-                "block_chain_error": str(e),
-            },
-        )
+        return success_response(dark_pid, op_mode="sync", status="executed", parameter=dark_id, action="get_pid")
+    except Exception as e:
+
+        resp_dict = {"status": "Unable to recovery (" + str(dark_id) + ")",
+                     "block_chain_error": str(e)}
         resp_code = 500
 
-    return resp, resp_code
+        return error_response(dark_pid, op_mode="sync", action="get_pid", parameter=dark_id, error_code=resp_code, error_message=resp_dict)
 
 
 @core_api_blueprint.get("/get/<nam>/<shoulder>")
