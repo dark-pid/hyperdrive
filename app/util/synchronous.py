@@ -61,7 +61,7 @@ def add_url(ark_id, external_url):
 
         if VERIFICATION_METHOD == "BASIC":
             if ValidationUtil.check_url(external_url) == False:
-                return error_response(action, "Sorry, the URL provided is not valid. Make sure it is in the correct format. Please review and try again.", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_url, parameter=external_url)
+                return error_response(action, "Sorry, the URL provided is not valid. Make sure it is in the correct format. Please review and try again.", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_url)
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_url) == 0:
                 return error_response(action, "Sorry, the URL cannot be empty. Please provide a valid URL and try again.", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_url)
@@ -145,7 +145,7 @@ def set_payload(ark_id, payload):
                     return error_response(action, "Sorry, the payload provided is not valid JSON. Make sure it is correct and try again", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=payload)
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
-            if type(payload) != dict or len(payload) == 0:
+            if len(payload) == 0:
                 return error_response(action, "Sorry, the provided payload cannot be empty. Please provide a valid payload and try again", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=payload)
         else:
             return error_response(action, "the method could not be implemented", 501, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=payload)
