@@ -5,7 +5,7 @@ ipywidgets
 jupyter
 nbconvert>=6.5.0
 tqdm
-ijson>=3.1.4      
+ijson>=3.1.4
 
 # pip install web3 --only-binary :all:
 web3==5.29.0
@@ -13,7 +13,7 @@ py-solc-x >= 1.1.1
 
 # webservice
 flask
-flask-sqlalchemy
+flask-sqlalchemy==3.1.1
 flask_jwt_extended
 gunicorn
 # recolocar quando alterar o web3
