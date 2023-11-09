@@ -1,6 +1,6 @@
 # Hyperdrive
 
-dARK Hyperdrive repository 
+dARK Hyperdrive repository
 
 
 ## How to run
@@ -12,6 +12,7 @@ dARK Hyperdrive repository
         <li> pip </li>
         <li> docker </li>
         <li> docker-compose </li>
+        <li> PostgresSQL 16 </li>
     </ul>
 </details>
 

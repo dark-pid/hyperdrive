@@ -1,15 +1,17 @@
+from util.responses import success_response, error_response
 import json
 import os
 import configparser
 import asyncio
 
-from flask import Blueprint, Flask, jsonify, render_template, send_file, abort, request
+from flask import Blueprint, Flask, jsonify, render_template, send_file, abort, request, make_response
 from web3 import Web3
 
 
 from dark import DarkMap, DarkGateway
 from util.validation import ValidationUtil
 from util.config_manager import ConfigManager
+from util.responses import success_response_create_pid, error_response
 
 
 # configurando classe das váriaveis externas
@@ -24,8 +26,7 @@ if async_mode == "ASYNC":
 else:
     from util.synchronous import add_url, add_external_pid, set_payload
 
-## config responses class
-from util.responses import success_response, error_response
+# config responses class
 
 ##
 # configuring dARK GW
@@ -38,7 +39,8 @@ deployed_contracts_config = configparser.ConfigParser()
 PROJECT_ROOT = "./"
 bc_config.read(os.path.join(PROJECT_ROOT, "config.ini"))
 # deployed contracts config
-deployed_contracts_config.read(os.path.join(PROJECT_ROOT, "deployed_contracts.ini"))
+deployed_contracts_config.read(os.path.join(
+    PROJECT_ROOT, "deployed_contracts.ini"))
 
 
 # gw
@@ -48,21 +50,22 @@ dark_gw = DarkGateway(bc_config, deployed_contracts_config)
 dark_map = DarkMap(dark_gw)
 
 ###
-### methods
+# methods
 ###
 
 
 def create_pid():
     try:
+        action = "create_pid"
         error_code = 200
         pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
-        resp = jsonify({"ark": pid_ark, "hash": Web3.toHex(pid_hash)})
+        resp = success_response_create_pid(pid_ark, pid_hash, action)
     except Exception as e:
+        message = f"block_chain_error : {str(e)}"
+        status = "Unable to create a new PID"
         error_code = 500
-        resp = jsonify(
-            {"status": "Unable to create a new PID", "block_chain_error": str(e)},
-        )
+        resp = error_response(action, message, error_code, status=status)
     return resp, error_code
 
 
@@ -128,14 +131,13 @@ def get_pid(dark_id):
         if len(dark_pid.externa_pid_list) == 0:
             del resp_dict["externa_pid_list"]
 
-        return success_response(dark_pid, op_mode="sync", status="executed", parameter=dark_id, action="get_pid")
+        return success_response(pid=dark_pid, op_mode="sync", status="executed", parameter=dark_id, key_action="get_pid", action="get_pid")
     except Exception as e:
-
-        resp_dict = {"status": "Unable to recovery (" + str(dark_id) + ")",
-                     "block_chain_error": str(e)}
         resp_code = 500
+        status = f"Unable to recovery (' {str(dark_id)} ')"
+        error_message = f"block_chain_error : {str(e)}"
 
-        return error_response(dark_pid, op_mode="sync", action="get_pid", parameter=dark_id, error_code=resp_code, error_message=resp_dict)
+        return error_response(pid=dark_pid, op_mode="sync", action="get_pid", parameter=dark_id, error_code=resp_code, error_message=error_message, status=status)
 
 
 @core_api_blueprint.get("/get/<nam>/<shoulder>")
@@ -146,20 +148,21 @@ def get_pid_by_noid(nam, shoulder):
 
 @core_api_blueprint.post("/set/<path:ark_id>")
 def set_general(ark_id):
+    pid = None
+
+    if ark_id.startswith("0x"):
+        pid = dark_map.get_pid_by_hash(ark_id)
+    else:
+        pid = dark_map.get_pid_by_ark(ark_id)
+
     if request.is_json:
         data = request.get_json()
         if len(data) == 0:
-            return jsonify({"error": "No parameter has been passed"}), 405
+            return make_response(error_response(action="set", error_message="No parameter has been passed", error_code=400, pid=pid))
 
         if len(data) > 1:
-            return (
-                jsonify(
-                    {
-                        "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
-                    }
-                ),
-                400,
-            )
+
+            return make_response(error_response(action="set", error_message="Unable to execute multiple operations considering the Hyperdriver Synchronized Mode.", error_code=500, pid=pid))
 
         if "external_url" in data:
             external_url = data.get("external_url")
@@ -177,31 +180,21 @@ def set_general(ark_id):
             if async_mode == "SYNC":
                 return set_payload(ark_id, payload)
 
-    return (
-        jsonify(
-            {
-                "error": "Invalid or missing data in the request. Please check your input and try again."
-            }
-        ),
-        400,
-    )
+    return make_response(error_response(action="set", error_message="Invalid or missing data in the request. Please check your input and try again.", error_code=400, pid=pid))
+
 
 @core_api_blueprint.post("/add/<path:ark_id>")
 def add_general(ark_id):
+    pid = None
+
     if request.is_json:
         data = request.get_json()
         if len(data) == 0:
-            return jsonify({"error": "No parameter has been passed"}), 405
+            return make_response(error_response(action="add", error_message="No parameter has been passed", error_code=400, pid=pid))
 
         if len(data) > 1:
-            return (
-                jsonify(
-                    {
-                        "error": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode."
-                    }
-                ),
-                400,
-            )
+
+            return make_response(error_response(action="add", error_message="Unable to execute multiple operations considering the Hyperdriver Synchronized Mode.", error_code=500, pid=pid))
 
         if "external_url" in data:
             external_url = data.get("external_url")
@@ -219,11 +212,4 @@ def add_general(ark_id):
             if async_mode == "SYNC":
                 return add_external_pid(ark_id, pid)
 
-    return (
-        jsonify(
-            {
-                "error": "Invalid or missing data in the request. Please check your input and try again."
-            }
-        ),
-        400,
-    )
+    return make_response(error_response(action="add", error_message="Invalid or missing data in the request. Please check your input and try again.", error_code=400, pid=pid))

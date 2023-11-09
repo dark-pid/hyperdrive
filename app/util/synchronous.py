@@ -27,7 +27,8 @@ deployed_contracts_config = configparser.ConfigParser()
 PROJECT_ROOT = "./"
 bc_config.read(os.path.join(PROJECT_ROOT, "config.ini"))
 # deployed contracts config
-deployed_contracts_config.read(os.path.join(PROJECT_ROOT, "deployed_contracts.ini"))
+deployed_contracts_config.read(os.path.join(
+    PROJECT_ROOT, "deployed_contracts.ini"))
 
 
 # gw
@@ -37,7 +38,7 @@ dark_gw = DarkGateway(bc_config, deployed_contracts_config)
 dark_map = DarkMap(dark_gw)
 
 ###
-### methods
+# methods
 ###
 
 
@@ -49,6 +50,7 @@ def add_url(ark_id, external_url):
         VERIFICATION_METHOD = None
 
     try:
+        key_action = "external url"
         action = "add_url"
         pid = None
 
@@ -59,21 +61,22 @@ def add_url(ark_id, external_url):
 
         if VERIFICATION_METHOD == "BASIC":
             if ValidationUtil.check_url(external_url) == False:
-                return error_response(pid,async_mode.lower(), action, external_url,"Invalid URL", 400)
+                return error_response(action, "Sorry, the URL provided is not valid. Make sure it is in the correct format. Please review and try again.", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_url)
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_url) == 0:
-                return error_response(pid,async_mode.lower(), action, external_url,"Invalid URL", 400)
+                return error_response(action, "Sorry, the URL cannot be empty. Please provide a valid URL and try again.", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_url)
         else:
-            return error_response(pid,async_mode.lower(), action, external_url, "the method could not be implemented", 400)
+            return error_response(action, "the method could not be implemented", 501, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_url)
 
         dark_map.sync_set_url(pid.pid_hash, external_url)
 
-        response = success_response(pid, async_mode.lower(), action, external_url, "executed")
+        response = success_response(action, "executed", pid=pid, op_mode=async_mode.lower(
+        ), parameter=external_url, key_action=key_action)
 
         return response
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
 
 
 # Set the external variable -> config_manager.set_external_pid_validation("BASIC")
@@ -85,6 +88,7 @@ def add_external_pid(ark_id, external_pid):
         VERIFICATION_METHOD = None
 
     try:
+        key_action = "external_pid"
         action = "add_external_pid"
         pid = None
 
@@ -95,23 +99,24 @@ def add_external_pid(ark_id, external_pid):
 
         if VERIFICATION_METHOD == "BASIC":
             if external_pid.startswith("doi:/") == False:
-                return error_response(pid,async_mode.lower(), action, external_pid, "Invalid PID", 400)
+                return error_response(action, "Sorry, the PID provided is not valid. Make sure it is correct and try again.", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_pid)
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
             if len(external_pid) == 0:
-                return error_response(pid,async_mode.lower(), action, external_pid, "Invalid PID", 400)
+                return error_response(action, "Sorry, PID cannot be empty. Please provide a valid PID and try again.", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_pid)
         else:
-            return error_response(pid,async_mode.lower(), action, external_pid,"queued" ,"the method could not, be implemented", 400)
+            return error_response(action, "queued", "the method could not, be implemented", 501, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_pid)
 
         valid_pid = external_pid.split(":/")[1]
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
 
-        response = success_response(pid, async_mode.lower(), action, external_pid, "executed")
+        response = success_response(
+            action, "executed", pid=pid, op_mode=async_mode.lower(), parameter=external_pid, key_action=key_action)
 
         return response
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
 
 
 # Set the external variable -> config_manager.set_payload_validation("BASIC")
@@ -123,6 +128,7 @@ def set_payload(ark_id, payload):
         VERIFICATION_METHOD = None
 
     try:
+        key_action = "payload"
         action = "set_payload"
         pid = None
 
@@ -136,19 +142,20 @@ def set_payload(ark_id, payload):
                 try:
                     payload = json.loads(payload)
                 except Exception as e:
-                    return error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400)
+                    return error_response(action, "Sorry, the payload provided is not valid JSON. Make sure it is correct and try again", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=payload)
 
         elif VERIFICATION_METHOD == "NONE" or VERIFICATION_METHOD == None:
-            if type(payload) != dict or len(payload) == 0:
-                return error_response(pid,async_mode.lower(), action, payload, "Invalid JSON payload", 400)
+            if len(payload) == 0:
+                return error_response(action, "Sorry, the provided payload cannot be empty. Please provide a valid payload and try again", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=payload)
         else:
-            return error_response(pid,async_mode.lower(), action, payload, "the method could not be implemented", 400)
+            return error_response(action, "the method could not be implemented", 501, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=payload)
 
         dark_map.sync_set_payload(pid.pid_hash, payload)
 
-        response = success_response(pid, async_mode.lower(), action, payload,"executed")
+        response = success_response(
+            action, "executed", pid=pid, op_mode=async_mode.lower(), parameter=payload, key_action=key_action)
 
         return response
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 500
