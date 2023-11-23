@@ -15,7 +15,7 @@ The configure_hyperdrive.py file plays a crucial role in configuring and initial
 
 ## parameter settings
 
-In configure_hyperdrive.py it is possible to configure the connection to the Database through the following configuration variables present in variables_database.py:
+Before starting the config_database methods, it is important that all configuration variables have their correct values
 
 | parameter name | description | parameter value by default |
 | --- | --- | --- |
@@ -25,42 +25,41 @@ In configure_hyperdrive.py it is possible to configure the connection to the Dat
 | DB_USER | configures the username used to authenticate the connection to the PostgreSQL database | postgres |
 | DB_NAME | configures the name of the PostgreSQL database to which the project will connect | hyperdrive |
 
-In the configure_hyperdrive.py file it is possible to modify the default values ​​of the environment variables using the command:
+To modify the default value of the variables, you need to open a terminal in the project folder and then start a python instance. Finally, in the following example you will find the commands for modifying variables.
 
 ```
-TO DO: put the command here after developing and testing the method
+>>> python
+>>> import os
+>>> os.environ["DB_HOST"] = "value"
+>>> os.environ["DB_PORT"] = "value"
+>>> os.environ["DB_PASS"] = "value"
+>>> os.environ["DB_USER"] = "value"
+>>> os.environ["DB_NAME"] = "value"
+>>> quit()
 ```
 
-##### command parameters
-
-> | name      |  type     | data type               |
-> |----|---|---|
-> | DB_HOST     |  optional | str    |
-> | DB_PORT     |  optional | str    |
-> | DB_PASS     |  optional | str    |
-> | DB_USER          |  optional | str   |
-> | DB_NAME          |  optional | str   |
-
-If the user does not pass any of the parameters, it will continue with its default value
+If the user does not configure these variables, they will continue with their default values
 
 
 ## Create and Populate the Database
 
-Once the database variables have been defined it will be possible to create a database using the create_database method which can be called using the command:
+It is necessary that postgresSQL is already installed and configured on the machine, and to use the methods it is important that there is a server created and named (DB_NAME). Then, use the command below in the terminal to call the method to create the tables in the database:
 
 ```
 TO DO: put the command here after developing and testing the method
 ```
 
-the function has no parameters and will use Flask SQLAlchemy to create the database. It is important that the environment variables, described previously, are configured with the correct values.
-
-It is very important that the database is created so that the necessary tables for this database can be created. These tables can be seen in [https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd](https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd). The configure_hyperdrive.py file is responsible for creating these tables with the following command:
+These tables can be seen in [https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd](https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd).
 
 ```
 TO DO: put the command here after developing and testing the method
 ```
 
 To insert data into the database tables, you must use the command below, passing a JSON with the values.
+
+```
+TO DO: put the command here after developing and testing the method
+```
 
 ##### command parameters
 
@@ -76,6 +75,4 @@ To insert data into the database tables, you must use the command below, passing
 > | `40x`         | `application/json; charset=utf-8` | TO DO: standardization to be considered after creating the method if necessary |
 > | `50x`         | `application/json; charset=utf-8` | TO DO: standardization to be considered after creating the method if necessary |
 
-```
-TO DO: put the command here after developing and testing the method
-```
+
