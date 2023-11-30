@@ -1,6 +1,6 @@
 # Hyperdrive Database
 
-The configure_hyperdrive.py file plays a crucial role in configuring and initializing the database system.
+The configure_database.py file plays a crucial role in the initial configuration of the database system.
 
 ## How to run
 
@@ -15,7 +15,7 @@ The configure_hyperdrive.py file plays a crucial role in configuring and initial
 
 ## parameter settings
 
-Before starting the config_database methods, it is important that all configuration variables have their correct values
+Before starting config_database, it is important that all configuration variables have their correct values.
 
 | parameter name | description | parameter value by default |
 | --- | --- | --- |
@@ -43,29 +43,22 @@ If the user does not configure these variables, they will continue with their de
 
 ## Create and Populate the Database
 
-It is necessary that postgresSQL is already installed and configured on the machine, and to use the methods it is important that there is a server created and named (DB_NAME). Then, use the command below in the terminal to call the method to create the tables in the database:
+PostgresSQL must already be installed and configured on the machine, and to use the methods it is important that there is a server created and named (DB_NAME). Then just run the configure_database.py file so that the database creates all the important tables for the hyperdrive
 
 ```
-TO DO: put the command here after developing and testing the method
+>> cd app
+>> python confgure_database.py
 ```
 
 These tables can be seen in [https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd](https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd).
 
-```
-TO DO: put the command here after developing and testing the method
-```
 
-To insert data into the database tables, you must use the command below, passing a JSON with the values.
+Below are the methods for the system administrator user to perform manipulations in the database
 
-```
-TO DO: put the command here after developing and testing the method
-```
 
-##### command parameters
-
-> | name      |  type     | data type               |
-> |----|---|---|
-> | user_account    |  optional | json    |
+#### ADD USER
+<details>
+ <summary><code>POST</code> <code><b>/data/add_user</b></code> <code>(creates a new user in the database)</code></summary>
 
 ##### Responses
 
@@ -75,4 +68,15 @@ TO DO: put the command here after developing and testing the method
 > | `40x`         | `application/json; charset=utf-8` | TO DO: standardization to be considered after creating the method if necessary |
 > | `50x`         | `application/json; charset=utf-8` | TO DO: standardization to be considered after creating the method if necessary |
 
+##### Example cURL [POST]
 
+> ```javascript
+>  curl -X POST http://10.0.0.114:8080/data/add_user -H 'Content-Type: application/json' -d '{"naan":"valid_naan", "organization":"valid_organization", "email":"valid_email", "wallet_private_key":"valid_wallet_private_key" }'
+> ```
+
+##### Example browser [GET]
+
+> ```
+>  TO DO
+> ```
+</details>
