@@ -71,7 +71,7 @@ Below are the methods for the system administrator user to perform manipulations
 ##### Example cURL [POST]
 
 > ```javascript
->  curl -X POST http://10.0.0.114:8080/data/add_user -H 'Content-Type: application/json' -d '{"naan":"valid_naan", "organization":"valid_organization", "email":"valid_email", "wallet_private_key":"valid_wallet_private_key" }'
+>  curl -X POST http://localhost:8080/data/add_user -H 'Content-Type: application/json' -d '{"naan":"valid_naan", "organization":"valid_organization", "email":"valid_email", "wallet_private_key":"valid_wallet_private_key" }'
 > ```
 
 ##### Example browser [GET]
