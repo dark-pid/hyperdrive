@@ -4,7 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Integer, String, Column, JSON
-from api_server import app
+from instance_app import app
 
 
 config_variables = ConfigVariables()
@@ -21,8 +21,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{os.environ['DB_USER']}:{
 db.init_app(app)
 
 
-# classes utilizadas para criar as tabelas, polir todas se necessário
-# falta testar no banco de dados
 class User(db.Model):
     __tablename__ = 'user_account'
 
@@ -61,7 +59,6 @@ class NoidProvider(db.Model):
     noid_len = Column(Integer)
 
     def gen(self):
-        # Implemente a lógica específica do método gen aqui se necessário
         generated_value = f"{self.nam}_{self.dnam}_{self.sec_nam}"
         return generated_value
 
