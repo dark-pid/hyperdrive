@@ -50,10 +50,9 @@ class Transaction(db.Model):
 class Wallet(db.Model):
     __tablename__ = 'wallet'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    private_key = Column(String(255))
+    private_key = Column(String(255), unique=True, primary_key=True)
 
-    noid_provider_id = Column(String, ForeignKey('noid_provider.id'))
+    noid_provider_id = Column(Integer, ForeignKey('noid_provider.id'))
     noid_provider = relationship("NoidProvider", back_populates="wallet")
 
     section_mapping_authority_id = Column(
@@ -62,7 +61,7 @@ class Wallet(db.Model):
         "SectionMappingAuthority", back_populates="wallet_responsable")
 
     decentralized_name_mapping_authority_id = Column(
-        String, ForeignKey('decentralized_name_mapping_authority.id'))
+        String(255), ForeignKey('decentralized_name_mapping_authority.id'))
     decentralized_name_mapping_authority = relationship(
         "DecentralizedNameMappingAuthority", back_populates="wallet_responsable")
 
@@ -77,12 +76,12 @@ class NoidProvider(db.Model):
     sep_token = Column(String(1))
     noid_len = Column(Integer)
 
-    decentralized_name_mapping_authority_id = Column(Integer, ForeignKey(
+    decentralized_name_mapping_authority_id = Column(String(255), ForeignKey(
         'decentralized_name_mapping_authority.id'))
     decentralized_name_mapping_authority = relationship(
         "DecentralizedNameMappingAuthority", back_populates="noid_provider")
 
-    wallet_id = Column(String, ForeignKey('wallet.id'))
+    wallet_id = Column(String, ForeignKey('wallet.private_key'))
     wallet = relationship("Wallet", back_populates="noid_provider")
 
     def gen(self):
@@ -93,7 +92,7 @@ class NoidProvider(db.Model):
 class DecentralizedNameMappingAuthority(db.Model):
     __tablename__ = 'decentralized_name_mapping_authority'
 
-    id = Column(String(255))
+    id = Column(String(255), primary_key=True)
     ror_id = Column(String(255))
     shoulder_prefix = Column(String(255))
     noid_provider_addr = Column(String(255))
@@ -107,7 +106,7 @@ class DecentralizedNameMappingAuthority(db.Model):
     section_mapping_authorities = relationship(
         "SectionMappingAuthority", back_populates="decentralized_name_mapping_authority")
 
-    wallet_responsable_id = Column(String, ForeignKey('wallet.id'))
+    wallet_responsable_id = Column(String, ForeignKey('wallet.private_key'))
     wallet_responsable = relationship(
         "Wallet", back_populates="decentralized_name_mapping_authority")
 
@@ -115,18 +114,19 @@ class DecentralizedNameMappingAuthority(db.Model):
 class SectionMappingAuthority(db.Model):
     __tablename__ = 'section_mapping_authority'
 
-    id = Column(String(255))
+    id = Column(String(255), primary_key=True)
+    ror_id = Column(String(255))
     shoulder_prefix = Column(String(255))
     dNMA_id = Column(String(255))
     noid_provider_addr = Column(String(255))
     responsable = Column(String(255))
 
     decentralized_name_mapping_authority_id = Column(
-        Integer, ForeignKey('decentralized_name_mapping_authority.id'))
+        String(255), ForeignKey('decentralized_name_mapping_authority.id'))
     decentralized_name_mapping_authority = relationship(
         "DecentralizedNameMappingAuthority", back_populates="section_mapping_authorities")
 
-    wallet_responsable_id = Column(String, ForeignKey('wallet.id'))
+    wallet_responsable_id = Column(String, ForeignKey('wallet.private_key'))
     wallet_responsable = relationship(
         "Wallet", back_populates="section_mapping_authority")
 
