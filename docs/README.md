@@ -177,6 +177,63 @@ The following method do not reequire authentication
 > ```
 </details>
 
+## User Access
+
+### Implementation Status
+
+| name                     |  function     | method | status |
+|:-                        | :-:           | :-:    | :-: |
+|[login_user](#login_user) | email and password | sync   | ⬜ |
+
+**status :**
+> - :heavy_check_mark: : done
+> - :construction: : under construction
+> - :bulb: : refactoring or improvement
+> - :x: : not implemented
+> - ⬜ : todo
+
+### API Endpoints
+
+Through this method the user authenticates:
+
+- [Login User](#login-user): authenticates the user using their data in the database.
+
+
+#### Login User
+
+<details>
+ <summary><code>POST</code> <code><b>/user/login</b></code> <code>(authenticate user)</code></summary>
+
+##### Parameters
+
+> | name      |  type     | data type               | description                                                           |
+> |----|---|---|---|
+> | email    |  required | str    | user identification email  |
+> | password     |  required | str    | user identification password  |
+
+
+##### Responses
+
+> | http code     | content-type       | response |
+> |----|---|---|
+> | `200`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
+> | `40x`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
+> | `50x`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
+
+
+##### Example cURL [POST]
+
+> ```javascript
+>  curl -X POST http://$API_HOST:$API_PORT/user/login -H 'Content-Type: application/json' -d '{"email":"valid_email", "password" : "valid_password" }'
+> ```
+
+##### Example browser [GET]
+
+> ```
+>  http://http://localhost:8080/user/login?email=valid_email&password=valid_password
+> ```
+</details>
+
 ### API Messages
 
 In this section we present the HyperDrive response, in the following table we summarize all response elements/parameters: <br>
