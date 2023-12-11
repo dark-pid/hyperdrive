@@ -1,0 +1,6 @@
+sequenceDiagram
+    User->>+Hyperdrive: calls protected method
+    Hyperdrive->>+JWT: check access token
+    JWT-->>+Hyperdrive: valid token | boolean
+    Hyperdrive->>+Hyperdrive: Execute Protected Method
+    Hyperdrive-->>+User: send execution result
