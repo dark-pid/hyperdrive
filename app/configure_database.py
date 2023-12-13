@@ -50,7 +50,7 @@ class Transaction(db.Model):
 
 with app.app_context():
 
-    csv_file_path = 'C:/Users/cambo/Projetos/hyperdriver/hyperdrive/app/database/users.csv'
+    csv_file_path = 'database/users.csv'
     df = pd.read_csv(csv_file_path)
     db.create_all()
 
