@@ -6,7 +6,6 @@ from flask import Flask, jsonify, render_template, send_file, abort
 from instance_app import app
 from api.query_api import queries_blueprint
 from api.core_api import core_api_blueprint
-from api.database_api import database_api_blueprint
 
 
 # basic config
@@ -17,7 +16,6 @@ app.config['JSON_SORT_KEYS'] = False  # prevent sorting json
 # blueprint registry
 app.register_blueprint(queries_blueprint)
 app.register_blueprint(core_api_blueprint)
-app.register_blueprint(database_api_blueprint)
 
 
 @app.route('/')
