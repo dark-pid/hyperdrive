@@ -43,40 +43,17 @@ If the user does not configure these variables, they will continue with their de
 
 ## Create and Populate the Database
 
-PostgresSQL must already be installed and configured on the machine, and to use the methods it is important that there is a server created and named (DB_NAME). Then just run the configure_database.py file so that the database creates all the important tables for the hyperdrive
+PostgresQL must already be installed and configured on the machine, and to use the methods it is important that there is a database created and named (DB_NAME) in postgres.
+
+In the folder called database it is important that there is a CSV file named users. Each line of this file must contain the user data that will be added to the database once it is created with the configure_database.py file.
+
+Then just run the configure_database.py file so that the database creates all the important tables for the hyperdrive as well as adding the user data present in the users.csv file.
+
+NOTE: check the users.csv file present on the hyperdrive to understand how it should be. It is important to keep line one present in the example and each user on one line in the file.
 
 ```
 >> cd app
->> python confgure_database.py
+>> python configure_database.py
 ```
 
 These tables can be seen in [https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd](https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd).
-
-
-Below are the methods for the system administrator user to perform manipulations in the database
-
-
-#### ADD USER
-<details>
- <summary><code>POST</code> <code><b>/data/add_user</b></code> <code>(creates a new user in the database)</code></summary>
-
-##### Responses
-
-> | http code     | content-type       | response |
-> |----|---|---|
-> | `200`         | `application/json; charset=utf-8` | TO DO: standardization to be considered after creating the method if necessary |
-> | `40x`         | `application/json; charset=utf-8` | TO DO: standardization to be considered after creating the method if necessary |
-> | `50x`         | `application/json; charset=utf-8` | TO DO: standardization to be considered after creating the method if necessary |
-
-##### Example cURL [POST]
-
-> ```javascript
->  curl -X POST http://localhost:8080/data/add_user -H 'Content-Type: application/json' -d '{"email":"valid_email", "password":"valid_password", "wallet_private_key":"valid_wallet_private_key" }'
-> ```
-
-##### Example browser [GET]
-
-> ```
->  TO DO
-> ```
-</details>
