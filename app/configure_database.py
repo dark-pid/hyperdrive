@@ -23,9 +23,6 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 
 
-csv_file_path = 'app/database/users.csv'
-df = pd.read_csv(csv_file_path)
-
 
 class User(db.Model):
     __tablename__ = 'user_account'
@@ -52,18 +49,20 @@ class Transaction(db.Model):
 
 
 with app.app_context():
+
+    csv_file_path = 'C:/Users/cambo/Projetos/hyperdriver/hyperdrive/app/database/users.csv'
+    df = pd.read_csv(csv_file_path)
     db.create_all()
 
+    for index, row in df.iterrows():
+        password=row['password']
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-for index, row in df.iterrows():
-    hashed_password = bcrypt.hashpw(
-        row['password'].encode('utf-8'), bcrypt.gensalt())
-
-    new_user = User(
-        email=row['email'],
-        password=hashed_password.decode('utf-8'),
-        wallet_private_key=row['wallet_private_key']
+        new_user = User(
+            email=row['email'],
+            password=hashed_password,
+            wallet_private_key=row['wallet_private_key']
     )
-    db.session.add(new_user)
+        db.session.add(new_user)
 
-db.session.commit()
+    db.session.commit()
