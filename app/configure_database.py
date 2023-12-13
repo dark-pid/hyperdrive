@@ -1,4 +1,6 @@
 import os
+import pandas as pd
+from flask_bcrypt import Bcrypt
 from database.variables_database import ConfigVariables
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, relationship
@@ -18,6 +20,11 @@ db = SQLAlchemy(model_class=Base)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
 
 db.init_app(app)
+bcrypt = Bcrypt(app)
+
+
+csv_file_path = 'app/database/users.csv'
+df = pd.read_csv(csv_file_path)
 
 
 class User(db.Model):
@@ -46,3 +53,17 @@ class Transaction(db.Model):
 
 with app.app_context():
     db.create_all()
+
+
+for index, row in df.iterrows():
+    hashed_password = bcrypt.hashpw(
+        row['password'].encode('utf-8'), bcrypt.gensalt())
+
+    new_user = User(
+        email=row['email'],
+        password=hashed_password.decode('utf-8'),
+        wallet_private_key=row['wallet_private_key']
+    )
+    db.session.add(new_user)
+
+db.session.commit()
