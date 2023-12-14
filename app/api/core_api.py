@@ -13,6 +13,7 @@ from util.validation import ValidationUtil
 from util.config_manager import ConfigManager
 from util.responses import success_response_create_pid, error_response
 
+from config.BlockchainManager import BlockChainManager
 
 # configurando classe das váriaveis externas
 config_manager = ConfigManager()
@@ -26,28 +27,15 @@ if async_mode == "ASYNC":
 else:
     from util.synchronous import add_url, add_external_pid, set_payload
 
-# config responses class
 
 ##
-# configuring dARK GW
+# configuring blockchainManager
 ##
 
-bc_config = configparser.ConfigParser()
-deployed_contracts_config = configparser.ConfigParser()
+blockchain_manager = BlockChainManager()
 
-# bc configuration
-PROJECT_ROOT = "./"
-bc_config.read(os.path.join(PROJECT_ROOT, "config.ini"))
-# deployed contracts config
-deployed_contracts_config.read(os.path.join(
-    PROJECT_ROOT, "deployed_contracts.ini"))
-
-
-# gw
-dark_gw = DarkGateway(bc_config, deployed_contracts_config)
-
-#
-dark_map = DarkMap(dark_gw)
+dark_gw = blockchain_manager.dark_gw
+dark_map = blockchain_manager.dark_map
 
 ###
 # methods
