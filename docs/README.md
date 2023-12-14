@@ -1,4 +1,4 @@
-# Hyperdrive 
+# Hyperdrive
 
 > _Table of Content:_
 > - [Hyperdrive API](#hyperdrive-api) : API and messages description
@@ -15,7 +15,7 @@
 ### Implementation Status
 
 | name                     |  function     | method | status |
-|:-                        | :-:           | :-:    | :-: | 
+|:-                        | :-:           | :-:    | :-: |
 |[assing_pid](#assing_pid) | no_parameter  | sync   | :bulb: |
 |[assing_pid](#assing_pid) | no_parameter  | async  | :construction: |
 |[assing_pid](#assing_pid) | external_url  | async  | :construction: |
@@ -29,6 +29,7 @@
 |[add](#add)               | external_pid  | async  | :heavy_check_mark: |
 |[add](#add)               | external_url  | async  | :heavy_check_mark: |
 |[set](#set)               | payload       | async  | :heavy_check_mark: |
+|[login_user](#login_user) | email and password | sync   | ⬜ |
 
 **status :**
 > - :heavy_check_mark: : done
@@ -75,7 +76,7 @@ The following method do not reequire authentication
 ##### Example cURL [POST]
 
 > ```javascript
->  curl -X POST http://localhost:8080/core/new -H 'Content-Type: application/json' -d '{"external_pid":"doi-number"}'
+>  curl -X POST http://localhost:8080/core/new -H 'Content-Type: application/json' -d '{"external_pid":"doi-number", "access_token" : "token_jwt"}'
 > ```
 
 ##### Example browser [GET]
@@ -109,7 +110,7 @@ The following method do not reequire authentication
 ##### Example cURL [POST]
 
 > ```javascript
->  curl -X POST http://localhost:8080/core/add/8008/fk3abd1344 -H 'Content-Type: application/json' -d '{"external_pid":"doi-number"}'
+>  curl -X POST http://localhost:8080/core/add/8008/fk3abd1344 -H 'Content-Type: application/json' -d '{"external_pid":"doi-number", "access_token" : "token_jwt"}'
 > ```
 
 </details>
@@ -139,7 +140,7 @@ The following method do not reequire authentication
 ##### Example cURL [POST]
 
 > ```javascript
->  curl -X POST http://localhost:8080/core/set/8008/fk3abd1344 -H 'Content-Type: application/json' -d '{"external_pid":"doi-number"}'
+>  curl -X POST http://localhost:8080/core/set/8008/fk3abd1344 -H 'Content-Type: application/json' -d '{"external_pid":"doi-number", "access_token" : "token_jwt"}'
 > ```
 
 </details>
@@ -174,6 +175,50 @@ The following method do not reequire authentication
 > ```
 </details>
 
+## User Access
+
+### user auth method
+
+Through this method the user authenticates:
+
+- [Login User](#login-user): authenticates the user using their data in the database.
+
+
+#### Login User
+
+<details>
+ <summary><code>POST</code> <code><b>/user/login</b></code> <code>(authenticate user)</code></summary>
+
+##### Parameters
+
+> | name      |  type     | data type               | description                                                           |
+> |----|---|---|---|
+> | email    |  required | str    | user identification email  |
+> | password     |  required | str    | user identification password  |
+
+
+##### Responses
+
+> | http code     | content-type       | response |
+> |----|---|---|
+> | `200`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
+> | `40x`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
+> | `50x`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
+
+
+##### Example cURL [POST]
+
+> ```javascript
+>  curl -X POST http://$API_HOST:$API_PORT/user/login -H 'Content-Type: application/json' -d '{"email":"valid_email", "password" : "valid_password" }'
+> ```
+
+##### Example browser [GET]
+
+> ```
+>  http://http://localhost:8080/user/login?email=valid_email&password=valid_password
+> ```
+</details>
+
 ### API Messages
 
 In this section we present the HyperDrive response, in the following table we summarize all response elements/parameters: <br>
@@ -185,6 +230,7 @@ In this section we present the HyperDrive response, in the following table we su
 | hyperdrive_op_mode | the hyperdrive operation mode has two possible response | str | sync and async|     - sync: if the HyperDrive is in syncronized mode <br> - async : if the HyperDrive is in asyncronized mode |
 | action | the action that is requested | json | sync and async |   - new_pid <br>    - add_url <br>    - add_external_pid<br>     - set_payload<br> | json |
 | parameters | the request parameters  | json | sync and async | - external_url <br> - external_pid <br> - payload <br> | - |
+| api_auth_key       | the access token that references the user | str | sync and async| token JWT |
 | status | the status of the request | str | sync and async | - executed (sync mode status) <br> - queued (async mode status) <br> - rejected (error messages)
 | transaction_hash | the blockchain transaction hash | str | async | the transaction hash is hex number avaliable only in `async mode` |
 | error_code | the error code     | str | sync and async | only if the status is `rejected`  |
@@ -194,9 +240,10 @@ Understanding these parameters is crucial for effectively interacting with the A
 
 > 1. pid: This parameter represents a unique identifier for a specific object. It's returned as a string and is available in both synchronous and asynchronous modes.
 > 1. pid_hash_index: This parameter holds a blockchain internal index of the PID.
-> 1. hyperdrive_op_mode: : The 'hyperdrive_op_mode' parameter indicates the operational mode of HyperDrive. It can be either "sync" or "async," signifying synchronized or asynchronous operation, respectively. 
+> 1. hyperdrive_op_mode: : The 'hyperdrive_op_mode' parameter indicates the operational mode of HyperDrive. It can be either "sync" or "async," signifying synchronized or asynchronous operation, respectively.
 > 1. action: specifies the action requested through the API. It can take on various values, including "set_payload," "new_pid," "add_url," and "add_external_pid." These values indicate different operations or tasks that the API can perform. This parameter is represented in JSON format and is available in both sync and async modes.
 > 1. parameters: Contains additional information required for the requested action. It's structured as JSON and may include values such as 'pid,' 'external_url,' and 'payload.' These values vary depending on the specific action requested.
+> 1. api_auth_key: this parameter refers to the JWT access token that authorizes the user to access the Hyperdrive API methods. It is returned as a string and is available in synchronous and asynchronous modes.
 > 1. status: reflects the status of the API request. It can have one of three values: "executed" (indicating successful execution in sync mode), "queued" (suggesting the task is awaiting processing in async mode), or "rejected" (implying that the request encountered an error).
 > 1. transaction_hash: In asynchronous mode, the 'transaction_hash' parameter comes into play. It holds the blockchain transaction hash, represented as a hexadecimal number. If the HyperDrive is executing over the sync mode the parameter will not be presented in API response.
 > 1. error_code : this parameter is only avalible if an error occur ( if the status is `rejected`)
@@ -212,7 +259,8 @@ Finally the response message will have the following structure:
  pid_hash_index : 0xffffff,
  hyperdrive_op_mode: [sync|async],
  action: set_payload|new_pid|add_url|add_external_pid
- parameters : { pid: 8033/fk819 , external_url : dark.io/xpto } , 
+ parameters : { pid: 8033/fk819 , external_url : dark.io/xpto } ,
+ api_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
  status : executed|queued|rejeceted,
  transaction_hash : 0xffff,
  error_code : 500,
