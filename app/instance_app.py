@@ -9,3 +9,5 @@ PROJECT_ROOT = '.'
 template_dir = os.path.join(PROJECT_ROOT, 'templates')
 
 app = Flask(__name__, template_folder=template_dir)
+
+USE_AUTH = os.environ.get('HYPERDRIVE_AUTH', 'true').lower() == 'true'
