@@ -19,7 +19,7 @@ Flask-Bcrypt==1.0.1
 Flask-Migrate==4.0.5
 flask-marshmallow==0.15.0
 marshmallow-sqlalchemy==0.29.0
-flask_jwt_extended
+flask_jwt_extended==4.5.3
 gunicorn
 # recolocar quando alterar o web3
 # uvicorn[standard]==0.21.1
