@@ -1,14 +1,6 @@
-import os
-import pandas as pd
-from flask_bcrypt import Bcrypt
-from database.variables_database import ConfigVariables
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, relationship
 from sqlalchemy import Integer, String, Column, JSON, ForeignKey
-from instance_app import app
-
-
-config_variables = ConfigVariables()
 
 
 class Base(DeclarativeBase):
@@ -17,11 +9,10 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://{os.environ['DB_USER']}:{os.environ['DB_PASS']}@{os.environ['DB_HOST']}:{os.environ['DB_PORT']}/{os.environ['DB_NAME']}"
 
-db.init_app(app)
-bcrypt = Bcrypt(app)
-
+def configure(app):
+    db.init_app(app)
+    app.db = db
 
 
 class User(db.Model):
@@ -46,23 +37,3 @@ class Transaction(db.Model):
 
     user_account_id = Column(Integer, ForeignKey('user_account.id'))
     user_account = relationship("User", back_populates="transactions")
-
-
-with app.app_context():
-
-    csv_file_path = 'database/users.csv'
-    df = pd.read_csv(csv_file_path)
-    db.create_all()
-
-    for index, row in df.iterrows():
-        password=row['password']
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-
-        new_user = User(
-            email=row['email'],
-            password=hashed_password,
-            wallet_private_key=row['wallet_private_key']
-    )
-        db.session.add(new_user)
-
-    db.session.commit()
