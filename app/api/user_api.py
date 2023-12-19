@@ -1,6 +1,6 @@
-from flask import Blueprint, request, make_response, jsonify
+from flask import Blueprint, request, make_response
 
-from util.responses import success_response, error_response
+from util.responses import error_response, success_response_database, error_response_database
 
 from database_methods import authenticate
 
@@ -18,11 +18,23 @@ def user_login():
     if len(data) == 0:
         return make_response(error_response(action="authenticate", error_message="No parameter has been passed", error_code=400))
 
+    if len(data) < 2:
+        return make_response(error_response(action="authenticate", error_message="Unspecified email or password", error_code=400))
+
     user_email = data.get("email")
     user_password = data.get("password")
 
-    api_auth_key = authenticate(user_email, user_password)
+    api_auth_key, refresh_auth_key = authenticate(user_email, user_password)
 
-    return jsonify({
-        "api_auth_key": api_auth_key
-    })
+    if api_auth_key != None:
+
+        response = success_response_database(
+            action="athenticate", api_auth_key=api_auth_key, refresh_auth_key=refresh_auth_key)
+
+        return response
+    else:
+
+        response = error_response_database(
+            action="athenticate", error_code=400, error_message="invalid credentials")
+
+        return response
