@@ -8,12 +8,16 @@ from api.query_api import queries_blueprint
 from api.core_api import core_api_blueprint
 from api.user_api import user_api_blueprint
 
+from util.auth_middleware import authentication_middleware
+
 app = create_app()
 
 # basic config
 app.config['JSON_AS_ASCII'] = False  # utf8
 app.config['JSON_SORT_KEYS'] = False  # prevent sorting json
 
+
+app.before_request(authentication_middleware)
 
 # blueprint registry
 app.register_blueprint(queries_blueprint)

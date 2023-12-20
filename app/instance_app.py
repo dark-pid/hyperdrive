@@ -15,8 +15,6 @@ PROJECT_ROOT = '.'
 config_variables = ConfigVariables()
 
 
-USE_AUTH = os.environ.get('HYPERDRIVE_AUTH', 'true').lower() == 'true'
-
 # templates
 template_dir = os.path.join(PROJECT_ROOT, 'templates')
 
