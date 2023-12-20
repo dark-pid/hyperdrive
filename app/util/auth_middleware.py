@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from util.config_manager import ConfigManager
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 
 config_manager = ConfigManager()
 

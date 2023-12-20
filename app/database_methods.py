@@ -30,6 +30,7 @@ def authenticate(email, password):
                 identity=user.id, expires_delta=timedelta(hours=6))
 
             refresh_token = create_refresh_token(identity=user.id)
+            # TO DO: create future method to use refresh token for new token request
 
             return access_token, refresh_token
         else:
