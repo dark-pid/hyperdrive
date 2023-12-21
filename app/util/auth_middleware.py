@@ -4,11 +4,12 @@ from flask_jwt_extended import jwt_required
 
 config_manager = ConfigManager()
 
-USE_AUTH = config_manager.get_hyperdrive_auth()
-
 
 def authentication_middleware():
-    if USE_AUTH == "True":
+
+    USE_AUTH = config_manager.get_hyperdrive_auth()
+
+    if USE_AUTH == "TRUE":
 
         token = request.headers.get('Authorization')
 
