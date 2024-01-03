@@ -55,11 +55,18 @@ The following method do not reequire authentication
 <details>
  <summary><code>POST</code> <code><b>/core/new</b></code> <code>(retrieve a new PID)</code></summary>
 
+##### header parameter
+
+> | name      |  type     | data type               | description                                                           |
+> |----|---|---|---|
+> | Authorization     |  required | str    | the api auth key  |
+
+NOTE: if authentication is disabled, it will not be mandatory to use Authorization. When sending the JWT token in Authorization, ensure that "Bearer" is sent before the token (see example)
+
 ##### Parameters
 
 > | name      |  type     | data type               | description                                                           |
 > |----|---|---|---|
-> | api_auth_key     |  required | str    | the api auth key  |
 > | external_url     |  optional | str    | external url   |
 > | external_pid     |  optional | str    | external pid   |
 > | payload          |  optional | json   | pid paylload  |
@@ -91,11 +98,18 @@ The following method do not reequire authentication
 <details>
  <summary><code>POST</code> <code><b>/core/add/{ark}|{hash_pid}</b></code> <code>(add an attribute to PID)</code></summary>
 
+##### header parameter
+
+> | name      |  type     | data type               | description                                                           |
+> |----|---|---|---|
+> | Authorization     |  required | str    | the api auth key  |
+
+NOTE: if authentication is disabled, it will not be mandatory to use Authorization. When sending the JWT token in Authorization, ensure that "Bearer" is sent before the token (see example)
+
 ##### Parameters
 
 > | name      |  type     | data type               | description                                                           |
 > |----|---|---|---|
-> | api_auth_key     |  required | str    | the api auth key  |
 > | external_url     |  optional | str    | external url   |
 > | external_pid     |  optional | str    | external pid   |
 
@@ -121,11 +135,18 @@ The following method do not reequire authentication
 <details>
  <summary><code>POST</code> <code><b>/core/set/{ark}|{hash_pid}</b></code> <code>(set PID attribute)</code></summary>
 
+##### header parameter
+
+> | name      |  type     | data type               | description                                                           |
+> |----|---|---|---|
+> | Authorization     |  required | str    | the api auth key  |
+
+NOTE: if authentication is disabled, it will not be mandatory to use Authorization. When sending the JWT token in Authorization, ensure that "Bearer" is sent before the token (see example)
+
 ##### Parameters
 
 > | name      |  type     | data type               | description                                                           |
 > |----|---|---|---|
-> | api_auth_key     |  required | str    | the api auth key  |
 > | external_url     |  optional | str    | external url   |
 > | payload          |  optional | json   | pid paylload   |
 
