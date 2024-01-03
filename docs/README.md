@@ -227,17 +227,37 @@ Through this method the user authenticates:
 > | `40x`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
 > | `50x`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
 
+NOTE: The user login method response presents some Messages API parameters explained in [paramerter detail](#api-messages) . Below are only the parameters that are exclusive to the method and an example response.
+
+| parameter | description | type | values   |
+| ---       | ---         | ---  | ---      |
+| api_auth_key       | the access token that references the user | str | token JWT |
+| refresh_auth_key       | allows access token renewal without the need for the user to log in again | str | resfresh token JWT |
+
+Below we present the parameters in more detail:
+
+> 1. api_auth_key: this parameter refers to the JWT access token that authorizes the user to access the Hyperdrive API methods. It is returned as a string and is available in synchronous and asynchronous modes.
+> 1. refresh_auth_key: This parameter allows the access token to be renewed without the need for the user to log in again.
+
+Finally the response message will have the following structure:
+
+
+```json
+{
+ action: athenticate,
+ api_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
+ refresh_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
+ status : executed|rejeceted,
+ error_code : 500,
+ error_msg : invalid credentials,
+}
+```
+
 
 ##### Example cURL [POST]
 
 > ```javascript
 >  curl -X POST http://$API_HOST:$API_PORT/user/login -H 'Content-Type: application/json' -d '{"email":"valid_email", "password" : "valid_password" }'
-> ```
-
-##### Example browser [GET]
-
-> ```
->  http://http://localhost:8080/user/login?email=valid_email&password=valid_password
 > ```
 </details>
 
@@ -252,8 +272,6 @@ In this section we present the HyperDrive response, in the following table we su
 | hyperdrive_op_mode | the hyperdrive operation mode has two possible response | str | sync and async|     - sync: if the HyperDrive is in syncronized mode <br> - async : if the HyperDrive is in asyncronized mode |
 | action | the action that is requested | json | sync and async |   - new_pid <br>    - add_url <br>    - add_external_pid<br>     - set_payload<br> | json |
 | parameters | the request parameters  | json | sync and async | - external_url <br> - external_pid <br> - payload <br> | - |
-| api_auth_key       | the access token that references the user | str | sync and async| token JWT |
-| refresh_auth_key       | allows access token renewal without the need for the user to log in again | str | sync and async| resfresh token JWT |
 | status | the status of the request | str | sync and async | - executed (sync mode status) <br> - queued (async mode status) <br> - rejected (error messages)
 | transaction_hash | the blockchain transaction hash | str | async | the transaction hash is hex number avaliable only in `async mode` |
 | error_code | the error code     | str | sync and async | only if the status is `rejected`  |
@@ -266,8 +284,6 @@ Understanding these parameters is crucial for effectively interacting with the A
 > 1. hyperdrive_op_mode: : The 'hyperdrive_op_mode' parameter indicates the operational mode of HyperDrive. It can be either "sync" or "async," signifying synchronized or asynchronous operation, respectively.
 > 1. action: specifies the action requested through the API. It can take on various values, including "set_payload," "new_pid," "add_url," and "add_external_pid." These values indicate different operations or tasks that the API can perform. This parameter is represented in JSON format and is available in both sync and async modes.
 > 1. parameters: Contains additional information required for the requested action. It's structured as JSON and may include values such as 'pid,' 'external_url,' and 'payload.' These values vary depending on the specific action requested.
-> 1. api_auth_key: this parameter refers to the JWT access token that authorizes the user to access the Hyperdrive API methods. It is returned as a string and is available in synchronous and asynchronous modes.
-> 1. refresh_auth_key: This parameter allows the access token to be renewed without the need for the user to log in again.
 > 1. status: reflects the status of the API request. It can have one of three values: "executed" (indicating successful execution in sync mode), "queued" (suggesting the task is awaiting processing in async mode), or "rejected" (implying that the request encountered an error).
 > 1. transaction_hash: In asynchronous mode, the 'transaction_hash' parameter comes into play. It holds the blockchain transaction hash, represented as a hexadecimal number. If the HyperDrive is executing over the sync mode the parameter will not be presented in API response.
 > 1. error_code : this parameter is only avalible if an error occur ( if the status is `rejected`)
@@ -284,8 +300,6 @@ Finally the response message will have the following structure:
  hyperdrive_op_mode: [sync|async],
  action: set_payload|new_pid|add_url|add_external_pid
  parameters : { pid: 8033/fk819 , external_url : dark.io/xpto } ,
- api_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
- refresh_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
  status : executed|queued|rejeceted,
  transaction_hash : 0xffff,
  error_code : 500,
