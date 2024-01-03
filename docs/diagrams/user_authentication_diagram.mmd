@@ -1,8 +1,8 @@
 sequenceDiagram
-    User->>+Hyperdrive: login(email, password)
-    Hyperdrive->>+JWT: send user email and password for authentication
-    JWT->>+database: authenticate (email, password)
+    User->>+Hyperdrive: user_login()
+    Hyperdrive->>+JWT: authenticate(user_email, user_password)
+    JWT->>+database: checks user data
     database-->>+ JWT: user exists | boolean
-    JWT->>+JWT: generate access token
-    JWT-->>+Hyperdrive: save user access token
-    Hyperdrive-->>+User: send the access token
+    JWT->>+JWT: generate access e refresh token
+    JWT-->>+Hyperdrive: save user access e refresh token
+    Hyperdrive-->>+User: send the access e refresh token
