@@ -10,6 +10,7 @@ class ConfigManager:
         os.environ.setdefault("HYPERDRIVE_URL_VALIDATION", "NONE")
         os.environ.setdefault("HYPERDRIVE_PAYLOAD_VALIDATION", "NONE")
         os.environ.setdefault("HYPERDRIVE_OPERATION_MODE", "ASYNC")
+        os.environ.setdefault("HYPERDRIVE_AUTH", "TRUE")
 
     def get_external_pid_validation(self):
         return os.environ["HYPERDRIVE_EXTERNAL_PID_VALIDATION"]
@@ -34,3 +35,9 @@ class ConfigManager:
 
     def set_operation_mode(self, value):
         os.environ["HYPERDRIVE_OPERATION_MODE"] = value
+
+    def get_hyperdrive_auth(self):
+        return os.environ["HYPERDRIVE_AUTH"]
+
+    def set_hyperdrive_auth(self, value):
+        os.environ["HYPERDRIVE_AUTH"] = value

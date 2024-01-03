@@ -1,15 +1,20 @@
 # Hyperdrive Database
 
-The configure_database.py file plays a crucial role in the initial configuration of the database system.
+To initialize the database it is important to follow some steps. Additionally, there are some requirements that need to be installed.
 
 ## How to run
 
 <details>
 <summary>System Requirements</summary>
     <ul>
-        <li> python 3.10 </li>
+        <li> python 3.10</li>
         <li> flask-sqlalchemy 3.1.1</li>
-        <li> PostgresSQL 16 </li>
+        <li> PostgresSQL 16</li>
+        <li> psycopg2-binary 2.9.9</li>
+        <li> Flask-Bcrypt 1.0.1</li>
+        <li> Flask-Migrate 4.0.5</li>
+        <li> flask-marshmallow 0.15.0</li>
+        <li> marshmallow-sqlalchemy 0.29.0</li>
     </ul>
 </details>
 
@@ -45,15 +50,17 @@ If the user does not configure these variables, they will continue with their de
 
 PostgresQL must already be installed and configured on the machine, and to use the methods it is important that there is a database created and named (DB_NAME) in postgres.
 
-In the folder called database it is important that there is a CSV file named users. Each line of this file must contain the user data that will be added to the database once it is created with the configure_database.py file.
-
-Then just run the configure_database.py file so that the database creates all the important tables for the hyperdrive as well as adding the user data present in the users.csv file.
+In the folder called database it is important that there is a CSV file named users. Each line of this file must contain the user data that will be added to the database once it is created.
 
 NOTE: check the users.csv file present on the hyperdrive to understand how it should be. It is important to keep line one present in the example and each user on one line in the file.
 
+Follow the commands below to create the tables in the database and then fill in the user table using a csv file:
+
 ```
 >> cd app
->> python configure_database.py
+>> python api_server.py
+>> flask --app instance_app db upgrade
+>> python import_csv.py
 ```
 
 These tables can be seen in [https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd](https://github.com/dark-pid/hyperdrive/blob/develop/docs/diagrams/entities_on_and_off_chain.mmd).
