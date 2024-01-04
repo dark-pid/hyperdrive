@@ -24,12 +24,12 @@ def user_login():
     user_email = data.get("email")
     user_password = data.get("password")
 
-    api_auth_key, refresh_auth_key = authenticate(user_email, user_password)
+    api_auth_key = authenticate(user_email, user_password)
 
     if api_auth_key != None:
 
         response = success_response_database(
-            action="athenticate", api_auth_key=api_auth_key, refresh_auth_key=refresh_auth_key)
+            action="athenticate", api_auth_key=api_auth_key)
 
         return response
     else:
