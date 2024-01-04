@@ -232,12 +232,10 @@ NOTE: The user login method response presents some Messages API parameters expla
 | parameter | description | type | values   |
 | ---       | ---         | ---  | ---      |
 | api_auth_key       | the access token that references the user | str | token JWT |
-| refresh_auth_key       | allows access token renewal without the need for the user to log in again | str | resfresh token JWT |
 
 Below we present the parameters in more detail:
 
 > 1. api_auth_key: this parameter refers to the JWT access token that authorizes the user to access the Hyperdrive API methods. It is returned as a string and is available in synchronous and asynchronous modes.
-> 1. refresh_auth_key: This parameter allows the access token to be renewed without the need for the user to log in again.
 
 Finally the response message will have the following structure:
 
@@ -246,7 +244,6 @@ Finally the response message will have the following structure:
 {
  action: athenticate,
  api_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
- refresh_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
  status : executed|rejeceted,
  error_code : 500,
  error_msg : invalid credentials,
