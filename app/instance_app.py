@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-
+from flasgger import Swagger
 from database.variables_database import ConfigVariables
 from model import configure as config_db
 from serealize import configure as config_ma
@@ -32,5 +32,6 @@ def create_app():
     Migrate(app, app.db)
 
     JWTManager(app)
-
+    Swagger(app)
+    
     return app
