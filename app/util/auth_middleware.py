@@ -13,7 +13,7 @@ def authentication_middleware():
 
         token = request.headers.get('Authorization')
 
-        non_auth_routes = ['/user/login', '/core/get']
+        non_auth_routes = ['/apidocs','/','/user/login', '/core/get']
 
         if request.path in non_auth_routes:
             return
