@@ -29,12 +29,12 @@ def user_login():
     if api_auth_key != None:
 
         response = success_response_database(
-            action="athenticate", api_auth_key=api_auth_key)
+            action="authenticate", api_auth_key=api_auth_key)
 
         return response
     else:
 
         response = error_response_database(
-            action="athenticate", error_code=400, error_message="invalid credentials")
+            action="authenticate", error_code=400, error_message="invalid credentials")
 
         return response
