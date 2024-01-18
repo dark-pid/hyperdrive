@@ -70,7 +70,6 @@ def success_response_create_pid(pid, pid_hash, action):
 
 def success_response_database(action, api_auth_key):
     response_data = {
-        "op_mode": "sync",
         "action": action,
         "status": "Executed",
         "api_auth_key": api_auth_key
@@ -82,7 +81,6 @@ def success_response_database(action, api_auth_key):
 def error_response_database(action, error_message, error_code):
     error_response = {
         "error": {
-            "op_mode": "sync",
             "action": action,
             "status": "Rejected",
             "error_code": error_code,
