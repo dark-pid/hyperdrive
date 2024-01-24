@@ -175,6 +175,11 @@ def set_general(ark_id):
 def add_general(ark_id):
     pid = None
 
+    if ark_id.startswith("0x"):
+        pid = dark_map.get_pid_by_hash(ark_id)
+    else:
+        pid = dark_map.get_pid_by_ark(ark_id)
+
     if request.is_json:
         data = request.get_json()
         if len(data) == 0:
@@ -201,3 +206,4 @@ def add_general(ark_id):
                 return add_external_pid(ark_id, pid)
 
     return make_response(error_response(action="add", error_message="Invalid or missing data in the request. Please check your input and try again.", error_code=400, pid=pid))
+
