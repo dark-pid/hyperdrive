@@ -44,7 +44,7 @@ dark_map = blockchain_manager.dark_map
 
 def create_pid():
     try:
-        action = "create_pid"
+        action = "new_pid"
         error_code = 200
         pid_hash = dark_map.sync_request_pid_hash()
         pid_ark = dark_map.convert_pid_hash_to_ark(pid_hash)
@@ -146,11 +146,11 @@ def set_general(ark_id):
     if request.is_json:
         data = request.get_json()
         if len(data) == 0:
-            return make_response(error_response(action="set", error_message="No parameter has been passed", error_code=400, pid=pid))
+            return make_response(error_response(action="get_data", error_message="No parameter has been passed", error_code=400, pid=pid))
 
         if len(data) > 1:
 
-            return make_response(error_response(action="set", error_message="Unable to execute multiple operations considering the Hyperdriver Synchronized Mode.", error_code=500, pid=pid))
+            return make_response(error_response(action="get_data", error_message="Unable to execute multiple operations considering the Hyperdriver Synchronized Mode.", error_code=500, pid=pid))
 
         if "external_url" in data:
             external_url = data.get("external_url")
@@ -168,7 +168,7 @@ def set_general(ark_id):
             if async_mode == "SYNC":
                 return set_payload(ark_id, payload)
 
-    return make_response(error_response(action="set", error_message="Invalid or missing data in the request. Please check your input and try again.", error_code=400, pid=pid))
+    return make_response(error_response(action="get_data", error_message="Invalid or missing data in the request. Please check your input and try again.", error_code=400, pid=pid))
 
 
 @core_api_blueprint.post("/add/<path:ark_id>")
@@ -178,11 +178,11 @@ def add_general(ark_id):
     if request.is_json:
         data = request.get_json()
         if len(data) == 0:
-            return make_response(error_response(action="add", error_message="No parameter has been passed", error_code=400, pid=pid))
+            return make_response(error_response(action="get_data", error_message="No parameter has been passed", error_code=400, pid=pid))
 
         if len(data) > 1:
 
-            return make_response(error_response(action="add", error_message="Unable to execute multiple operations considering the Hyperdriver Synchronized Mode.", error_code=500, pid=pid))
+            return make_response(error_response(action="get_data", error_message="Unable to execute multiple operations considering the Hyperdriver Synchronized Mode.", error_code=500, pid=pid))
 
         if "external_url" in data:
             external_url = data.get("external_url")
@@ -200,4 +200,4 @@ def add_general(ark_id):
             if async_mode == "SYNC":
                 return add_external_pid(ark_id, pid)
 
-    return make_response(error_response(action="add", error_message="Invalid or missing data in the request. Please check your input and try again.", error_code=400, pid=pid))
+    return make_response(error_response(action="get_data", error_message="Invalid or missing data in the request. Please check your input and try again.", error_code=400, pid=pid))
