@@ -116,10 +116,16 @@ def get_pid(dark_id):
 
         resp_dict = dark_pid.to_dict()
 
+        resp = {
+            "externa_pid_list": dark_pid.externa_pid_list,
+            "externa_url": dark_pid.externa_url,
+            "payload": dark_pid.payload
+        }
+
         if len(dark_pid.externa_pid_list) == 0:
             del resp_dict["externa_pid_list"]
 
-        return success_response(pid=dark_pid, op_mode="sync", status="executed", parameter=dark_id, key_action="get_pid", action="get_pid")
+        return success_response(pid=dark_pid, op_mode="sync", status="executed", parameter=resp, key_action="get_pid_informations", action="get_pid")
     except Exception as e:
         resp_code = 500
         status = f"Unable to recovery (' {str(dark_id)} ')"
