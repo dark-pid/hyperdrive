@@ -105,7 +105,7 @@ def add_external_pid(ark_id, external_pid):
             if len(external_pid) == 0:
                 return error_response(action, "Sorry, PID cannot be empty. Please provide a valid PID and try again.", 400, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_pid)
         else:
-            return error_response(action, "queued", "the method could not, be implemented", 501, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_pid)
+            return error_response(action, "the method could not, be implemented", 501, op_mode=async_mode.lower(), key_action=key_action, pid=pid, parameter=external_pid)
 
         valid_pid = external_pid.split(":/")[1]
         dark_map.sync_add_external_pid(pid.pid_hash, valid_pid)
