@@ -13,11 +13,12 @@ def authentication_middleware():
 
         token = request.headers.get('Authorization')
 
-        non_auth_routes = ['/user/login', '/core/get']
-
+        non_auth_routes = ['/','/user/login', '/core/get','/static/swagger.json']
+        
         if request.path in non_auth_routes:
             return
-
+        if request.endpoint == 'swagger' or request.path.startswith('/swagger'):
+            return 
         try:
             jwt_required()(lambda: None)()
 

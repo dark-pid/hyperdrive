@@ -1,0 +1,1043 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "description": "Hyperdrive is responsible for intermediating access to the Blockchain through its routes access which are documented below.",
+      "version": "1.0.0",
+      "title": "Hyperdrive API Documentation",
+      "license": {
+        "name": "GNU General Public License v3.0",
+        "url": "https://github.com/dark-pid/hyperdrive/blob/main/LICENSE"
+      }
+    },
+    "paths": {
+        "/user/login" :{
+            "description": "Login User: authenticates the user using their data in the database.",
+            "summary": "Through this method the user authenticates",
+            "post" :{
+                "description": "Through the method, the user can send their credentials that will be used to carry out authentication",
+                "requestBody":{
+                    "$ref": "#/components/requestBodies/login"
+                },                                
+                "responses": {
+                    "200":{
+                        "description": "the success response means that the user will receive the authentication token to access the other API methods",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "description": "",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Action"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Status"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "api_auth_key":{
+                                                    "description": "this parameter refers to the JWT access token that authorizes the user to access the Hyperdrive API methods. It is returned as a string and is available in synchronous and asynchronous modes.",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                },
+                                "example":{
+                                    "action": "authenticate",
+                                    "status": "executed",
+                                    "api_auth_key":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcwNjExNzY0MCwianRpIjoiMDViNWNhNjAtYWJlZC00NDgxLWI3NGUtZDRmM2MwNjI1MTMxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzA2MTE3NjQwLCJleHAiOjE3MDYxMzkyNDB9.Ahg0ofJFeXZMylBMU_ADSk2OCaS1L974wZqWeIzC18M"
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "standard error response in json format",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/error_response"
+                                },
+                                "examples":{
+                                    "exemple1":{
+                                        "description": "error message triggered when the user submits an invalid email or password",
+                                        "value":{
+                                            "action": "authenticate",
+                                            "status": "Rejected",
+                                            "error_code": 400,
+                                            "error_message": "invalid credentials"
+                                        }
+                                    },
+                                    "exemple2":{
+                                        "description": "error message triggered when the user does not send any information to the request body",
+                                        "value":{
+                                            "action": "authenticate",
+                                            "status": "Rejected",
+                                            "error_code": 400,
+                                            "error_message": "No parameter has been passed"
+                                        }
+                                    },
+                                    "exemple3":{
+                                        "description": "error message triggered when the user does not send one of the information in the request body",
+                                        "value":{
+                                            "action": "authenticate",
+                                            "status": "Rejected",
+                                            "error_code": 400,
+                                            "error_message": "Unspecified email or password"
+                                        }
+                                    }
+                                }
+                            }
+                        }                     
+                    }            
+                }   
+            }            
+        },
+        "/core/new":{
+            "description": "the path that is used to generate a new pid",
+            "summary": "request a PID to the hyperdrive",
+            "post":{
+                "description": "using this method it is possible to generate a new draft pid",
+                "security": [
+                    {
+                        "bearerAuth":[]
+                    }
+                ],
+                "parameters": [
+                ],
+                "responses": {
+                    "200":{
+                        "description": "the success response in json format containing a draft pid and the your hash index",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "description": "",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Action"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Status"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Pid_hash_index"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Pid"
+                                        }
+                                    ]
+                                },
+                                "example":{
+                                    "action": "create_pid",
+                                    "pid": "8033/fkwff30000000000026",
+                                    "pid_hash_index": "0xc764a3c06b1f4d8f723b466541b9cfc66a88ba3ca5a02ee090e2396e065f5d1a",
+                                    "status": "executed"                                     
+                                }
+                            }
+                            
+                        }
+                    },
+                    "500":{
+                        "description": "internal error in the blockchain ",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/error_response"
+                                },
+                                "example":{
+                                    "error": {
+                                        "message": "block_chain_error_message",
+                                        "error_code": 500,
+                                        "action": "create_pid",
+                                        "status": "Unable to create a new PID"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get":{
+                "summary": "",
+                "description": "",
+                "security": [
+                    {
+                        "bearerAuth":[]
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+
+                                }
+                            }
+                            
+                        }
+                    },
+                    "400":{
+                        "description": "",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }                
+        },        
+        "/core/add/{dark_id}":{
+            "summary": "add an attribute to PID",
+            "description": "route used to add new attributes to an already created pid",
+            "post":{
+                "description": "the post method is used to add new attributes to a pid, using a body in json format it is possible to submit one of the following keys: external_url or external pid",
+                "requestBody":{
+                    "$ref": "#/components/requestBodies/add_external_attributes"
+                },
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/dark_id"
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth":[]
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "json format success response containing the request components, alternating depending on the hyperdrive operating mode and the parameter submitted by the user",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/async_success_response"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/sync_success_response"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "Example1":{
+                                        "$ref": "#/components/examples/add_external_url_async_response_exemple"
+                                    },
+                                    "Example2":{
+                                        "$ref": "#/components/examples/add_external_url_sync_response_exemple"
+                                    },
+                                    "Exemple3":{
+                                        "description": "",
+                                        "value":{                                                                                      
+                                            "action": "add_external_pid",
+                                            "hyperdrive_op_mode": "async",
+                                            "parameter": {
+                                                "external_pid": "doi:/116.jdakt.7892",
+                                                "pid": "8033/fkwff3000000000005k"
+                                            },
+                                            "pid": "8033/fkwff3000000000005k",
+                                            "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                            "status": "queued",
+                                            "transaction_hash": "0xe2d0fe1b3c583af4d1abf88dadca3200cef75a44c5fced0fa8c69385220a699b"                                                                                    
+                                        }
+                                    },
+                                    "Exemple4":{
+                                        "description": "",
+                                        "value":{                                                                                      
+                                            "action": "add_external_pid",
+                                            "hyperdrive_op_mode": "sync",
+                                            "parameter": {
+                                                "external_pid": "doi:/116.jdakt.7892",
+                                                "pid": "8033/fkwff3000000000005k"
+                                            },
+                                            "pid": "8033/fkwff3000000000005k",
+                                            "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                            "status": "executed"                                                                                   
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "json format error response containing the request components, alternating depending on the parameter submitted by the user",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/generic_with_parameter_error_response"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/generic_without_parameter_error_response"
+                                        }
+                                    ]
+                                },
+                                "examples":{   
+                                    "Example1":{                                     
+                                        "description": "",
+                                        "value":{                                           
+                                            "error": {
+                                                "action": "add",
+                                                "error_code": 400,
+                                                "message": "Invalid or missing data in the request. Please check your input and try again.",
+                                                "pid": "8033/fkwff3000000000005k",
+                                                "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                                "status": "rejected"
+                                            }
+                                        }
+                                    },
+                                    "Example2":{                                     
+                                        "description": "",
+                                        "value":{                                                                                      
+                                            "error": {
+                                                "action": "add",
+                                                "error_code": 400,
+                                                "message": "No parameter has been passed",
+                                                "pid": "8033/fkwff3000000000005k",
+                                                "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                                "status": "rejected"
+                                            }                                             
+                                        }
+                                    }                                  
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "blockchain internal error response",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/generic_with_parameter_error_response"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/generic_without_parameter_error_response"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "Example1":{                                     
+                                        "description": "",
+                                        "value":{                                                                                      
+                                            "error": {
+                                                "action": "add",
+                                                "error_code": 500,
+                                                "message": "Unable to execute multiple operations considering the Hyperdriver Synchronized Mode.",
+                                                "pid": "8033/fkwff3000000000005k",
+                                                "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                                "status": "rejected"
+                                            }                                                                                      
+                                        }
+                                    },
+                                    "Example2":{                                     
+                                        "description": "",
+                                        "value":{                                           
+                                            "error": "list index out of range"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "501":{
+                        "description": "",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/generic_with_parameter_error_response"
+                                }
+                            }
+                        }
+                    }
+                }               
+            }
+        },
+        "/core/set/{dark_id}":{
+            "summary": "set PID attribute",
+            "description": "route used to set attributes to an already created pid",
+            "post":{
+                "description": "the post method accepts a json body with only one of the following keys: external_url or payload",
+                "requestBody":{
+                    "$ref": "#/components/requestBodies/set_external_attributes"
+                },
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/dark_id"
+                    }
+                ],
+                "security": [
+                    {
+                        "bearerAuth":[]
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "json format success response containing the request components, alternating depending on the hyperdrive operating mode and the parameter submitted by the user",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/async_success_response"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/sync_success_response"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "Example1":{
+                                        "description": "",
+                                        "value":{
+                                            "action": "set_payload",
+                                            "hyperdrive_op_mode": "async",
+                                            "parameter": {
+                                                "payload": {
+                                                    "X": "Y"
+                                                },
+                                                "pid": "8033/fkwff3000000000005k"
+                                            },
+                                            "pid": "8033/fkwff3000000000005k",
+                                            "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                            "status": "queued",
+                                            "transaction_hash": "0xfa3565d4ce4b2b21428824dad9bc8598a4bccc2580c219d7f0f0bed39b7cec58"
+                                        }
+                                    },
+                                    "Example2":{
+                                        "description": "",
+                                        "value":{
+                                            "action": "set_payload",
+                                            "hyperdrive_op_mode": "sync",
+                                            "parameter": {
+                                                "payload": {
+                                                    "X": "Y"
+                                                },
+                                                "pid": "8033/fkwff3000000000005k"
+                                            },
+                                            "pid": "8033/fkwff3000000000005k",
+                                            "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                            "status": "executed"                                            
+                                        }
+                                    }
+                                }
+                            }
+                        }                   
+                    },
+                    "400":{
+                        "description": "json format error response containing the request components, alternating depending on the parameter submitted by the user",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/generic_with_parameter_error_response"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/generic_without_parameter_error_response"
+                                        }
+                                    ]
+                                },
+                                "examples": {
+                                    "Example1":{                                     
+                                        "description": "",
+                                        "value":{                                                                                      
+                                            "error": {
+                                                "action": "set",
+                                                "error_code": 400,
+                                                "message": "Invalid or missing data in the request. Please check your input and try again.",
+                                                "pid": "8033/fkwff3000000000005k",
+                                                "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                                "status": "rejected"
+                                              }                                                                                  
+                                        }
+                                    },
+                                    "Example2":{                                     
+                                        "description": "",
+                                        "value":{                                                                                      
+                                            "error": {
+                                                "action": "set_payload",
+                                                "error_code": 400,
+                                                "message": "Sorry, the provided payload cannot be empty. Please provide a valid payload and try again",
+                                                "pid": "8033/fkwff3000000000005k",
+                                                "pid_hash_index": "0xd454201ebc0d81a8b060d766d4e9f0556d020b4412e32b282e29d3efb43a9c9f",
+                                                "status": "rejected"
+                                              },
+                                              "hyperdrive_op_mode": "async",
+                                              "parameter": {
+                                                "payload": {},
+                                                "pid": "8033/fkwff3000000000005k"
+                                              }                                                                               
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "blockchain internal error response",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/generic_with_parameter_error_response"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/generic_without_parameter_error_response"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "501":{
+                        "description": "the server does not support the functionality required to complete the request",
+                        "content": {
+                            "application/json":{
+                                "schema":{                                    
+                                    "$ref": "#/components/schemas/generic_with_parameter_error_response"                                    
+                                }
+                            }
+                        }
+                    }
+                }               
+            }
+        },
+        "/core/get/{dark_id}":{
+            "summary": "retrieve a PID from blockchain",
+            "description": "through this route you can view all the information present in a PID stored on the blockchain",
+            "get":{
+                "description": "",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/dark_id"
+                    }
+                ],
+                "responses": {
+                    "200":{
+                        "description": "success response in json format containing the information contained in the PID submitted by the user",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "description": "",
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/Action"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Hyperdrive_op_mode"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Status"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Pid"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/Pid_hash_index"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "description": "",
+                                            "properties": {
+                                                "parameter":{
+                                                    "type": "object",
+                                                    "description": "contains all the information of the submitted pid",
+                                                    "allOf": [
+                                                        {
+                                                            "type": "object",
+                                                            "description": "",
+                                                            "properties": {
+                                                                "get_pid_informations":{
+                                                                    "type": "object",
+                                                                    "description": "",
+                                                                    "allOf": [
+                                                                        {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "externa_pid_list":{
+                                                                                    "type": "array",
+                                                                                    "description": "",
+                                                                                    "items":{}
+                                                                                },
+                                                                                "externa_url":{
+                                                                                    "type": "string",
+                                                                                    "description": ""
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "$ref": "#/components/schemas/Payload"
+                                                                        },
+                                                                        {
+                                                                            "$ref": "#/components/schemas/Pid"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            }
+                                                        },
+                                                        {
+                                                            "$ref": "#/components/schemas/Pid"
+                                                        }
+                                                    ]
+                                                }
+                                                
+                                            }
+                                        }
+                                    ]
+                                },
+                                "example":{
+                                    "action":"get_pid",
+                                    "hyperdrive_op_mode":"sync",
+                                    "parameter":{"get_pid_informations":{"externa_pid_list":[],"externa_url":"","payload":""},"pid":"8033/fkwff3000000000004s"},
+                                    "pid":"8033/fkwff3000000000004s",
+                                    "pid_hash_index":"0xf6b438cb3c79162c8b06dc2bad33a3fe8ac9234710d30193f1a293d883e1e897",
+                                    "status":"executed"
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "json format error response",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/generic_without_parameter_error_response"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "blockchain internal error response",
+                        "content": {
+                            "application/json":{
+                                "schema":{
+                                    "$ref": "#/components/schemas/generic_without_parameter_error_response"
+                                }
+                            }
+                        }
+                    }
+                }               
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "generic_with_parameter_error_response":{
+                "type": "object",
+                "description": "a schematic of a generic error response in which the user submitted an argument in the body of the request",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/error_with_pid"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Parameter"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Hyperdrive_op_mode"
+                    }
+                ]
+            },
+            "generic_without_parameter_error_response":{
+                "description": "a schematic of a generic error response where the user did not submit an argument in the request body",
+                "$ref": "#/components/schemas/error_with_pid"
+
+            },
+            "sync_success_response":{
+                "description": "generic synchronous success response",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Action"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Status"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Pid"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Parameter"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Hyperdrive_op_mode"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Pid_hash_index"
+                    }
+                ]
+            },
+            "async_success_response":{
+                "description": "generic asynchronous success response",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Action"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Status"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Pid"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Parameter"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Hyperdrive_op_mode"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Pid_hash_index"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Transaction_hash"
+                    }
+                ]
+            },
+            "error_response":{
+                "description": "",
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/Action"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Status"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "message":{
+                                "type": "string",
+                                "description": "the error message"
+                            },
+                            "error_code":{
+                                "type": "integer",
+                                "description": "the error code"
+                            }
+                        }
+                    }
+                ]
+            },
+            "error_with_pid":{
+                "type": "object",
+                "description": "generic error response in which the user submitted a pid or hash_pid",
+                "discriminator": {
+                    "propertyName": "error"
+                },
+                "properties": {
+                    "error":{
+                        "type": "object",
+                        "allOf": [
+                            {
+                                "$ref": "#/components/schemas/error_response"
+                            },
+                            {
+                                "$ref": "#/components/schemas/Pid"
+                            },
+                            {
+                                "$ref": "#/components/schemas/Pid_hash_index"
+                            }
+                        ]
+                    }
+                }               
+            },
+            "Action": {
+                "type": "string",
+                "description": "specifies the action requested through the API. It can take on various values, including 'set_payload,' 'new_pid,' 'add_url,' and 'add_external_pid.' These values indicate different operations or tasks that the API can perform. This parameter is represented in JSON format and is available in both sync and async modes.",
+                "discriminator":{
+                    "propertyName": "action" ,
+                    "mapping": {
+                        
+                    }
+                },
+                "properties": {
+                    "action":{
+                        "description": "the action that is requested",
+                        "type": "string"
+                    }
+                }
+            },
+            "Status": {
+                "type": "string",
+                "description": "reflects the status of the API request. It can have one of three values: 'executed' (indicating successful execution in sync mode), 'queued' (suggesting the task is awaiting processing in async mode), or 'rejected' (implying that the request encountered an error).",
+                "discriminator":{
+                    "propertyName": "status"
+                },
+                "properties": {
+                    "status":{
+                        "description": "the status of the request",
+                        "type": "string"
+                    }
+                }
+            },
+            "Pid":{
+                "type": "string",
+                "description": "This parameter represents a unique identifier for a specific object. It's returned as a string and is available in both synchronous and asynchronous modes.",
+                "discriminator": {
+                    "propertyName": "pid"
+                },
+                "properties": {
+                    "pid":{
+                        "description": "the pid that the action refers.",
+                        "type": "string"
+                    }
+                }
+            },
+            "Hyperdrive_op_mode":{
+                "type": "string",
+                "description": "The 'hyperdrive_op_mode' parameter indicates the operational mode of HyperDrive. It can be either 'sync' or 'async', signifying synchronized or asynchronous operation, respectively.",
+                "discriminator": {
+                    "propertyName": "hyperdrive_op_mode"
+                },
+                "properties": {
+                    "hyperdrive_op_mode":{
+                        "description": "the hyperdrive operation mode has two possible response",
+                        "type": "string"
+                    }
+                }
+            },
+            "Transaction_hash":{
+                "type": "string",
+                "description": "In asynchronous mode, the 'transaction_hash' parameter comes into play. It holds the blockchain transaction hash, represented as a hexadecimal number. If the HyperDrive is executing over the sync mode the parameter will not be presented in API response.",
+                "discriminator": {
+                    "propertyName": "transaction_hash"
+                },
+                "properties": {
+                    "transaction_hash":{
+                        "description": "the blockchain transaction hash",
+                        "type": "string"
+                    }
+                }
+            },
+            "Pid_hash_index":{
+                "type": "string",
+                "description": "This parameter holds a blockchain internal index of the PID.",
+                "discriminator": {
+                    "propertyName": "pid_hash_index"
+                },
+                "properties": {
+                    "pid_hash_index":{
+                        "description": "the pid hash values",
+                        "type": "string"
+                    }
+                }
+            },
+            "Parameter":{
+                "description": "Contains additional information required for the requested action. It's structured as JSON and may include values such as 'pid,' 'external_url,' and 'payload.' These values vary depending on the specific action requested",
+                "type": "object",
+                "discriminator": {
+                    "propertyName": "parameter"
+                },
+                "properties": {
+                    "parameter":{
+                        "description": "the request parameters",
+                        "type": "object"
+                    }
+                }
+            },
+            "Payload":{
+                "description": "an object record that can be sent or accessed by the user through its respective PID",
+                "type": "object",
+                "discriminator": {
+                    "propertyName": "payload"
+                },
+                "properties": {
+                    "payload":{
+                        "description": "The payload of the object record",
+                        "type": "object"
+                    }
+                }
+            }
+        },
+        "securitySchemes":{
+            "bearerAuth":{
+                "description": "this parameter refers to the JWT access token that authorizes the user to access the Hyperdrive API methods. It is returned as a string and is available in synchronous and asynchronous modes.",
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        },
+        "parameters": {
+            "dark_id":{
+                "in": "path",
+                "name": "dark_id",
+                "description": "The dark id is a parameter submitted as an argument in the request path. It is an already existing pid or hash_pid value.",
+                "required": true,
+                "schema":{
+                    "type": "string"
+                }
+            }
+        },
+        "requestBodies": {
+            "add_external_attributes":{
+                "description": "To add external attributes to the pid, it is necessary to submit one of the following keys that will make up the body of the request: external_url or external_pid and its respective value",
+                "content": {
+                    "application/json":{
+                        "schema":{
+                            "oneOf": [
+                            {
+                                "properties": {
+                                    "external_url":{
+                                        "description": "an external url",
+                                        "type": "string"
+                                    }
+                                }
+                                },
+                            {
+                                "properties": {
+                                    "external_pid":{
+                                        "description": "an external pid",
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                            ]
+                        },
+                        "examples": {
+                            "exemple1":{
+                                "$ref": "#/components/examples/request_body_add_external_url_exemple"
+                            },
+                            "exemple2":{        
+                                "$ref": "#/components/examples/request_body_add_external_pid_exemple"
+                            }
+                        }
+                    }
+                },
+                "required": true
+            },
+            "set_external_attributes":{
+                "description": "To set attributes external to the pid, it is necessary to submit one of the following keys that will make up the request body: external_url or payload and its respective value",
+                "content": {
+                    "application/json":{
+                        "schema":{
+                           "oneOf": [
+                                {
+                                    "properties": {
+                                        "external_url":{
+                                            "description": "a external url",
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                {
+                                    "$ref": "#/components/schemas/Payload"
+                                }
+                           ]
+                        },
+                        "examples": {
+                            "exemple1":{
+                                "$ref": "#/components/examples/request_body_add_external_url_exemple"
+                            },
+                            "exemple2":{
+                                "description": "an exemple of a payload",
+                                "value":{
+                                    "payload":{
+                                        "title": "Blockchain-based Privacy-PreservingRecord Linkage: enhancing data privacy in anuntrusted environment.",
+                                        "author": "Thiago Nobrega",
+                                        "type": "Article"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "required": true
+            },
+            "login": {              
+                "description": "the request body is a json format composed of two keys: email and password",
+                    "content": {
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "required": [
+                                    "email", "password"
+                                ],
+                                "properties": {
+                                    "email":{
+                                        "description": "user email",
+                                        "type": "string"
+                                    },
+                                    "password":{
+                                        "description": "user password",
+                                        "type": "string"
+                                    }
+                                }                                                                   
+                            },
+                            "example":{
+                                "email": "usuario1@example.com",
+                                "password": "senha123"
+                                
+                            }
+                        }                
+                    },
+                    "required": true              
+            }
+        },
+        "examples": {
+            "request_body_add_external_url_exemple":{
+                "description": "an example of an external URL that the user will submit in the body of the request",
+                "value":{
+                    "external_url":"https://twitter.com/"
+                }
+            },
+            "request_body_add_external_pid_exemple":{
+                "description": "an example of an external PID that the user will submit in the body of the request",
+                "value":{                    
+                    "external_pid":"doi:/116.jdakt.7892"                      
+                }
+            },
+            "add_external_url_async_response_exemple":{
+                "description": "response when the user submits a external_url as a parameter in hyperdrive sync op mode",
+                "value":{
+                    "action": "add_url",
+                    "hyperdrive_op_mode": "async",
+                    "parameter": {
+                        "external_url": "https://twitter.com/",
+                        "pid": "8033/fkwff30000000000026"
+                    },
+                    "pid": "8033/fkwff30000000000026",
+                    "pid_hash_index": "0xc764a3c06b1f4d8f723b466541b9cfc66a88ba3ca5a02ee090e2396e065f5d1a",
+                    "status": "queued",
+                    "transaction_hash": "0xfe6f60bd0ac041dd0c6b3178f57acf338dae343c7985eacc7fcdd42b510868b8"
+                }
+            },
+            "add_external_url_sync_response_exemple":{
+                "description": "response when the user submits a external_url as a parameter in hyperdrive async op mode",
+                "value":{                                           
+                    "action": "add_url",
+                    "hyperdrive_op_mode": "sync",
+                    "parameter": {
+                        "external_url": "https://www.google.com/",
+                        "pid": "8033/fkwff30000000000026"
+                    },
+                    "pid": "8033/fkwff30000000000026",
+                    "pid_hash_index": "0xc764a3c06b1f4d8f723b466541b9cfc66a88ba3ca5a02ee090e2396e065f5d1a",
+                    "status": "executed"
+                }   
+            },
+            "error_response_exemple": {
+                "description": "",
+                "value":{
+                    "action": "add",
+                    "error_code": 400,
+                    "message": "Invalid or missing data in the request. Please check your input and try again.",
+                    "pid": "8033/fkwff30000000000026",
+                    "pid_hash_index": "0xc764a3c06b1f4d8f723b466541b9cfc66a88ba3ca5a02ee090e2396e065f5d1a",
+                    "status": "rejected"
+                }
+            }      
+        }
+    }    
+}
+
+
+ 
