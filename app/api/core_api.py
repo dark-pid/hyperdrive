@@ -4,7 +4,7 @@ import os
 import configparser
 import asyncio
 
-from flask import Blueprint, Flask, jsonify, render_template, send_file, abort, request, make_response
+from flask import Blueprint, Flask, jsonify, render_template, send_file, abort, request, make_response, current_app
 from web3 import Web3
 
 
@@ -13,7 +13,6 @@ from util.validation import ValidationUtil
 from util.config_manager import ConfigManager
 from util.responses import success_response_create_pid, error_response
 
-from config.BlockchainManager import BlockChainManager
 
 # configurando classe das váriaveis externas
 config_manager = ConfigManager()
@@ -28,14 +27,6 @@ else:
     from util.synchronous import add_url, add_external_pid, set_payload
 
 
-##
-# configuring blockchainManager
-##
-
-blockchain_manager = BlockChainManager()
-
-dark_gw = blockchain_manager.dark_gw
-dark_map = blockchain_manager.dark_map
 
 ###
 # methods
@@ -43,6 +34,8 @@ dark_map = blockchain_manager.dark_map
 
 
 def create_pid():
+    blockchain_manager = current_app.blockchain_manager
+    dark_map = blockchain_manager.dark_map
     try:
         action = "create_pid"
         error_code = 200
@@ -105,6 +98,8 @@ def get_new():
 
 @core_api_blueprint.get("/get/<dark_id>")
 def get_pid(dark_id):
+    blockchain_manager = current_app.blockchain_manager
+    dark_map = blockchain_manager.dark_map
     resp_code = 200
     try:
         dark_pid = None
@@ -136,6 +131,8 @@ def get_pid_by_noid(nam, shoulder):
 
 @core_api_blueprint.post("/set/<path:ark_id>")
 def set_general(ark_id):
+    blockchain_manager = current_app.blockchain_manager
+    dark_map = blockchain_manager.dark_map
     pid = None
 
     if ark_id.startswith("0x"):

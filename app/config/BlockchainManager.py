@@ -19,6 +19,7 @@ deployed_contracts_config.read(os.path.join(PROJECT_ROOT, "deployed_contracts.in
 
 class BlockChainManager:
     _instance = None
+
     def __new__(cls, user_pk=None, *args, **kwargs):
         if not cls._instance:
             if user_pk:
