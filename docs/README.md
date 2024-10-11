@@ -55,11 +55,18 @@ The following method do not reequire authentication
 <details>
  <summary><code>POST</code> <code><b>/core/new</b></code> <code>(retrieve a new PID)</code></summary>
 
+##### header parameter
+
+> | name      |  type     | data type               | description                                                           |
+> |----|---|---|---|
+> | Authorization     |  required | str    | the api auth key  |
+
+NOTE: if authentication is disabled, it will not be mandatory to use Authorization. When sending the JWT token in Authorization, ensure that "Bearer" is sent before the token (see example)
+
 ##### Parameters
 
 > | name      |  type     | data type               | description                                                           |
 > |----|---|---|---|
-> | api_auth_key     |  required | str    | the api auth key  |
 > | external_url     |  optional | str    | external url   |
 > | external_pid     |  optional | str    | external pid   |
 > | payload          |  optional | json   | pid paylload  |
@@ -91,11 +98,18 @@ The following method do not reequire authentication
 <details>
  <summary><code>POST</code> <code><b>/core/add/{ark}|{hash_pid}</b></code> <code>(add an attribute to PID)</code></summary>
 
+##### header parameter
+
+> | name      |  type     | data type               | description                                                           |
+> |----|---|---|---|
+> | Authorization     |  required | str    | the api auth key  |
+
+NOTE: if authentication is disabled, it will not be mandatory to use Authorization. When sending the JWT token in Authorization, ensure that "Bearer" is sent before the token (see example)
+
 ##### Parameters
 
 > | name      |  type     | data type               | description                                                           |
 > |----|---|---|---|
-> | api_auth_key     |  required | str    | the api auth key  |
 > | external_url     |  optional | str    | external url   |
 > | external_pid     |  optional | str    | external pid   |
 
@@ -121,11 +135,18 @@ The following method do not reequire authentication
 <details>
  <summary><code>POST</code> <code><b>/core/set/{ark}|{hash_pid}</b></code> <code>(set PID attribute)</code></summary>
 
+##### header parameter
+
+> | name      |  type     | data type               | description                                                           |
+> |----|---|---|---|
+> | Authorization     |  required | str    | the api auth key  |
+
+NOTE: if authentication is disabled, it will not be mandatory to use Authorization. When sending the JWT token in Authorization, ensure that "Bearer" is sent before the token (see example)
+
 ##### Parameters
 
 > | name      |  type     | data type               | description                                                           |
 > |----|---|---|---|
-> | api_auth_key     |  required | str    | the api auth key  |
 > | external_url     |  optional | str    | external url   |
 > | payload          |  optional | json   | pid paylload   |
 
@@ -206,17 +227,34 @@ Through this method the user authenticates:
 > | `40x`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
 > | `50x`         | `application/json; charset=utf-8` | see response [paramerter detail](#api-messages) |
 
+NOTE: The user login method response presents some Messages API parameters explained in [paramerter detail](#api-messages) . Below are only the parameters that are exclusive to the method and an example response.
+
+| parameter | description | type | values   |
+| ---       | ---         | ---  | ---      |
+| api_auth_key       | the access token that references the user | str | token JWT |
+
+Below we present the parameters in more detail:
+
+> 1. api_auth_key: this parameter refers to the JWT access token that authorizes the user to access the Hyperdrive API methods. It is returned as a string and is available in synchronous and asynchronous modes.
+
+Finally the response message will have the following structure:
+
+
+```json
+{
+ action: athenticate,
+ api_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
+ status : executed|rejeceted,
+ error_code : 500,
+ error_msg : invalid credentials,
+}
+```
+
 
 ##### Example cURL [POST]
 
 > ```javascript
 >  curl -X POST http://$API_HOST:$API_PORT/user/login -H 'Content-Type: application/json' -d '{"email":"valid_email", "password" : "valid_password" }'
-> ```
-
-##### Example browser [GET]
-
-> ```
->  http://http://localhost:8080/user/login?email=valid_email&password=valid_password
 > ```
 </details>
 
@@ -245,8 +283,6 @@ Understanding these parameters is crucial for effectively interacting with the A
 > 1. hyperdrive_op_mode: : The 'hyperdrive_op_mode' parameter indicates the operational mode of HyperDrive. It can be either "sync" or "async," signifying synchronized or asynchronous operation, respectively.
 > 1. action: specifies the action requested through the API. It can take on various values, including "set_payload," "new_pid," "add_url," and "add_external_pid." These values indicate different operations or tasks that the API can perform. This parameter is represented in JSON format and is available in both sync and async modes. Some tasks that can be seen are: "get_pid", "authentication", "get_data".
 > 1. parameters: Contains additional information required for the requested action. It's structured as JSON and may include values such as 'pid,' 'external_url,' and 'payload.' These values vary depending on the specific action requested.
-> 1. api_auth_key: this parameter refers to the JWT access token that authorizes the user to access the Hyperdrive API methods. It is returned as a string and is available in synchronous and asynchronous modes.
-> 1. refresh_auth_key: This parameter allows the access token to be renewed without the need for the user to log in again.
 > 1. status: reflects the status of the API request. It can have one of three values: "executed" (indicating successful execution in sync mode), "queued" (suggesting the task is awaiting processing in async mode), or "rejected" (implying that the request encountered an error).
 > 1. transaction_hash: In asynchronous mode, the 'transaction_hash' parameter comes into play. It holds the blockchain transaction hash, represented as a hexadecimal number. If the HyperDrive is executing over the sync mode the parameter will not be presented in API response.
 > 1. error_code : this parameter is only avalible if an error occur ( if the status is `rejected`)
@@ -263,8 +299,6 @@ Finally the response message will have the following structure:
  hyperdrive_op_mode: [sync|async],
  action: set_payload|new_pid|add_url|add_external_pid
  parameters : { pid: 8033/fk819 , external_url : dark.io/xpto } ,
- api_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
- refresh_auth_key : eyJhbGciOnR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI.6R95X82cQPuN7MvZqP0DQjG1BY2a3vI,
  status : executed|queued|rejeceted,
  transaction_hash : 0xffff,
  error_code : 500,
