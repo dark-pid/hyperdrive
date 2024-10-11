@@ -5,6 +5,7 @@ import json
 from flask import Flask , jsonify , render_template, send_file, abort
 
 from services.load_api import load_api
+from services.logs_service import logs_bp
 # from shared_utils import MANAGED_NAM_DICT
 
 # # PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
@@ -23,6 +24,8 @@ app.config['JSON_SORT_KEYS'] = False #prevent sorting json
 
 
 app.register_blueprint(load_api)
+app.register_blueprint(logs_bp, url_prefix='/logs')
+
 
 if __name__ == "__main__":
 
