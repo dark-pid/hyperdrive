@@ -95,8 +95,11 @@ The HYPERDRIVE_PAYLOAD_VALIDATION must be :
 ## Authentication
 
 
-| PARAMETER                                                         | VALIDATION METHODS        |
-| ---                                                               | ---                       |
-| [HYPERDRIVE_AUTH]                     | TRUE, NONE               |
+| PARAMETER                                                         | VALIDATION METHODS        | DEFAULT |
+| ---                                                               | ---                       | --- |
+| [HYPERDRIVE_AUTH]                     | TRUE, NONE               | TRUE |
+| [AUTH_TOKEN_EXPIRATION_TIME]                     |       number of hours        | 6 |
 
-responsible for activating and deactivating the authentication of methods protected by access tokens.
+
+> 1. HYPERDRIVE_AUTH: responsible for activating and deactivating the authentication of methods protected by access tokens.
+> 1. AUTH_TOKEN_EXPIRATION_TIME: responsible for manipulating the jwt token expiration time, in hours.

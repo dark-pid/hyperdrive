@@ -267,8 +267,10 @@ In this section we present the HyperDrive response, in the following table we su
 | pid       | the pid that the action refers. | str | sync and async|  |
 | pid_hash_index       | the pid hash values | str | sync and async|  |
 | hyperdrive_op_mode | the hyperdrive operation mode has two possible response | str | sync and async|     - sync: if the HyperDrive is in syncronized mode <br> - async : if the HyperDrive is in asyncronized mode |
-| action | the action that is requested | json | sync and async |   - new_pid <br>    - add_url <br>    - add_external_pid<br>     - set_payload<br> | json |
-| parameters | the request parameters  | json | sync and async | - external_url <br> - external_pid <br> - payload <br> | - |
+| action | the action that is requested | json | sync and async |   - new_pid <br>    - add_url <br>    - add_external_pid<br>     - set_payload<br> | Json |
+| parameters | the request parameters  | JSON | sync and async | - external_url <br> - external_pid <br> - payload <br> | - |
+| api_auth_key       | the access token that references the user | str | sync and async| token JWT |
+| refresh_auth_key       | allows access token renewal without the need for the user to log in again | str | sync and async| resfresh token JWT |
 | status | the status of the request | str | sync and async | - executed (sync mode status) <br> - queued (async mode status) <br> - rejected (error messages)
 | transaction_hash | the blockchain transaction hash | str | async | the transaction hash is hex number avaliable only in `async mode` |
 | error_code | the error code     | str | sync and async | only if the status is `rejected`  |
@@ -279,7 +281,7 @@ Understanding these parameters is crucial for effectively interacting with the A
 > 1. pid: This parameter represents a unique identifier for a specific object. It's returned as a string and is available in both synchronous and asynchronous modes.
 > 1. pid_hash_index: This parameter holds a blockchain internal index of the PID.
 > 1. hyperdrive_op_mode: : The 'hyperdrive_op_mode' parameter indicates the operational mode of HyperDrive. It can be either "sync" or "async," signifying synchronized or asynchronous operation, respectively.
-> 1. action: specifies the action requested through the API. It can take on various values, including "set_payload," "new_pid," "add_url," and "add_external_pid." These values indicate different operations or tasks that the API can perform. This parameter is represented in JSON format and is available in both sync and async modes.
+> 1. action: specifies the action requested through the API. It can take on various values, including "set_payload," "new_pid," "add_url," and "add_external_pid." These values indicate different operations or tasks that the API can perform. This parameter is represented in JSON format and is available in both sync and async modes. Some tasks that can be seen are: "get_pid", "authentication", "get_data".
 > 1. parameters: Contains additional information required for the requested action. It's structured as JSON and may include values such as 'pid,' 'external_url,' and 'payload.' These values vary depending on the specific action requested.
 > 1. status: reflects the status of the API request. It can have one of three values: "executed" (indicating successful execution in sync mode), "queued" (suggesting the task is awaiting processing in async mode), or "rejected" (implying that the request encountered an error).
 > 1. transaction_hash: In asynchronous mode, the 'transaction_hash' parameter comes into play. It holds the blockchain transaction hash, represented as a hexadecimal number. If the HyperDrive is executing over the sync mode the parameter will not be presented in API response.

@@ -11,6 +11,7 @@ class ConfigManager:
         os.environ.setdefault("HYPERDRIVE_PAYLOAD_VALIDATION", "NONE")
         os.environ.setdefault("HYPERDRIVE_OPERATION_MODE", "ASYNC")
         os.environ.setdefault("HYPERDRIVE_AUTH", "TRUE")
+        os.environ.setdefault("AUTH_TOKEN_EXPIRATION_TIME", "6")
 
     def get_external_pid_validation(self):
         return os.environ["HYPERDRIVE_EXTERNAL_PID_VALIDATION"]
@@ -41,3 +42,9 @@ class ConfigManager:
 
     def set_hyperdrive_auth(self, value):
         os.environ["HYPERDRIVE_AUTH"] = value
+
+    def get_auth_token_expiration_time(self):
+        return os.environ["AUTH_TOKEN_EXPIRATION_TIME"]
+
+    def set_auth_token_expiration_time(self, value):
+        os.environ["AUTH_TOKEN_EXPIRATION_TIME"] = value

@@ -23,7 +23,7 @@ def authentication_middleware():
 
         except:
 
-            return jsonify({'message': 'Invalid token'}), 401
+            return jsonify({'message': 'Invalid token', 'action': 'user authentication', 'status': 'rejected'}), 401
 
         if not token:
-            return jsonify({'message': 'Missing authentication token'}), 401
+            return jsonify({'message': 'Missing authentication token', 'action': 'user authentication', 'status': 'rejected'}), 401
