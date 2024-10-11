@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  ul {
+    list-style:none;
+    padding:0;
+  }
+  li {
+    margin-bottom:50px;
+  }
+</style>
+
+
+
+<div style="margin-top:30px" class="row text-center">
+  <img src="{{url_for('static', filename='dark-logo.png')}}" align="middle"/>
+
+  <div class="col-md-12">
+      <ul>
+        Welcome to decentralized Archive Resource Key (dARK) Resolver
+        <!-- <li>um</li>
+        <li>um</li> -->
+      </ul>
+  </div>
+</div>
+{% endblock %}
