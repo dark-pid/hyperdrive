@@ -1,0 +1,539 @@
+### Variables 
+@apiurl = http://127.0.0.1:7000
+
+
+### load valido
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "R1",
+    "items": [ 
+        {"oai_id" : "a" , "url" : "invalida"},
+        {"oai_id" : "b" , "url" : "http://uol.com"},
+        {"oai_id" : "c" , "url" : "http://uol.com"},
+        {"oai_id" : "d" , "url" : "http://uol.com"}
+    ]
+    
+}
+
+
+### load invalido
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam1_pk": "R1",
+    "ite1ms": [ 
+        {"oai_id" : "a" , "url" : "invalida"},
+        {"oai_id" : "b" , "url" : "http://uol.com"},
+        {"oai_id" : "c" , "url" : "http://uol.com"},
+        {"oai_id" : "d" , "url" : "http://uol.com"}
+    ]
+    
+}
+
+### load com chave de teste
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "0x9f2551016c584a21bafa4b7c4e1a3facc9720aec430748663062a308dd4bb337",
+    "items": [ 
+        {"oai_id" : "a" , "url" : "invalida"},
+        {"oai_id" : "b" , "url" : "http://uol.com"},
+        {"oai_id" : "c" , "url" : "http://uol.com"},
+        {"oai_id" : "d" , "url" : "http://uol.com"}
+    ]
+    
+}
+
+### load com 10
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "0x9f2551016c584a21bafa4b7c4e1a3facc9720aec430748663062a308dd4bb337",
+    "items": [ 
+        {"oai_id": "1", "url": "http://ibict.br/a1"},
+        {"oai_id": "2", "url": "http://ibict.br/a2"},
+        {"oai_id": "3", "url": "http://ibict.br/a3"},
+        {"oai_id": "4", "url": "http://ibict.br/a4"},
+        {"oai_id": "5", "url": "http://ibict.br/a5"},
+        {"oai_id": "6", "url": "http://ibict.br/a6"},
+        {"oai_id": "7", "url": "http://ibict.br/a7"},
+        {"oai_id": "8", "url": "http://ibict.br/a8"},
+        {"oai_id": "9", "url": "http://ibict.br/a9"},
+        {"oai_id": "10", "url": "http://ibict.br/a10"}
+    ]
+}
+
+### load com 50
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "0x9f2551016c584a21bafa4b7c4e1a3facc9720aec430748663062a308dd4bb337",
+    "items": [
+        {"oai_id": "1", "url": "http://ibict.br/1"},
+        {"oai_id": "2", "url": "http://ibict.br/2"},
+        {"oai_id": "3", "url": "http://ibict.br/3"},
+        {"oai_id": "4", "url": "http://ibict.br/4"},
+        {"oai_id": "5", "url": "http://ibict.br/5"},
+        {"oai_id": "6", "url": "http://ibict.br/6"},
+        {"oai_id": "7", "url": "http://ibict.br/7"},
+        {"oai_id": "8", "url": "http://ibict.br/8"},
+        {"oai_id": "9", "url": "http://ibict.br/9"},
+        {"oai_id": "10", "url": "http://ibict.br/10"},
+        {"oai_id": "11", "url": "http://ibict.br/11"},
+        {"oai_id": "12", "url": "http://ibict.br/12"},
+        {"oai_id": "13", "url": "http://ibict.br/13"},
+        {"oai_id": "14", "url": "http://ibict.br/14"},
+        {"oai_id": "15", "url": "http://ibict.br/15"},
+        {"oai_id": "16", "url": "http://ibict.br/16"},
+        {"oai_id": "17", "url": "http://ibict.br/17"},
+        {"oai_id": "18", "url": "http://ibict.br/18"},
+        {"oai_id": "19", "url": "http://ibict.br/19"},
+        {"oai_id": "20", "url": "http://ibict.br/20"},
+        {"oai_id": "21", "url": "http://ibict.br/21"},
+        {"oai_id": "22", "url": "http://ibict.br/22"},
+        {"oai_id": "23", "url": "http://ibict.br/23"},
+        {"oai_id": "24", "url": "http://ibict.br/24"},
+        {"oai_id": "25", "url": "http://ibict.br/25"},
+        {"oai_id": "26", "url": "http://ibict.br/26"},
+        {"oai_id": "27", "url": "http://ibict.br/27"},
+        {"oai_id": "28", "url": "http://ibict.br/28"},
+        {"oai_id": "29", "url": "http://ibict.br/29"},
+        {"oai_id": "30", "url": "http://ibict.br/30"},
+        {"oai_id": "31", "url": "http://ibict.br/31"},
+        {"oai_id": "32", "url": "http://ibict.br/32"},
+        {"oai_id": "33", "url": "http://ibict.br/33"},
+        {"oai_id": "34", "url": "http://ibict.br/34"},
+        {"oai_id": "35", "url": "http://ibict.br/35"},
+        {"oai_id": "36", "url": "http://ibict.br/36"},
+        {"oai_id": "37", "url": "http://ibict.br/37"},
+        {"oai_id": "38", "url": "http://ibict.br/38"},
+        {"oai_id": "39", "url": "http://ibict.br/39"},
+        {"oai_id": "40", "url": "http://ibict.br/40"},
+        {"oai_id": "41", "url": "http://ibict.br/41"},
+        {"oai_id": "42", "url": "http://ibict.br/42"},
+        {"oai_id": "43", "url": "http://ibict.br/43"},
+        {"oai_id": "44", "url": "http://ibict.br/44"},
+        {"oai_id": "45", "url": "http://ibict.br/45"},
+        {"oai_id": "46", "url": "http://ibict.br/46"},
+        {"oai_id": "47", "url": "http://ibict.br/47"},
+        {"oai_id": "48", "url": "http://ibict.br/48"},
+        {"oai_id": "49", "url": "http://ibict.br/49"},
+        {"oai_id": "50", "url": "http://ibict.br/50"}
+    ]
+}
+
+### load com 100
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "0x9f2551016c584a21bafa4b7c4e1a3facc9720aec430748663062a308dd4bb337",
+    "items": [
+        {
+            "oai_id": "z1",
+            "url": "http://ibict.br/z1"
+        },
+        {
+            "oai_id": "z2",
+            "url": "http://ibict.br/z2"
+        },
+        {
+            "oai_id": "z3",
+            "url": "http://ibict.br/z3"
+        },
+        {
+            "oai_id": "z4",
+            "url": "http://ibict.br/z4"
+        },
+        {
+            "oai_id": "z5",
+            "url": "http://ibict.br/z5"
+        },
+        {
+            "oai_id": "z6",
+            "url": "http://ibict.br/z6"
+        },
+        {
+            "oai_id": "z7",
+            "url": "http://ibict.br/z7"
+        },
+        {
+            "oai_id": "z8",
+            "url": "http://ibict.br/z8"
+        },
+        {
+            "oai_id": "z9",
+            "url": "http://ibict.br/z9"
+        },
+        {
+            "oai_id": "z10",
+            "url": "http://ibict.br/z10"
+        },
+        {
+            "oai_id": "z11",
+            "url": "http://ibict.br/z11"
+        },
+        {
+            "oai_id": "z12",
+            "url": "http://ibict.br/z12"
+        },
+        {
+            "oai_id": "z13",
+            "url": "http://ibict.br/z13"
+        },
+        {
+            "oai_id": "z14",
+            "url": "http://ibict.br/z14"
+        },
+        {
+            "oai_id": "z15",
+            "url": "http://ibict.br/z15"
+        },
+        {
+            "oai_id": "z16",
+            "url": "http://ibict.br/z16"
+        },
+        {
+            "oai_id": "z17",
+            "url": "http://ibict.br/z17"
+        },
+        {
+            "oai_id": "z18",
+            "url": "http://ibict.br/z18"
+        },
+        {
+            "oai_id": "z19",
+            "url": "http://ibict.br/z19"
+        },
+        {
+            "oai_id": "z20",
+            "url": "http://ibict.br/z20"
+        },
+        {
+            "oai_id": "z21",
+            "url": "http://ibict.br/z21"
+        },
+        {
+            "oai_id": "z22",
+            "url": "http://ibict.br/z22"
+        },
+        {
+            "oai_id": "z23",
+            "url": "http://ibict.br/z23"
+        },
+        {
+            "oai_id": "z24",
+            "url": "http://ibict.br/z24"
+        },
+        {
+            "oai_id": "z25",
+            "url": "http://ibict.br/z25"
+        },
+        {
+            "oai_id": "z26",
+            "url": "http://ibict.br/z26"
+        },
+        {
+            "oai_id": "z27",
+            "url": "http://ibict.br/z27"
+        },
+        {
+            "oai_id": "z28",
+            "url": "http://ibict.br/z28"
+        },
+        {
+            "oai_id": "z29",
+            "url": "http://ibict.br/z29"
+        },
+        {
+            "oai_id": "z30",
+            "url": "http://ibict.br/z30"
+        },
+        {
+            "oai_id": "z31",
+            "url": "http://ibict.br/z31"
+        },
+        {
+            "oai_id": "z32",
+            "url": "http://ibict.br/z32"
+        },
+        {
+            "oai_id": "z33",
+            "url": "http://ibict.br/z33"
+        },
+        {
+            "oai_id": "z34",
+            "url": "http://ibict.br/z34"
+        },
+        {
+            "oai_id": "z35",
+            "url": "http://ibict.br/z35"
+        },
+        {
+            "oai_id": "z36",
+            "url": "http://ibict.br/z36"
+        },
+        {
+            "oai_id": "z37",
+            "url": "http://ibict.br/z37"
+        },
+        {
+            "oai_id": "z38",
+            "url": "http://ibict.br/z38"
+        },
+        {
+            "oai_id": "z39",
+            "url": "http://ibict.br/z39"
+        },
+        {
+            "oai_id": "z40",
+            "url": "http://ibict.br/z40"
+        },
+        {
+            "oai_id": "z41",
+            "url": "http://ibict.br/z41"
+        },
+        {
+            "oai_id": "z42",
+            "url": "http://ibict.br/z42"
+        },
+        {
+            "oai_id": "z43",
+            "url": "http://ibict.br/z43"
+        },
+        {
+            "oai_id": "z44",
+            "url": "http://ibict.br/z44"
+        },
+        {
+            "oai_id": "z45",
+            "url": "http://ibict.br/z45"
+        },
+        {
+            "oai_id": "z46",
+            "url": "http://ibict.br/z46"
+        },
+        {
+            "oai_id": "z47",
+            "url": "http://ibict.br/z47"
+        },
+        {
+            "oai_id": "z48",
+            "url": "http://ibict.br/z48"
+        },
+        {
+            "oai_id": "z49",
+            "url": "http://ibict.br/z49"
+        },
+        {
+            "oai_id": "z50",
+            "url": "http://ibict.br/z50"
+        },
+        {
+            "oai_id": "z51",
+            "url": "http://ibict.br/z51"
+        },
+        {
+            "oai_id": "z52",
+            "url": "http://ibict.br/z52"
+        },
+        {
+            "oai_id": "z53",
+            "url": "http://ibict.br/z53"
+        },
+        {
+            "oai_id": "z54",
+            "url": "http://ibict.br/z54"
+        },
+        {
+            "oai_id": "z55",
+            "url": "http://ibict.br/z55"
+        },
+        {
+            "oai_id": "z56",
+            "url": "http://ibict.br/z56"
+        },
+        {
+            "oai_id": "z57",
+            "url": "http://ibict.br/z57"
+        },
+        {
+            "oai_id": "z58",
+            "url": "http://ibict.br/z58"
+        },
+        {
+            "oai_id": "z59",
+            "url": "http://ibict.br/z59"
+        },
+        {
+            "oai_id": "z60",
+            "url": "http://ibict.br/z60"
+        },
+        {
+            "oai_id": "z61",
+            "url": "http://ibict.br/z61"
+        },
+        {
+            "oai_id": "z62",
+            "url": "http://ibict.br/z62"
+        },
+        {
+            "oai_id": "z63",
+            "url": "http://ibict.br/z63"
+        },
+        {
+            "oai_id": "z64",
+            "url": "http://ibict.br/z64"
+        },
+        {
+            "oai_id": "z65",
+            "url": "http://ibict.br/z65"
+        },
+        {
+            "oai_id": "z66",
+            "url": "http://ibict.br/z66"
+        },
+        {
+            "oai_id": "z67",
+            "url": "http://ibict.br/z67"
+        },
+        {
+            "oai_id": "z68",
+            "url": "http://ibict.br/z68"
+        },
+        {
+            "oai_id": "z69",
+            "url": "http://ibict.br/z69"
+        },
+        {
+            "oai_id": "z70",
+            "url": "http://ibict.br/z70"
+        },
+        {
+            "oai_id": "z71",
+            "url": "http://ibict.br/z71"
+        },
+        {
+            "oai_id": "z72",
+            "url": "http://ibict.br/z72"
+        },
+        {
+            "oai_id": "z73",
+            "url": "http://ibict.br/z73"
+        },
+        {
+            "oai_id": "z74",
+            "url": "http://ibict.br/z74"
+        },
+        {
+            "oai_id": "z75",
+            "url": "http://ibict.br/z75"
+        },
+        {
+            "oai_id": "z76",
+            "url": "http://ibict.br/z76"
+        },
+        {
+            "oai_id": "z77",
+            "url": "http://ibict.br/z77"
+        },
+        {
+            "oai_id": "z78",
+            "url": "http://ibict.br/z78"
+        },
+        {
+            "oai_id": "z79",
+            "url": "http://ibict.br/z79"
+        },
+        {
+            "oai_id": "z80",
+            "url": "http://ibict.br/z80"
+        },
+        {
+            "oai_id": "z81",
+            "url": "http://ibict.br/z81"
+        },
+        {
+            "oai_id": "z82",
+            "url": "http://ibict.br/z82"
+        },
+        {
+            "oai_id": "z83",
+            "url": "http://ibict.br/z83"
+        },
+        {
+            "oai_id": "z84",
+            "url": "http://ibict.br/z84"
+        },
+        {
+            "oai_id": "z85",
+            "url": "http://ibict.br/z85"
+        },
+        {
+            "oai_id": "z86",
+            "url": "http://ibict.br/z86"
+        },
+        {
+            "oai_id": "z87",
+            "url": "http://ibict.br/z87"
+        },
+        {
+            "oai_id": "z88",
+            "url": "http://ibict.br/z88"
+        },
+        {
+            "oai_id": "z89",
+            "url": "http://ibict.br/z89"
+        },
+        {
+            "oai_id": "z90",
+            "url": "http://ibict.br/z90"
+        },
+        {
+            "oai_id": "z91",
+            "url": "http://ibict.br/z91"
+        },
+        {
+            "oai_id": "z92",
+            "url": "http://ibict.br/z92"
+        },
+        {
+            "oai_id": "z93",
+            "url": "http://ibict.br/z93"
+        },
+        {
+            "oai_id": "z94",
+            "url": "http://ibict.br/z94"
+        },
+        {
+            "oai_id": "z95",
+            "url": "http://ibict.br/z95"
+        },
+        {
+            "oai_id": "z96",
+            "url": "http://ibict.br/z96"
+        },
+        {
+            "oai_id": "z97",
+            "url": "http://ibict.br/z97"
+        },
+        {
+            "oai_id": "z98",
+            "url": "http://ibict.br/z98"
+        },
+        {
+            "oai_id": "z99",
+            "url": "http://ibict.br/z99"
+        },
+        {
+            "oai_id": "z100",
+            "url": "http://ibict.br/z100"
+        }
+    ]
+}
