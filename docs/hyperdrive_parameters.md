@@ -3,6 +3,7 @@
 > *Table of Contents:*
 > - [HyperDrive Operation Mode](#operation-mode)
 > - [HyperDrive Validations](#validations)
+> - [HyperDrive Authentication](#Authentication)
 
 This page details the HyperDrive parameters.
 
@@ -58,7 +59,7 @@ The HYPERDRIVE_URL_VALIDATION must be :
 
 The HyperDrive can perform check the External PID of a dARK PID, we assume a simple validation schema detailed below.
 
-We need that all pid starts with `<protocol>:/<pid>`. 
+We need that all pid starts with `<protocol>:/<pid>`.
 
 > - The `<protocol>` designates the pid system that handles/generates the pid (e.g., DOI)
 > - The `<pid>` is the pid
@@ -91,3 +92,14 @@ The HYPERDRIVE_PAYLOAD_VALIDATION must be :
 | NONE| No validation will be performed | ✅  |
 | BASIC | Perform the validation described here | ❌ |
 
+## Authentication
+
+
+| PARAMETER                                                         | VALIDATION METHODS        | DEFAULT |
+| ---                                                               | ---                       | --- |
+| [HYPERDRIVE_AUTH]                     | TRUE, NONE               | TRUE |
+| [AUTH_TOKEN_EXPIRATION_TIME]                     |       number of hours        | 6 |
+
+
+> 1. HYPERDRIVE_AUTH: responsible for activating and deactivating the authentication of methods protected by access tokens.
+> 1. AUTH_TOKEN_EXPIRATION_TIME: responsible for manipulating the jwt token expiration time, in hours.

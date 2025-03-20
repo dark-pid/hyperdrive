@@ -1,0 +1,28 @@
+classDiagram
+    class ConfigEnvironment {
+        + __init__()
+        + load_config()
+        + get(key: str, default: Optional[str] = None)
+        + set(key: str, value: str)
+    }
+
+    class App {
+        + __init__(config: ConfigEnvironment)
+        + run()
+    }
+
+    class SynchronousOperations {
+        + external_pid_add(pid)
+        + external_url(url)
+        + set_payload(payload)
+    }
+
+    class AsynchronousOperations {
+        + async async_external_pid_add(pid)
+        + async async_external_url(url)
+        + async async_set_payload(payload)
+    }
+
+    ConfigEnvironment --> App
+    App --> SynchronousOperations
+    App --> AsynchronousOperations

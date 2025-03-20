@@ -1,0 +1,1 @@
+copy the config.ini and deployment_contracts.ini
