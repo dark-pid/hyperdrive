@@ -1,23 +1,12 @@
 import re
 
-
-class ValidationUtil:
-    @staticmethod
-    def check_url(url_str):
-        regex = (
-            "((http|https)://)(www.)?"
-            + "[a-zA-Z0-9@:%._\\+~#?&//=]"
-            + "{2,256}\\.[a-z]"
-            + "{2,6}\\b([-a-zA-Z0-9@:%"
-            + "._\\+~#?&//=]*)"
-        )
-
-        p = re.compile(regex)
-
-        if url_str is None:
-            return False
-
-        if p.match(url_str):
-            return True
-        else:
-            return False
+def is_valid_url(url):
+    regex = re.compile(
+        r'^(?:http|ftp)s?://'  
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|' 
+        # r'localhost|'  # ou localhost...
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|'  
+        r'\[?[A-F0-9]*:[A-F0-9:]+\]?)'  # IPv6
+        r'(?::\d+)?'  # porta
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    return re.match(regex, url) is not None
