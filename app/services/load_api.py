@@ -248,7 +248,7 @@ def update_metadata():
             "action": 'update',
             "update_time" : update_time,
             "timestamp": datetime.now().timestamp(),
-            "update_pids": processados
+            "updated_pids": processados
     }
 
     if len(nao_processados) != 0:
