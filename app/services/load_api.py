@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import time
+from datetime import datetime
 import random
 
 import configparser
@@ -42,6 +43,13 @@ def get_bc_gateway(account_pk):
     return dark_gw, dark_map
 
 
+def check_account(data):
+    dnam_pk = data.get('dnam_pk').strip()
+    account = Account.from_key(dnam_pk)
+    dnam_wallet = account.address
+    dark_gw, dark_map = get_bc_gateway(dnam_pk)
+    return account, dnam_wallet, dark_gw, dark_map
+
 @load_api.route('/load', methods=['post'])
 def check_json():
     data = request.json
@@ -52,10 +60,11 @@ def check_json():
     r_time = 0
 
     try:
-        dnam_pk = data.get('dnam_pk').strip()
-        account = Account.from_key(dnam_pk)
-        dnam_wallet = account.address
-        dark_gw, dark_map = get_bc_gateway(dnam_pk)
+        account, dnam_wallet, dark_gw, dark_map = check_account(data)
+        # dnam_pk = data.get('dnam_pk').strip()
+        # account = Account.from_key(dnam_pk)
+        # dnam_wallet = account.address
+        # dark_gw, dark_map = get_bc_gateway(dnam_pk)
     except AttributeError:
         # sem a chave
         erros.append("No private key identified")
@@ -143,4 +152,116 @@ def check_json():
 
     return jsonify(response), 200
 
+
+
+@load_api.route('/update', methods=['post'])
+def update_metadata():
+    data = request.json
+    items = data.get('items', [])
+    erros = []
+    update_time = 0
+
+    try:
+        account, dnam_wallet, dark_gw, dark_map = check_account(data)
+    except AttributeError:
+        # sem a chave
+        erros.append("No private key identified")
+    except Exception:
+        erros.append("Invalid private key")
+    except ValueError:
+        erros.append("Invalid private key")
+    
+    # caso tenha parametros invalidos
+    if len(erros) > 0:
+        resp = {'erros' :  erros , 'params' : str(data)}
+        return jsonify(resp), 500
+    
+    processados = []
+    nao_processados = []
+    start_time = time.time()
+    for item in items:
+
+        # recuperar o pid
+        parametros_validos = True
+        try:
+            dark_id = item.get('dark_id')
+            if not dark_id:
+                item['error'] = 'No valid dark_id provided'
+                nao_processados.append(item)
+                parametros_validos = False
+        except ValueError as e:
+            erros.append('No dark_id provided')
+            item['error'] = 'No valid dark_id provided'
+            nao_processados.append(item)
+            parametros_validos = False
+        try:
+            update_url = item.get('url')
+            item['update_url'] = update_url
+            del item['url']
+
+            if not update_url:
+                item['error'] = 'No url provided'
+                nao_processados.append(item)
+                parametros_validos = False
+        except ValueError as e:
+            item['error'] = 'No url provided'
+            nao_processados.append(item)
+            parametros_validos = False
+        
+        if parametros_validos:
+            try:
+                dark_pid = dark_map.get_pid_by_ark(dark_id)
+            except Exception as e:
+                item['error'] = 'dark_id not found'
+                nao_processados.append(item)
+                break
+                # resp = jsonify({'status' : 'Unable to recovery (' + str(dark_id) + ')', 'block_chain_error' : str(e)},)
+                # resp_code = 500 # colocar um erro especifico?
+
+            item['update_url'] = update_url
+
+            if is_valid_url(update_url):
+                try:
+                    ark_hash_obj = dark_pid.pid_hash
+                    ark_hash_hex_val = ark_hash_obj.hex()
+                    item['ark_hash'] = ark_hash_hex_val
+                    tx = dark_map.async_set_url(ark_hash_obj,update_url)
+                    txr = tx.hex()
+                    item['tx_recipt'] = txr
+                    item['previous_url'] = dark_pid.external_url
+                    processados.append(item)
+                except Exception as e: 
+                    item['error'] = 'bockchain error'
+                    item['error_desc'] = str(e)
+                    nao_processados.append(item)
+            else:
+                item['error'] = 'invalid url'
+                nao_processados.append(item)
+                print("aqui")
+
+        
+    end_time = time.time()
+    update_time = end_time - start_time
+
+    response = {
+            "wallet_addr": account.address ,
+            "action": 'update',
+            "update_time" : update_time,
+            "timestamp": datetime.now().timestamp(),
+            "updated_pids": processados
+    }
+
+    if len(nao_processados) != 0:
+        response["not_updated_pids"] = nao_processados
+        
+
+    # 
+    os.makedirs('logs', exist_ok=True)
+    timestamp = int(time.time())
+    random_digits = random.randint(000, 999)
+    filename = f"logs/update_{time.strftime('%Y-%m-%d')}_{dnam_wallet[2:]}_{timestamp}_{random_digits}.json"
+    with open(filename, 'w') as f:
+        json.dump(response, f, indent=4)
+
+    return jsonify(response), 200
 
