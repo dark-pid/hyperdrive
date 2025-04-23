@@ -216,6 +216,7 @@ def update_metadata():
                 nao_processados.append(item)
                 parametros_validos = False
 
+            # chek whether the url already exists
             if url_exists(update_url,dark_map):
                 item['error'] = 'URL already exists and set to other ark'
                 nao_processados.append(item)
