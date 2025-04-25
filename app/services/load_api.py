@@ -12,6 +12,7 @@ from flask import Blueprint, jsonify , redirect , request
 from dark import DarkMap, DarkGateway
 
 from util.validation import is_valid_url
+from util.bc import url_exists
 from eth_account import Account
 
 import shared_utils 
@@ -51,7 +52,7 @@ def check_account(data):
     return account, dnam_wallet, dark_gw, dark_map
 
 @load_api.route('/load', methods=['post'])
-def check_json():
+def load_data():
     data = request.json
     items = data.get('items', [])
     erros = []
@@ -69,10 +70,13 @@ def check_json():
         # sem a chave
         erros.append("No private key identified")
     except Exception:
-        erros.append("Invalid private key")
+        erros.append("Invalid private key.")
     except ValueError:
         erros.append("Invalid private key")
 
+    if len(erros) > 0:
+        resp = {'erros' :  erros , 'params' : str(data)}
+        return jsonify(resp), 500
 
 
     processados = []
@@ -84,7 +88,8 @@ def check_json():
 
         item_data = {'oai_id' : oai_id , 'requested_url' : url}
 
-        if oai_id and is_valid_url(url):
+
+        if oai_id and ( is_valid_url(url) and url_exists(url,dark_map) == False ):
             try: 
                 ark_hash_obj = shared_utils.get_pid(dnam_wallet,dark_map)
                 ark_hash_hex_val = ark_hash_obj.hex()
@@ -100,7 +105,10 @@ def check_json():
                 item_data['error_desc'] = str(e)
                 nao_processados.append(item_data)
         else:
-            item_data['error'] = 'invalid url'
+            if not is_valid_url(url):
+                item_data['error'] = 'invalid url'
+            else:
+                item_data['error'] = 'URL already exists and set to other ark'
             nao_processados.append(item_data)
     
     end_time = time.time()
@@ -203,6 +211,17 @@ def update_metadata():
                 item['error'] = 'No url provided'
                 nao_processados.append(item)
                 parametros_validos = False
+            if not is_valid_url(update_url):
+                item['error'] = 'invalid URL'
+                nao_processados.append(item)
+                parametros_validos = False
+
+            # chek whether the url already exists
+            if url_exists(update_url,dark_map):
+                item['error'] = 'URL already exists and set to other ark'
+                nao_processados.append(item)
+                parametros_validos = False
+
         except ValueError as e:
             item['error'] = 'No url provided'
             nao_processados.append(item)
@@ -237,7 +256,7 @@ def update_metadata():
             else:
                 item['error'] = 'invalid url'
                 nao_processados.append(item)
-                print("aqui")
+                # print("aqui")
 
         
     end_time = time.time()

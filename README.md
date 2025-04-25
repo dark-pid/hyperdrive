@@ -72,7 +72,7 @@ Follow these simple steps to run the project:
 
 ### System Requirements
 
-- Python 3.10
+- Python 3.10 or higher
 - pip
 - Docker
 - Docker Compose
@@ -82,10 +82,12 @@ Follow these simple steps to run the project:
 
 **linux**
 > ```
+> $ sudo apt install build-essential
+> $ sudo apt install python3.12-dev
 > $ cd hyperdrive
 > $ pip install -r requirements
 > $ cd app
-> $ python api_server.py
+> $ python server.py
 > ```
 
 **windows**
@@ -93,7 +95,7 @@ Follow these simple steps to run the project:
 > cd hyperdrive
 > pip install -r requirements
 > cd app
-> python.exe api_server.py
+> python.exe server.py
 >```
 
 ### Docker execution
