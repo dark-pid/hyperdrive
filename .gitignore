@@ -1,5 +1,6 @@
 # vscode
 .vscode/
+app/logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
