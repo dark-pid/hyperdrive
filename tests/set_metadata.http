@@ -1,0 +1,30 @@
+### Variables 
+@apiurl = http://127.0.0.1:7000
+
+
+### load com 10
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
+    "items": [ 
+        {"oai_id": "1", "url": "http://dark.net/p1"},
+        {"oai_id": "2", "url": "http://dark.net/p2"},
+        {"oai_id": "3", "url": "http://dark.net/p3"}
+    ]
+}
+
+### fsd 8033/fkwf300000091x, 8033/fkwf300000092j e 8033/fkwf3000000935
+POST {{apiurl}}/set/metadata HTTP/1.1
+Content-Type: application/json
+
+{
+  "dnam_pk": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
+  "items": [
+    {
+      "dark_id": "8033/fkwf300000091x",
+      "metadata": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<dublin_core>\n    <dcvalue element=\"creator\" qualifier=\"ID\" language=\"pt_BR\">NÓBREGA, T. P.</dcvalue>\n    ...\n</dublin_core>"
+    }
+  ]
+}
