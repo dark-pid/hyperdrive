@@ -21,6 +21,10 @@ gevent
 # uvicorn[standard]==0.21.1
 
 # dark
-dark-gateway==0.1.6
+dark-gateway==2.0.0b
 # load variables
 python-dotenv
+
+#ipfs
+ipfspy==0.0.15
+# ipfshttpclient==0.7.0

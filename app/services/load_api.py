@@ -6,13 +6,16 @@ from datetime import datetime
 import random
 
 import configparser
+from hexbytes import HexBytes
 
 from flask import Blueprint, jsonify , redirect , request
+from ipfspy.ipfshttpapi import IPFSApi
 
 from dark import DarkMap, DarkGateway
 
 from util.validation import is_valid_url
 from util.bc import url_exists
+from util.ipfs import add_to_ipfs
 from eth_account import Account
 
 import shared_utils 
@@ -101,7 +104,7 @@ def load_data():
                 item_data['tx_recipt'] = txr
                 processados.append(item_data)
             except Exception as e: 
-                item_data['error'] = 'bockchain error'
+                item_data['error'] = 'blockchain error'
                 item_data['error_desc'] = str(e)
                 nao_processados.append(item_data)
         else:
@@ -159,8 +162,6 @@ def load_data():
         json.dump(response, f, indent=4)
 
     return jsonify(response), 200
-
-
 
 @load_api.route('/update', methods=['post'])
 def update_metadata():
@@ -284,3 +285,89 @@ def update_metadata():
 
     return jsonify(response), 200
 
+@load_api.route('/set/metadata', methods=['post'])
+def add_metadata():
+    """
+    Recebe uma lista de metadados, faz upload de cada um no IPFS e associa ao PID na blockchain.
+    Espera JSON com:
+    {
+        "dnam_pk": "<private_key>",
+        "items": [
+            {
+                "dark_id": "<ark>",
+                "metadata": "<conteúdo do metadata>"
+            },
+            ...
+        ]
+    }
+    """
+    data = request.json
+    items = data.get('items', [])
+    erros = []
+    upload_time = 0
+
+    try:
+        account, dnam_wallet, dark_gw, dark_map = check_account(data)
+    except AttributeError:
+        erros.append("No private key identified")
+    except Exception:
+        erros.append("Invalid private key")
+    except ValueError:
+        erros.append("Invalid private key")
+
+    if len(erros) > 0:
+        resp = {'erros': erros, 'params': str(data)}
+        return jsonify(resp), 500
+
+    processados = []
+    nao_processados = []
+    start_time = time.time()
+    api = IPFSApi()
+
+    for item in items:
+        dark_id = item.get('dark_id')
+        metadata = item.get('metadata')
+        item_result = {'dark_id': dark_id}
+
+        if not dark_id or not metadata:
+            item_result['error'] = 'dark_id or metadata missing'
+            nao_processados.append(item_result)
+            continue
+
+        try:
+            pid_obj = dark_map.get_pid_by_ark(dark_id)
+            resp, obj = add_to_ipfs(metadata, api)
+            ps = dark_map.get_payload_schema_by_name('DC', 'none')
+            pid_hash = pid_obj.pid_hash
+            payload_schema_id = HexBytes(ps.get_id())
+            payload_ipfs_addr = obj[1]['Hash']
+            bctx = dark_map.async_set_payload(pid_hash, payload_schema_id, payload_ipfs_addr)
+            item_result['ipfs_hash'] = payload_ipfs_addr
+            item_result['status'] = 'uploaded'
+            item_result['dark_tx'] = str(bctx)
+            processados.append(item_result)
+        except Exception as e:
+            item_result['error'] = str(e)
+            nao_processados.append(item_result)
+
+    end_time = time.time()
+    upload_time = end_time - start_time
+
+    response = {
+        "wallet_addr": account.address,
+        "action": 'upload_metadata',
+        "upload_time": upload_time,
+        "timestamp": datetime.now().timestamp(),
+        "uploaded": processados
+    }
+    if nao_processados:
+        response["not_uploaded"] = nao_processados
+
+    os.makedirs('logs', exist_ok=True)
+    timestamp = int(time.time())
+    random_digits = random.randint(0, 999)
+    filename = f"logs/upload_metadata_{time.strftime('%Y-%m-%d')}_{dnam_wallet[2:]}_{timestamp}_{random_digits}.json"
+    with open(filename, 'w') as f:
+        json.dump(response, f, indent=4)
+
+    return jsonify(response), 200

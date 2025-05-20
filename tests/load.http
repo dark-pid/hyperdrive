@@ -38,7 +38,7 @@ POST {{apiurl}}/load HTTP/1.1
 Content-Type: application/json
 
 {
-    "dnam_pk": "0x9f2551016c584a21bafa4b7c4e1a3facc9720aec430748663062a308dd4bb337",
+    "dnam_pk": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
     "items": [ 
         {"oai_id" : "a" , "url" : "invalida"},
         {"oai_id" : "b" , "url" : "http://uol.com"},
@@ -53,7 +53,7 @@ POST {{apiurl}}/load HTTP/1.1
 Content-Type: application/json
 
 {
-    "dnam_pk": "0x9f2551016c584a21bafa4b7c4e1a3facc9720aec430748663062a308dd4bb337",
+    "dnam_pk": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
     "items": [ 
         {"oai_id": "1", "url": "http://ibict.br/a1"},
         {"oai_id": "2", "url": "http://ibict.br/a2"},
@@ -73,7 +73,7 @@ POST {{apiurl}}/load HTTP/1.1
 Content-Type: application/json
 
 {
-    "dnam_pk": "0x9f2551016c584a21bafa4b7c4e1a3facc9720aec430748663062a308dd4bb337",
+    "dnam_pk": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
     "items": [
         {"oai_id": "1", "url": "http://ibict.br/1"},
         {"oai_id": "2", "url": "http://ibict.br/2"},
@@ -125,6 +125,26 @@ Content-Type: application/json
         {"oai_id": "48", "url": "http://ibict.br/48"},
         {"oai_id": "49", "url": "http://ibict.br/49"},
         {"oai_id": "50", "url": "http://ibict.br/50"}
+    ]
+}
+
+
+### load com repetida
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
+    "items": [
+        {"oai_id": "11", "url": "http://ibict.br/r1"},
+        {"oai_id": "1", "url": "http://ibict.br/1"},
+        {"oai_id": "2", "url": "http://ibict.br/2"},
+        {"oai_id": "3", "url": "http://ibict.br/3"},
+        {"oai_id": "4", "url": "http://ibict.br/4"},
+        {"oai_id": "5", "url": "http://ibict.br/5"},
+        {"oai_id": "6", "url": "http://ibict.br/6"},
+        {"oai_id": "7", "url": "http://ibict.br/7"},
+        {"oai_id": "22", "url": "http://ibict.br/r2"}
     ]
 }
 

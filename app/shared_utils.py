@@ -5,7 +5,8 @@ from dark import DarkMap, DarkGateway
 #   arks : []
 # }
  
-LIMIAR = 100
+NUM_REQUEST = 20
+LIMIAR = 40 #100
 MANAGED_ARK_DICT = {}
 
 
@@ -20,9 +21,9 @@ def get_pid(wallet_addr,dark_map:DarkMap):
 
     s = len(warks)
     if s < LIMIAR:
-        r = int((LIMIAR- s)/100)
+        r = int((LIMIAR- s)/NUM_REQUEST)
         for i in range(r):
-            pids = dark_map.bulk_request_pid_hash()
+            pids = dark_map.bulk_request_pid_hash(2300000)
             warks.extend(pids)
     
     ark_hash = warks.pop(0)
