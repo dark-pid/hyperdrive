@@ -96,3 +96,32 @@ Content-Type: application/json
     
 }
 
+
+
+### update
+
+### load com repetida
+POST {{apiurl}}/load HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
+    "items": [
+        {"oai_id": "11", "url": "http://ibict.br/r121"},
+        {"oai_id": "br1", "url": "http://gov.br/1"},
+        {"oai_id": "1ggg", "url": "http:/gov.com"}
+    ]
+}
+
+### load invalida 4
+POST {{apiurl}}/update HTTP/1.1
+Content-Type: application/json
+
+{
+    "dnam_pk": "0xae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
+    "items": [ 
+        {"dark_id" : "8033/fkwf3000000ftj" , "url" : "http://ibict.br/r1"},
+        {"dark_id" : "8033/fkwf3000000fws" , "url" : "http://uol.com/q1"}
+    ]
+    
+}
